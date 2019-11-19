@@ -81,7 +81,15 @@ app.io.on('connect', function (socket) {
   });
 
   socket.on('matchRoom', data => {
-    room.match();
+    if (room.getNumParticipants() < 3) {
+      socket.emit('message', {message: 'Need at least 3 participants!'});
+    } else {
+      room.match();
+    }
+  });
+
+  socket.on('closeRoom', data => {
+    room.close();
   });
 
   socket.on('disconnect', data => {

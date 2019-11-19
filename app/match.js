@@ -62,7 +62,6 @@ function match(names, n_santas) {
         }
       }
     }
-    console.log(matches);
     Object.keys(matches).forEach(santa => {
       santas[santa].push(matches[santa]);
     });

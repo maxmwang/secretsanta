@@ -29,6 +29,10 @@ class Room {
     return _.filter(this.participants, p => p.name == name)[0];
   }
 
+  getNumParticipants() {
+    return this.participants.length;
+  }
+
   activate(name, socket) {
     this.get(name).active = true;
     this.get(name).socket = socket;
@@ -39,7 +43,7 @@ class Room {
     this.get(name).active = false;
     this.get(name).socket = undefined;
     if (this.allDeactivated()) {
-      this.end();
+      this.close();
     } else {
       this.notifyParticipantUpdate();
     }
@@ -60,7 +64,6 @@ class Room {
 
   match() {
     const santas = match(this.participants.map(p => p.name), N_SANTAS);
-    console.log(santas);
     this.participants.forEach(p => {
       p.send('santas', {'santas': santas[p.name]});
     });
@@ -70,8 +73,8 @@ class Room {
     this.participants.forEach(p => p.send('participants', this.getParticipantData()));
   }
 
-  end() {
-    this.participants.forEach(p => p.send('end', {}));
+  close() {
+    this.participants.forEach(p => p.send('close', {}));
     this.onClose();
   }
 }

@@ -8,6 +8,7 @@ import Home from 'views/Home';
 import Create from 'views/Create';
 import Join from 'views/Join';
 import Lobby from 'views/Lobby';
+import HowItWorks from 'views/HowItWorks';
 
 class App extends Component {
   constructor(props) {
@@ -20,13 +21,14 @@ class App extends Component {
   }
 
   setRoom(roomCode, name) {
-    this.socket = io();
+    this.socket = io('localhost:5000/');
     this.socket.on('start', data => {
       this.setState({ view: "table" });
     });
 
-    this.socket.on('end', data => {
-      this.exitGame();
+    this.socket.on('close', data => {
+      this.socket.disconnect();
+      this.setState({ view: "home", roomCode: "", name: "" });
     });
 
     this.socket.on('disconnect', data => {
@@ -44,7 +46,8 @@ class App extends Component {
     const views = {
       home:   <Home 
                 createRoom={ () => this.setState({ view: "create" }) } 
-                joinRoom={ () => this.setState({ view: "join" }) }/>,
+                joinRoom={ () => this.setState({ view: "join" }) }
+                viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
                 goBack={ () => this.setState({ view: "home" }) }
                 create={ name => createGame().then(res => this.setRoom(res.roomCode, name)) }/>,
@@ -56,6 +59,7 @@ class App extends Component {
                 roomCode={this.state.roomCode}
                 name={this.state.name}
                 exitGame={ () => this.exitGame() }/>,
+      how: <HowItWorks goBack={ () => this.setState({ view: "home" }) }/>,
     }
 
     return (

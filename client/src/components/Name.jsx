@@ -12,6 +12,8 @@ class Name extends Component {
   getStyle() {
     if (this.props.participant.santa) {
       return { boxShadow: "0px 0px 4px 2px red" };
+    } else if (this.props.participant.self) {
+      return { boxShadow: "0px 0px 4px 2px green" };
     }
     return {};
   }

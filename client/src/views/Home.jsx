@@ -8,6 +8,10 @@ class Home extends Component {
           <button type="button" className="btn btn-light" onClick={this.props.joinRoom}>Join Room</button>
           <button type="button" className="btn btn-light" onClick={this.props.createRoom}>Create Room</button>
         </div>
+        <br/>
+        <div>
+          <button type="button" className="btn btn-light" onClick={this.props.viewHow}>How It Works</button>
+        </div>
       </div>
     );
   }
