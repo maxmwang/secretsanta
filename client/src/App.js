@@ -21,7 +21,7 @@ class App extends Component {
   }
 
   setRoom(roomCode, name) {
-    this.socket = io('localhost:5000/');
+    this.socket = io();
     this.socket.on('start', data => {
       this.setState({ view: "table" });
     });
