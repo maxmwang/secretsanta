@@ -10,11 +10,6 @@ import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
 
-import { createRoom, deleteRoom, getRoom } from 'database/Room';
-import Room from 'db_models/room';
-import Participant from 'db_models/participant';
-import Item from 'db_models/item';
-
 
 class App extends Component {
   constructor(props) {
@@ -24,13 +19,6 @@ class App extends Component {
       roomCode: "",
       name: "",
     };
-  }
-
-  componentDidMount() {
-    const testItem = new Item('', '', '', '', '');
-    // deleteRoom('test');
-    // createRoom(new Room('test', [new Participant('bob', ['joe'], [testItem])]));
-    getRoom('test').then(room => console.log(room));
   }
 
   setRoom(roomCode, name) {
