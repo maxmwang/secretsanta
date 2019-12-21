@@ -8,18 +8,19 @@ get room
 import firebase from './Init.js';
 import Room from 'db_models/room';
 
-export async function createRoom(room) {
-  console.log('here')
-  await firebase.database().ref(room.id).set(room.json());
+const ROOM = "rooms"
+
+export async function updateRoom(room) {
+  await firebase.database().ref(ROOM).child(room.id).set(room.json());
 }
 
 export async function deleteRoom(roomId) {
-  await firebase.database().ref(roomId).remove();
+  await firebase.database().ref(ROOM).child(roomId).remove();
 }
 
 export async function getRoom(roomId) {
   let room;
-  await firebase.database().ref(roomId).once('value', (snapshot) => {
+  await firebase.database().ref(ROOM).child(roomId).once('value', (snapshot) => {
     room = Room.fromJson(roomId, snapshot.val());
   });
 

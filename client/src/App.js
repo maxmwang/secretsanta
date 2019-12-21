@@ -10,7 +10,9 @@ import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
 
-import { createRoom } from 'database/Room';
+import { updateRoom } from 'database/Room';
+import { addParticipantToRoom } from 'database/Participant';
+
 import Room from 'db_models/room';
 import Participant from 'db_models/participant';
 
@@ -49,9 +51,14 @@ class App extends Component {
 
   create(name) {
     createSocketioRoom().then(res => {
-      createRoom(new Room(res.roomCode, [new Participant(name, [], [])]));
+      updateRoom(new Room(res.roomCode, [new Participant(name, [], [])]));
       this.setRoom(res.roomCode, name)
     });
+  }
+
+  join(roomCode, name) {
+    this.setRoom(roomCode, name);
+    addParticipantToRoom(roomCode, new Participant(name, [], []));
   }
 
   render() {
@@ -65,7 +72,7 @@ class App extends Component {
                 create={ name => this.create(name) }/>,
       join:   <Join
                 goBack={ () => this.setState({ view: "home" }) }
-                join={ (roomCode, name) => this.setRoom(roomCode, name) }/>,
+                join={ (roomCode, name) => this.join(roomCode, name) }/>,
       lobby:  <Lobby
                 socket={this.socket}
                 roomCode={this.state.roomCode}

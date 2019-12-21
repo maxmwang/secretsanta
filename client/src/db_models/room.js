@@ -9,7 +9,7 @@ export default class Room {
   json() {
     let jsonObject = {};
     this.participants.forEach(p => {
-      jsonObject[p.name] = p.json();
+      jsonObject[p.name] = p;
     });
 
     return jsonObject;
