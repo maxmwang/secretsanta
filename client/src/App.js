@@ -10,14 +10,6 @@ import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
 
-import { createRoom, deleteRoom, getRoom } from 'database/Room';
-import { addPassword, checkPassword } from 'database/Passwords';
-
-import Room from 'db_models/room';
-import Participant from 'db_models/participant';
-import Item from 'db_models/item';
-
-
 class App extends Component {
   constructor(props) {
     super(props);
@@ -26,15 +18,6 @@ class App extends Component {
       roomCode: "",
       name: "",
     };
-  }
-
-  componentDidMount() {
-    const testItem = new Item('', '', '', '', '');
-    addPassword('test', 'test', 'test');
-    checkPassword('test', 'test', 'test', () => {console.log("success");}, () => {console.log("fialre");});
-    // deleteRoom('test');
-    // createRoom(new Room('test', [new Participant('bob', ['joe'], [testItem])]));
-    // getRoom('test').then(room => console.log(room));
   }
 
   setRoom(roomCode, name) {
