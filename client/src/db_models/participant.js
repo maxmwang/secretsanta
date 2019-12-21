@@ -11,6 +11,7 @@ export default class Participant {
     let jsonObject = {
       targets: [],
       wishlist: [],
+      name: this.name,
     };
 
     this.targets.forEach(t => {

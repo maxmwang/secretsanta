@@ -9,6 +9,7 @@ import firebase from './Init.js';
 import Room from 'db_models/room';
 
 export async function createRoom(room) {
+  console.log('here')
   await firebase.database().ref(room.id).set(room.json());
 }
 

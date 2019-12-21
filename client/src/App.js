@@ -2,13 +2,17 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import './App.css';
 
-import { createGame } from 'api/api';
+import { createSocketioRoom } from 'api/api';
 
 import Home from 'views/Home';
 import Create from 'views/Create';
 import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
+
+import { createRoom } from 'database/Room';
+import Room from 'db_models/room';
+import Participant from 'db_models/participant';
 
 
 class App extends Component {
@@ -43,6 +47,13 @@ class App extends Component {
     });
   }
 
+  create(name) {
+    createSocketioRoom().then(res => {
+      createRoom(new Room(res.roomCode, [new Participant(name, [], [])]));
+      this.setRoom(res.roomCode, name)
+    });
+  }
+
   render() {
     const views = {
       home:   <Home
@@ -51,7 +62,7 @@ class App extends Component {
                 viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
                 goBack={ () => this.setState({ view: "home" }) }
-                create={ name => createGame().then(res => this.setRoom(res.roomCode, name)) }/>,
+                create={ name => this.create(name) }/>,
       join:   <Join
                 goBack={ () => this.setState({ view: "home" }) }
                 join={ (roomCode, name) => this.setRoom(roomCode, name) }/>,
