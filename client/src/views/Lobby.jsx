@@ -43,7 +43,7 @@ class Lobby extends Component {
       <div>
         <p>Lobby</p>
         <RoomCode roomCode={this.props.roomCode}/>
-        
+
         <br/>
 
         <h6>Participants</h6>
@@ -55,7 +55,7 @@ class Lobby extends Component {
         </button>
 
         <br/>
-        {this.state.santas.length > 0 && 
+        {this.state.santas.length > 0 &&
           <div>
             <br/>
             <h6>Match Results</h6>

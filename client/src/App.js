@@ -10,6 +10,12 @@ import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
 
+import { createRoom, deleteRoom, getRoom } from 'database/Room';
+import Room from 'db_models/room';
+import Participant from 'db_models/participant';
+import Item from 'db_models/item';
+
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -18,6 +24,13 @@ class App extends Component {
       roomCode: "",
       name: "",
     };
+  }
+
+  componentDidMount() {
+    const testItem = new Item('', '', '', '', '');
+    // deleteRoom('test');
+    // createRoom(new Room('test', [new Participant('bob', ['joe'], [testItem])]));
+    getRoom('test').then(room => console.log(room));
   }
 
   setRoom(roomCode, name) {
@@ -34,7 +47,7 @@ class App extends Component {
     this.socket.on('disconnect', data => {
       this.setState({ view: "home", roomCode: "", name: "" });
     });
-    
+
     this.setState({
       view: "lobby",
       roomCode,
@@ -44,8 +57,8 @@ class App extends Component {
 
   render() {
     const views = {
-      home:   <Home 
-                createRoom={ () => this.setState({ view: "create" }) } 
+      home:   <Home
+                createRoom={ () => this.setState({ view: "create" }) }
                 joinRoom={ () => this.setState({ view: "join" }) }
                 viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
