@@ -1,3 +1,5 @@
+import Participant from "./participant";
+
 export default class Room {
   constructor(id, participants) {
     this.id = id;
@@ -11,5 +13,14 @@ export default class Room {
     });
 
     return jsonObject;
+  }
+
+  static fromJson(id, jsonObject) {
+    let participants = []
+    Object.keys(jsonObject).forEach(p => {
+      participants.push(Participant.fromJson(p, jsonObject[p]));
+    });
+
+    return new Room(id, participants);
   }
 }

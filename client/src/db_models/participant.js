@@ -1,3 +1,5 @@
+import Item from './item';
+
 export default class Participant {
   constructor(name, targets, wishlist) {
     this.name = name;
@@ -20,5 +22,20 @@ export default class Participant {
     });
 
     return jsonObject;
+  }
+
+  static fromJson(name, jsonObject) {
+    let targets = [];
+    let wishlist = [];
+
+    jsonObject.targets.forEach(t => {
+      targets.push(t);
+    });
+
+    jsonObject.wishlist.forEach(i => {
+      wishlist.push(new Item(i.name, i.link, i.style, i.notes));
+    });
+
+    return new Participant(name, targets, wishlist);
   }
 }
