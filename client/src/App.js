@@ -10,6 +10,7 @@ import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
 
+
 class App extends Component {
   constructor(props) {
     super(props);
