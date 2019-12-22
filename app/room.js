@@ -10,6 +10,7 @@ class Room {
     this.code = code;
     this.participants = [];
     this.onClose = onClose;
+    this.private = false;
   }
 
   addParticipant(name, socket) {
@@ -68,6 +69,13 @@ class Room {
       p.send('santas', {'santas': santas[p.name]});
     });
     return santas;
+  }
+
+  setPrivate() {
+    this.private = true;
+    this.participants.foreEach(p => {
+        p.send('privated', {});
+    });
   }
 
   notifyParticipantUpdate() {

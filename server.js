@@ -98,6 +98,10 @@ app.io.on('connect', function (socket) {
     }
   });
 
+  socket.on('confirmMatch', data => {
+    room.setPrivate();
+  });
+
   socket.on('closeRoom', data => {
     room.close();
   });
