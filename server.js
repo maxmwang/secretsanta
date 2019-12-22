@@ -18,11 +18,10 @@ admin.initializeApp({
   databaseURL: "https://secretsanta-ea79a.firebaseio.com"
 });
 var db = admin.database();
-var ROOMS_REF = db.ref("rooms");
 
 app.use(bodyParser.json());
 app.io = io;
-app.santa = new Santa();
+app.santa = new Santa(db);
 
 app.post('/api/create', (req, res) => {
   const room = app.santa.createRoom();
@@ -81,7 +80,6 @@ app.io.on('connect', function (socket) {
       room.activate(name, socket);
     } else {
       room.addParticipant(name, socket);
-      ROOMS_REF.child(data.roomCode).child(name).set({'name': name});
     }
 
     player = room.get(name);
@@ -91,10 +89,7 @@ app.io.on('connect', function (socket) {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
-      const santas = room.match();
-      Object.keys(santas).forEach(name => {
-        ROOMS_REF.child(room.code).child(name).child("targets").set(santas[name]);
-      });
+      room.match();
     }
   });
 
