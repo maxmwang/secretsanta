@@ -17,8 +17,9 @@ export default class Room {
 
   static fromJson(id, jsonObject) {
     let participants = []
-    Object.keys(jsonObject).forEach(p => {
-      participants.push(Participant.fromJson(p, jsonObject[p]));
+    jsonParticipants = jsonObject["participants"];
+    Object.keys(jsonParticipants).forEach(p => {
+      participants.push(Participant.fromJson(p, jsonParticipants[p]));
     });
 
     return new Room(id, participants);

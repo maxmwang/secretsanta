@@ -51,6 +51,8 @@ app.get('/api/checkname', (req, res) => {
     } else if (room.exists(name)) {
       res.send({ valid: false, message: 'This name has been taken' });
       return;
+    } else if (room.private) {
+      res.send({ valid: false, message: 'This room is private' });
     }
   }
 
@@ -61,11 +63,7 @@ app.get('/api/checkcode', (req, res) => {
   const { roomCode } = req.query;
   const room = app.santa.getRoom(roomCode);
   if (room != undefined) {
-    if (!room.private) {
-      res.send({ valid: true });
-    } else {
-      res.send({ valid: false, message: 'This room is private' });
-    }
+    res.send({ valid: true });
   } else {
     res.send({ valid: false, message: 'This room code is invalid' });
   }
