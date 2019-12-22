@@ -11,6 +11,16 @@ const Santa = require('./app/santa');
 
 const port = process.env.PORT || 5000;
 
+var admin = require("firebase-admin");
+var serviceAccount = require("./secretsanta-ea79a-firebase-adminsdk-bo1t6-8a3af719ff.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://secretsanta-ea79a.firebaseio.com"
+});
+var db = admin.database();
+var ref = db.ref("rooms");
+console.log(ref);
+
 app.use(bodyParser.json());
 app.io = io;
 app.santa = new Santa();
