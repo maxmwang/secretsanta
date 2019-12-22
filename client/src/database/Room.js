@@ -10,7 +10,7 @@ import Room from 'db_models/room';
 
 const ROOM = "rooms"
 
-export async function createRoom(room) {
+export async function updateRoom(room) {
   await firebase.database().ref(ROOM).child(room.id).set(room.json());
 }
 
