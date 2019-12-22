@@ -6,15 +6,17 @@ var { match } = require('./match');
 const N_SANTAS = 2;
 
 class Room {
-  constructor(code, onClose) {
+  constructor(code, dbRef, participants, onClose) {
     this.code = code;
-    this.participants = [];
+    this.ref = dbRef;
+    this.participants = participants;
     this.onClose = onClose;
   }
 
   addParticipant(name, socket) {
     this.participants.push(new Participant(name, socket));
     this.notifyParticipantUpdate();
+    this.ref.child(name).set({'name': name});
   }
 
   exists(name) {
@@ -65,9 +67,9 @@ class Room {
   match() {
     const santas = match(this.participants.map(p => p.name), N_SANTAS);
     this.participants.forEach(p => {
-      p.send('santas', {'santas': santas[p.name]});
+        p.send('santas', {'santas': santas[p.name]});
+        this.ref.child(p.name).child("targets").set(santas[p.name]);
     });
-    return santas;
   }
 
   notifyParticipantUpdate() {
