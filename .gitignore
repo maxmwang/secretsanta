@@ -1,2 +1,6 @@
 node_modules
+
+# evonake's env
 secretsanta.code-workspace
+.eslintrc.json
+.prettierrc.json
