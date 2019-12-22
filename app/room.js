@@ -6,10 +6,10 @@ var { match } = require('./match');
 const N_SANTAS = 2;
 
 class Room {
-  constructor(code, dbRef, onClose) {
+  constructor(code, dbRef, participants, onClose) {
     this.code = code;
     this.ref = dbRef;
-    this.participants = [];
+    this.participants = participants;
     this.onClose = onClose;
   }
 

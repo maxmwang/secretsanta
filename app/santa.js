@@ -1,14 +1,23 @@
 var Room = require('./room');
+var Participant = require('./participant');
 
 class Santa {
   constructor(db) {
     this.rooms = {};
-    this.codesTaken = {};
     this.db = db;
     this.roomsRef = db.ref("rooms");
 
     this.roomsRef.once("value", s => {
-        Object.keys(s.val()).forEach(code => this.codesTaken[code] = true);
+        const rooms = s.val();
+
+        Object.keys(rooms).forEach(code => {
+          const roomRef = this.db.ref('rooms').child(code)
+          const participants = Object.keys(rooms[code]).map((p) => new Participant(p, undefined));
+          participants.forEach((p) => p.active = false);
+          const newRoom = new Room(code, roomRef, participants, () => this.close(code));
+
+          this.rooms[code] = newRoom;
+        });
     });
   }
 
@@ -16,9 +25,8 @@ class Santa {
     const code = this.generateCode();
     var roomRef = this.db.ref("rooms").child(code);
 
-    const newRoom = new Room(code, roomRef, () => this.close(code));
+    const newRoom = new Room(code, roomRef, [], () => this.close(code));
     this.rooms[code] = newRoom;
-    this.codeTaken[code] = true;
     return newRoom;
   }
 
