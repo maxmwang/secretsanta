@@ -72,7 +72,7 @@ app.get('/api/checkcode', (req, res) => {
 app.io.on('connect', function (socket) {
   var room;
   var name;
-  var player;
+  var participant;
 
   socket.on('join', data => {
     name = data.name;
@@ -84,7 +84,10 @@ app.io.on('connect', function (socket) {
       room.addParticipant(name, socket);
     }
 
-    player = room.get(name);
+    participant = room.get(name);
+
+    if (room.private) { participant.send('privated', {}); }
+    participant.emitTargets();
   });
 
   socket.on('matchRoom', data => {
