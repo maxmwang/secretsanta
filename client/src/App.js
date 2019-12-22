@@ -51,14 +51,16 @@ class App extends Component {
 
   create(name) {
     createSocketioRoom().then(res => {
-      updateRoom(new Room(res.roomCode, [new Participant(name, [], [])]));
-      this.setRoom(res.roomCode, name)
+      const p = new Participant(name, [], []);
+      updateRoom(new Room(res.roomCode, [p]));
+      this.setRoom(res.roomCode, name);
     });
   }
 
   join(roomCode, name) {
+    const p = new Participant(name, [], []);
+    addParticipantToRoom(roomCode, p);
     this.setRoom(roomCode, name);
-    addParticipantToRoom(roomCode, new Participant(name, [], []));
   }
 
   render() {
