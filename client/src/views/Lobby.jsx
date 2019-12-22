@@ -65,7 +65,7 @@ class Lobby extends Component {
         {this.state.santas.length > 0 &&
           <div>
             <br/>
-            <h6>Match Results</h6>
+            <h6>You are Secret Santa for:</h6>
 
             <br/>
             <ParticipantList participants={this.state.santas}/>
