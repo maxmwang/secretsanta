@@ -12,7 +12,6 @@ export default class Room {
       jsonObject[p.name] = p;
     });
 
-    console.log(jsonObject)
     return jsonObject;
   }
 
