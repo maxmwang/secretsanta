@@ -61,7 +61,11 @@ app.get('/api/checkcode', (req, res) => {
   const { roomCode } = req.query;
   const room = app.santa.getRoom(roomCode);
   if (room != undefined) {
-    res.send({ valid: true });
+    if (!room.private) {
+      res.send({ valid: true });
+    } else {
+      res.send({ valid: false, message: 'This room is private' });
+    }
   } else {
     res.send({ valid: false, message: 'This room code is invalid' });
   }
