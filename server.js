@@ -11,6 +11,15 @@ const Santa = require('./app/santa');
 
 const port = process.env.PORT || 5000;
 
+var admin = require("firebase-admin");
+var serviceAccount = require("./secretsanta-ea79a-firebase-adminsdk-bo1t6-8a3af719ff.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://secretsanta-ea79a.firebaseio.com"
+});
+var db = admin.database();
+var ROOMS_REF = db.ref("rooms");
+
 app.use(bodyParser.json());
 app.io = io;
 app.santa = new Santa();
@@ -72,11 +81,9 @@ app.io.on('connect', function (socket) {
       room.activate(name, socket);
     } else {
       room.addParticipant(name, socket);
+      ROOMS_REF.child(data.roomCode).child(name).set({'name': name});
     }
 
-    // if (room.started) {
-    //   socket.emit('start', {});
-    // }
     player = room.get(name);
   });
 
@@ -84,7 +91,10 @@ app.io.on('connect', function (socket) {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
-      room.match();
+      const santas = room.match();
+      Object.keys(santas).forEach(name => {
+        ROOMS_REF.child(room.code).child(name).child("targets").set(santas[name]);
+      });
     }
   });
 

@@ -2,19 +2,13 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import './App.css';
 
-import { createSocketioRoom } from 'api/api';
+import { createRoom } from 'api/api';
 
 import Home from 'views/Home';
 import Create from 'views/Create';
 import Join from 'views/Join';
 import Lobby from 'views/Lobby';
 import HowItWorks from 'views/HowItWorks';
-
-import { updateRoom } from 'database/Room';
-import { addParticipantToRoom } from 'database/Participant';
-
-import Room from 'db_models/room';
-import Participant from 'db_models/participant';
 
 
 class App extends Component {
@@ -49,20 +43,6 @@ class App extends Component {
     });
   }
 
-  create(name) {
-    createSocketioRoom().then(res => {
-      const p = new Participant(name, [], []);
-      updateRoom(new Room(res.roomCode, [p]));
-      this.setRoom(res.roomCode, name);
-    });
-  }
-
-  join(roomCode, name) {
-    const p = new Participant(name, [], []);
-    addParticipantToRoom(roomCode, p);
-    this.setRoom(roomCode, name);
-  }
-
   render() {
     const views = {
       home:   <Home
@@ -71,10 +51,10 @@ class App extends Component {
                 viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
                 goBack={ () => this.setState({ view: "home" }) }
-                create={ name => this.create(name) }/>,
+                create={ name => createRoom().then(res => { this.setRoom(res.roomCode, name); }) }/>,
       join:   <Join
                 goBack={ () => this.setState({ view: "home" }) }
-                join={ (roomCode, name) => this.join(roomCode, name) }/>,
+                join={ (roomCode, name) => this.setRoom(roomCode, name) }/>,
       lobby:  <Lobby
                 socket={this.socket}
                 roomCode={this.state.roomCode}
