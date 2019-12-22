@@ -51,6 +51,8 @@ app.get('/api/checkname', (req, res) => {
     } else if (room.exists(name)) {
       res.send({ valid: false, message: 'This name has been taken' });
       return;
+    } else if (room.private) {
+      res.send({ valid: false, message: 'This room is private' });
     }
   }
 
@@ -91,6 +93,10 @@ app.io.on('connect', function (socket) {
     } else {
       room.match();
     }
+  });
+
+  socket.on('confirmMatch', data => {
+    room.setPrivate();
   });
 
   socket.on('closeRoom', data => {

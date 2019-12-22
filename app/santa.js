@@ -7,23 +7,31 @@ class Santa {
     this.db = db;
     this.roomsRef = db.ref("rooms");
 
+    this.loadRooms();
+  }
+
+  loadRooms() {
     this.roomsRef.once("value", s => {
         const rooms = s.val();
+        if (rooms != undefined) {
+            Object.keys(rooms).forEach(code => {
+                const roomRef = this.roomsRef.child(code);
 
-        Object.keys(rooms).forEach(code => {
-          const roomRef = this.db.ref('rooms').child(code)
-          const participants = Object.keys(rooms[code]).map((p) => new Participant(p, undefined));
-          participants.forEach((p) => p.active = false);
-          const newRoom = new Room(code, roomRef, participants, () => this.close(code));
+                const participants = Object.keys(rooms[code]["participants"]).map((p) => new Participant(p, undefined));
+                participants.forEach((p) => p.active = false);
 
-          this.rooms[code] = newRoom;
-        });
+                let newRoom = new Room(code, roomRef, participants, () => this.close(code));
+                newRoom.private = rooms[code].private;
+
+                this.rooms[code] = newRoom;
+            });
+        }
     });
   }
 
   createRoom() {
     const code = this.generateCode();
-    var roomRef = this.db.ref("rooms").child(code);
+    var roomRef = this.roomsRef.child(code);
 
     const newRoom = new Room(code, roomRef, [], () => this.close(code));
     this.rooms[code] = newRoom;

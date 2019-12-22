@@ -9,14 +9,17 @@ class Room {
   constructor(code, dbRef, participants, onClose) {
     this.code = code;
     this.ref = dbRef;
+    this.participantRef = dbRef.child("participants");
     this.participants = participants;
     this.onClose = onClose;
+    this.private = false;
+    this.ref.child('private').set(false);
   }
 
   addParticipant(name, socket) {
     this.participants.push(new Participant(name, socket));
     this.notifyParticipantUpdate();
-    this.ref.child(name).set({'name': name});
+    this.participantRef.child(name).set({'name': name});
   }
 
   exists(name) {
@@ -70,6 +73,14 @@ class Room {
         p.send('santas', {'santas': santas[p.name]});
         this.ref.child(p.name).child("targets").set(santas[p.name]);
     });
+  }
+
+  setPrivate() {
+    this.private = true;
+    this.participants.forEach(p => {
+        p.send('privated', {});
+    });
+    this.ref.child('private').set(true);
   }
 
   notifyParticipantUpdate() {
