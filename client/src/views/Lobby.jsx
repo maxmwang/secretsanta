@@ -7,10 +7,13 @@ import Participant from 'models/participant';
 import { getParticipant } from 'database/Participant';
 import { setTargets } from 'database/Participant';
 
+import WishlistPage from 'components/WishlistPage';
+
 class Lobby extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      view: 'lobby',
       participants: {},
       santas: [],
       message: undefined,
@@ -45,41 +48,55 @@ class Lobby extends Component {
   }
 
   render() {
+    const views = {
+      lobby: <div>
+                <p>Lobby</p>
+                <RoomCode roomCode={this.props.roomCode}/>
+
+                <br/>
+
+                <h6>Participants</h6>
+                <ParticipantList participants={Object.values(this.state.participants)}/>
+
+                <br/>
+                <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('matchRoom', {}) }>
+                  {this.state.santas.length > 0 ? 'Rematch' : 'Match'}
+                </button>
+
+
+                <br/>
+                {this.state.santas.length > 0 &&
+                  <div>
+                    <br/>
+                    <h6>Match Results</h6>
+
+                    <br/>
+                    <ParticipantList participants={this.state.santas}/>
+                  </div>
+                }
+
+                <br/>
+                {this.state.message && <div class="alert alert-danger" role="alert">
+                  {this.state.message}
+                </div>}
+
+                <br/>
+                {this.state.santas.length > 0 && <button type="button" className="btn btn-light" onClick={ () => this.setState({ view: 'wishlist' })}>
+                  Wishlist
+                </button>}
+                <br/>
+
+                <br/>
+                <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('closeRoom', {}) }>
+                  Close Room
+                </button>
+              </div>,
+      wishlist: <WishlistPage name={this.props.name} targets={this.state.santas.map((s) => s.name)}/>
+    }
+
     return (
       <div>
-        <p>Lobby</p>
-        <RoomCode roomCode={this.props.roomCode}/>
-
-        <br/>
-
-        <h6>Participants</h6>
-        <ParticipantList participants={Object.values(this.state.participants)}/>
-
-        <br/>
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('matchRoom', {}) }>
-          {this.state.santas.length > 0 ? 'Rematch' : 'Match'}
-        </button>
-
-        <br/>
-        {this.state.santas.length > 0 &&
-          <div>
-            <br/>
-            <h6>Match Results</h6>
-
-            <br/>
-            <ParticipantList participants={this.state.santas}/>
-          </div>
-        }
-
-        <br/>
-        {this.state.message && <div class="alert alert-danger" role="alert">
-          {this.state.message}
-        </div>}
-
-        <br/>
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('closeRoom', {}) }>
-          Close Room
-        </button>
+        {views[this.state.view]}
       </div>
     );
   }
