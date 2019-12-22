@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import './App.css';
 
-import { createSocketioRoom } from 'api/api';
+import { createRoom } from 'api/api';
 
 import Home from 'views/Home';
 import Create from 'views/Create';
@@ -50,11 +50,7 @@ class App extends Component {
   }
 
   create(name) {
-    createSocketioRoom().then(res => {
-      const p = new Participant(name, [], []);
-      updateRoom(new Room(res.roomCode, [p]));
-      this.setRoom(res.roomCode, name);
-    });
+    
   }
 
   join(roomCode, name) {
@@ -71,7 +67,7 @@ class App extends Component {
                 viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
                 goBack={ () => this.setState({ view: "home" }) }
-                create={ name => this.create(name) }/>,
+                create={ name => createRoom().then(res => { this.setRoom(res.roomCode, name); }) }/>,
       join:   <Join
                 goBack={ () => this.setState({ view: "home" }) }
                 join={ (roomCode, name) => this.join(roomCode, name) }/>,

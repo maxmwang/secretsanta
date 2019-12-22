@@ -1,4 +1,4 @@
-export async function createSocketioRoom(options) {
+export async function createRoom(options) {
   return callApi('api/create', {
     method: "POST",
     headers: {

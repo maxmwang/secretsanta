@@ -18,8 +18,7 @@ admin.initializeApp({
   databaseURL: "https://secretsanta-ea79a.firebaseio.com"
 });
 var db = admin.database();
-var ref = db.ref("rooms");
-console.log(ref);
+var ROOMS_REF = db.ref("rooms");
 
 app.use(bodyParser.json());
 app.io = io;
@@ -82,11 +81,9 @@ app.io.on('connect', function (socket) {
       room.activate(name, socket);
     } else {
       room.addParticipant(name, socket);
+      ROOMS_REF.child(data.roomCode).child(name).set({'name': name});
     }
 
-    // if (room.started) {
-    //   socket.emit('start', {});
-    // }
     player = room.get(name);
   });
 
