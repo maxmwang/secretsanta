@@ -4,6 +4,9 @@ import RoomCode from 'components/RoomCode';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 
+import { getParticipant } from 'database/Participant';
+import { setTargets } from 'database/Participant';
+
 class Lobby extends Component {
   constructor(props) {
     super(props);
@@ -30,7 +33,10 @@ class Lobby extends Component {
       data.santas.forEach(name => {
         santas.push(new Participant(name, true, true));
       });
+
       this.setState({ santas });
+
+      setTargets(this.props.roomCode, this.props.name, santas.map((s) => s.name));
     });
 
     this.props.socket.on('message', data => {

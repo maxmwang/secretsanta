@@ -6,15 +6,6 @@ export default class Room {
     this.participants = participants;
   }
 
-  json() {
-    let jsonObject = {};
-    this.participants.forEach(p => {
-      jsonObject[p.name] = p;
-    });
-
-    return jsonObject;
-  }
-
   static fromJson(id, jsonObject) {
     let participants = []
     Object.keys(jsonObject).forEach(p => {
