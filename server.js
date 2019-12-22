@@ -91,7 +91,10 @@ app.io.on('connect', function (socket) {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
-      room.match();
+      const santas = room.match();
+      Object.keys(santas).forEach(name => {
+        ROOMS_REF.child(room.code).child(name).child("targets").set(santas[name]);
+      });
     }
   });
 

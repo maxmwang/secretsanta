@@ -67,6 +67,7 @@ class Room {
     this.participants.forEach(p => {
       p.send('santas', {'santas': santas[p.name]});
     });
+    return santas;
   }
 
   notifyParticipantUpdate() {
