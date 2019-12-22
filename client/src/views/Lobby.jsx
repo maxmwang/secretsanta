@@ -10,6 +10,7 @@ class Lobby extends Component {
     this.state = {
       participants: {},
       santas: [],
+      private: false,
       message: undefined,
     };
   }
@@ -34,6 +35,10 @@ class Lobby extends Component {
       this.setState({ santas });
     });
 
+    this.props.socket.on('privated', data => {
+      this.setState({ private: true });
+    });
+
     this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     })
@@ -51,11 +56,12 @@ class Lobby extends Component {
         <ParticipantList participants={Object.values(this.state.participants)}/>
 
         <br/>
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('matchRoom', {}) }>
-          {this.state.santas.length > 0 ? 'Rematch' : 'Match'}
-        </button>
+        {!this.state.private &&
+          <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('matchRoom', {}) }>
+            {this.state.santas.length > 0 ? 'Rematch' : 'Match'}
+          </button>
+        }
 
-        <br/>
         {this.state.santas.length > 0 &&
           <div>
             <br/>
@@ -63,6 +69,16 @@ class Lobby extends Component {
 
             <br/>
             <ParticipantList participants={this.state.santas}/>
+
+            <br/>
+            {!this.state.private && 
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={ () => this.props.socket.emit('confirmMatch', {}) }>
+                Confirm
+              </button>
+            }
           </div>
         }
 

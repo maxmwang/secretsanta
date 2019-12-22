@@ -75,6 +75,9 @@ class Room {
 
   setPrivate() {
     this.private = true;
+    this.participants.forEach(p => {
+        p.send('privated', {});
+    });
     this.ref.child('private').set(true);
   }
 
