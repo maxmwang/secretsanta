@@ -1,13 +1,39 @@
 var Room = require('./room');
+var Participant = require('./participant');
 
 class Santa {
-  constructor() {
+  constructor(db) {
     this.rooms = {};
+    this.db = db;
+    this.roomsRef = db.ref("rooms");
+
+    this.loadRooms();
+  }
+
+  loadRooms() {
+    this.roomsRef.once("value", s => {
+        const rooms = s.val();
+        if (rooms != undefined) {
+            Object.keys(rooms).forEach(code => {
+                const roomRef = this.roomsRef.child(code);
+
+                const participants = Object.keys(rooms[code]["participants"]).map((p) => new Participant(p, undefined));
+                participants.forEach((p) => p.active = false);
+
+                let newRoom = new Room(code, roomRef, participants, () => this.close(code));
+                newRoom.private = rooms[code].private;
+
+                this.rooms[code] = newRoom;
+            });
+        }
+    });
   }
 
   createRoom() {
     const code = this.generateCode();
-    const newRoom = new Room(code, () => this.close(code));
+    var roomRef = this.roomsRef.child(code);
+
+    const newRoom = new Room(code, roomRef, [], () => this.close(code));
     this.rooms[code] = newRoom;
     return newRoom;
   }

@@ -11,9 +11,17 @@ const Santa = require('./app/santa');
 
 const port = process.env.PORT || 5000;
 
+var admin = require("firebase-admin");
+var serviceAccount = require("./secretsanta-ea79a-firebase-adminsdk-bo1t6-8a3af719ff.json");
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://secretsanta-ea79a.firebaseio.com"
+});
+var db = admin.database();
+
 app.use(bodyParser.json());
 app.io = io;
-app.santa = new Santa();
+app.santa = new Santa(db);
 
 app.post('/api/create', (req, res) => {
   const room = app.santa.createRoom();
@@ -43,6 +51,8 @@ app.get('/api/checkname', (req, res) => {
     } else if (room.exists(name)) {
       res.send({ valid: false, message: 'This name has been taken' });
       return;
+    } else if (room.private) {
+      res.send({ valid: false, message: 'This room is private' });
     }
   }
 
@@ -74,9 +84,6 @@ app.io.on('connect', function (socket) {
       room.addParticipant(name, socket);
     }
 
-    // if (room.started) {
-    //   socket.emit('start', {});
-    // }
     player = room.get(name);
   });
 
@@ -86,6 +93,10 @@ app.io.on('connect', function (socket) {
     } else {
       room.match();
     }
+  });
+
+  socket.on('confirmMatch', data => {
+    room.setPrivate();
   });
 
   socket.on('closeRoom', data => {

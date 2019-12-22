@@ -91,7 +91,7 @@ class Lobby extends Component {
                   Close Room
                 </button>
               </div>,
-      wishlist: <WishlistPage name={this.props.name} targets={this.state.santas.map((s) => s.name)}/>
+      wishlist: <WishlistPage roomId={this.props.roomCode} name={this.props.name} targetNames={this.state.santas.map((t) => t.name)} />
     }
 
     return (
