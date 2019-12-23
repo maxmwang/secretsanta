@@ -12,9 +12,13 @@ const Santa = require('./app/santa');
 const port = process.env.PORT || 5000;
 
 var admin = require("firebase-admin");
-var serviceAccount = require("./secretsanta-ea79a-firebase-adminsdk-bo1t6-8a3af719ff.json");
 admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
+  credential: admin.credential.cert({
+    project_id: process.env.PROJECT_ID,
+    private_key_id: process.env.PRIVATE_KEY_ID,
+    private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
+    client_email: process.env.CLIENT_EMAIL,
+  }),
   databaseURL: "https://secretsanta-ea79a.firebaseio.com"
 });
 var db = admin.database();
