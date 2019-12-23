@@ -96,7 +96,7 @@ app.io.on('connect', function (socket) {
 
   socket.on('matchRoom', data => {
     if (room.getNumParticipants() < 3) {
-      socket.emit('message', {message: 'Need at least 3 participants!'});
+      socket.emit('error', {message: 'Need at least 3 participants!'});
     } else {
       room.match();
     }
@@ -108,6 +108,10 @@ app.io.on('connect', function (socket) {
 
   socket.on('getWishlist', data => {
     participant.emitWishlist();
+  });
+
+  socket.on('addItem', data => {
+    participant.addItem(data.item);
   });
 
   socket.on('closeRoom', data => {

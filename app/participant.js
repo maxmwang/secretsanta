@@ -28,13 +28,15 @@ class Participant {
   }
 
   emitWishlist() {
-    this.ref.child('targets').once('value', s => {
+    this.ref.child('wishlist').once('value', s => {
       if (s.val() != null) {
-        this.send('wishlist', {'santas': s.val()});
+        this.send('wishlist', {'wishlist': s.val()});
       }
     });
-    // emit wishlists
-    // used at server.js 108:
+  }
+
+  addItem(item) {
+    this.ref.child('wishlist').push(item);
   }
 }
 

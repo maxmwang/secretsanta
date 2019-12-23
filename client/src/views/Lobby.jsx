@@ -4,10 +4,7 @@ import RoomCode from 'components/RoomCode';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 
-import { getParticipant } from 'database/Participant';
-import { setTargets } from 'database/Participant';
-
-import WishlistPage from 'components/WishlistPage';
+import WishlistPage from 'components/Wishlist/WishlistPage';
 
 class Lobby extends Component {
   constructor(props) {
@@ -38,11 +35,9 @@ class Lobby extends Component {
       });
 
       this.setState({ santas });
-
-      setTargets(this.props.roomCode, this.props.name, santas.map((s) => s.name));
     });
 
-    this.props.socket.on('message', data => {
+    this.props.socket.on('error', data => {
       this.setState({ message: data.message });
     })
   }
@@ -95,7 +90,12 @@ class Lobby extends Component {
                   Close Room
                 </button>
               </div>,
-      wishlist: <WishlistPage roomId={this.props.roomCode} name={this.props.name} targetNames={this.state.santas.map((t) => t.name)} />
+      wishlist: <WishlistPage
+                  socket={this.props.socket}
+                  roomId={this.props.roomCode}
+                  name={this.props.name}
+                  targetNames={this.state.santas.map((t) => t.name)}
+                />
     }
 
     return (
