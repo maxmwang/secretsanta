@@ -26,6 +26,10 @@ class Participant {
       }
     });
   }
+
+  addItem(item) {
+    this.ref.child('wishlist').push(item);
+  }
 }
 
 module.exports = Participant;

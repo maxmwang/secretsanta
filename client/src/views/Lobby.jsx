@@ -39,7 +39,7 @@ class Lobby extends Component {
       this.setState({ private: true });
     });
 
-    this.props.socket.on('message', data => {
+    this.props.socket.on('error', data => {
       this.setState({ message: data.message });
     })
   }
