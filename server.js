@@ -107,7 +107,7 @@ app.io.on('connect', function (socket) {
   });
 
   socket.on('getWishlist', data => {
-    participant.emitWishlist();
+    return participant.emitWishlist();
   });
 
   socket.on('addItem', data => {

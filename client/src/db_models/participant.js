@@ -19,7 +19,7 @@ export default class Participant {
 
     if (jsonObject.wishlist != undefined) {
       jsonObject.wishlist.forEach(i => {
-        wishlist.push(new Item(i.name, i.link, i.style, i.notes));
+        wishlist.push(new Item(i.name, i.price, i.link, i.style, i.notes));
       });
     }
 

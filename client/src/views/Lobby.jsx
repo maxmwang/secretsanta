@@ -83,6 +83,7 @@ class Lobby extends Component {
                     }
                   </div>
                 }
+                <br/>
 
                 <br/>
                 {this.state.message && <div class="alert alert-danger" role="alert">
