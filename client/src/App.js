@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import io from 'socket.io-client';
 import './App.css';
 
-import { createRoom } from 'api/api';
-
 import Home from 'views/Home';
 import Create from 'views/Create';
 import Join from 'views/Join';
@@ -51,7 +49,7 @@ class App extends Component {
                 viewHow={ () => this.setState({ view: "how" }) }/>,
       create: <Create
                 goBack={ () => this.setState({ view: "home" }) }
-                create={ name => createRoom().then(res => { this.setRoom(res.roomCode, name); }) }/>,
+                create={ (roomCode, name) => this.setRoom(roomCode, name) }/>,
       join:   <Join
                 goBack={ () => this.setState({ view: "home" }) }
                 join={ (roomCode, name) => this.setRoom(roomCode, name) }/>,

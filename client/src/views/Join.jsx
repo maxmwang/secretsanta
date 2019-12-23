@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { checkName, checkCode } from 'api/api';
+import { checkCode, checkName, attemptJoin } from 'api/api';
 
 class Join extends Component {
   constructor(props) {
@@ -8,6 +8,7 @@ class Join extends Component {
     this.state = {
       roomCode: '',
       name: '',
+      password: '',
       message: undefined,
     };
   }
@@ -19,13 +20,20 @@ class Join extends Component {
         return;
       }
 
-      checkName(this.state.name, this.state.roomCode).then(res => {
+      checkName(this.state.name).then(res => {
         if (!res.valid) {
           this.setState({ message: res.message });
           return;
         }
 
-        this.props.join(this.state.roomCode, this.state.name);
+        attemptJoin(this.state.roomCode, this.state.name, this.state.password).then(res => {
+          if (!res.valid) {
+            this.setState({ message: res.message });
+            return;
+          }
+
+          this.props.join(this.state.roomCode, this.state.name);
+        });
       });
     });
   }
@@ -42,6 +50,10 @@ class Join extends Component {
         <input type="name" className="form-control" placeholder="Enter your name" 
           value={this.state.name} 
           onChange={ e => this.setState({ name: e.target.value }) }/>
+        <br />
+        <input type="password" className="form-control" placeholder="Enter password"
+          value={this.state.password}
+          onChange={ e => this.setState({ password: e.target.value })}/>
 
         <br/>
 

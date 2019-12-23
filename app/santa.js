@@ -1,3 +1,5 @@
+var sha256 = require('js-sha256');
+
 var Room = require('./room');
 var Participant = require('./participant');
 
@@ -6,6 +8,7 @@ class Santa {
     this.rooms = {};
     this.db = db;
     this.roomsRef = db.ref("rooms");
+    this.passwordsRef = db.ref("passwords")
 
     this.loadRooms();
   }
@@ -41,6 +44,23 @@ class Santa {
 
   getRoom(code) {
     return this.rooms[code];
+  }
+
+  addPassword(roomCode, name, password) {
+    const hash = sha256(password);
+    this.passwordsRef.child(roomCode).child(name).set(hash);
+  }
+
+  async verifyPassword(roomCode, name, password) {
+    let hash;
+    await this.passwordsRef.child(roomCode).child(name).once('value', snapshot => {
+      hash = snapshot.val();
+    });
+    return sha256(password) === hash;
+  }
+
+  removePasswords(roomCode) {
+    this.passwordsRef.child(roomCode).remove();
   }
 
   close(code) {
