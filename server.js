@@ -110,6 +110,10 @@ app.io.on('connect', function (socket) {
     participant.addItem(data.item);
   });
 
+  socket.on('removeItem', data => {
+    participant.removeItem(data.id);
+  })
+
   socket.on('closeRoom', data => {
     room.close();
   });
