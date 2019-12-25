@@ -66,15 +66,15 @@ class Room {
   match() {
     const santas = match(this.participants.map(p => p.name), N_SANTAS);
     this.participants.forEach(p => {
-        p.send('santas', {'santas': santas[p.name]});
-        p.ref.child("targets").set(santas[p.name]);
+      p.send('santas', {'santas': santas[p.name]});
+      p.ref.child("targets").set(santas[p.name]);
     });
   }
 
   setPrivate() {
     this.private = true;
     this.participants.forEach(p => {
-        p.send('privated', {});
+      p.send('privated', {});
     });
     this.ref.child('private').set(true);
   }

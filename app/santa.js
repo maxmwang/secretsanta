@@ -15,21 +15,21 @@ class Santa {
 
   loadRooms() {
     this.roomsRef.once("value", s => {
-        const rooms = s.val();
-        if (rooms != undefined) {
-            Object.keys(rooms).forEach(code => {
-                const roomRef = this.roomsRef.child(code);
+      const rooms = s.val();
+      if (rooms != undefined) {
+        Object.keys(rooms).forEach(code => {
+          const roomRef = this.roomsRef.child(code);
 
-                const jsonParticipants = Object.keys(rooms[code]["participants"]);
-                const participants = jsonParticipants.map( p => new Participant(p, roomRef.child("participants").child(p), undefined));
-                participants.forEach((p) => p.active = false);
+          const jsonParticipants = Object.keys(rooms[code]["participants"]);
+          const participants = jsonParticipants.map(p => new Participant(p, roomRef.child("participants").child(p), undefined));
+          participants.forEach(p => p.active = false);
 
-                let newRoom = new Room(code, roomRef, participants, () => this.close(code));
-                newRoom.private = rooms[code].private;
+          let newRoom = new Room(code, roomRef, participants, () => this.close(code));
+          newRoom.private = rooms[code].private;
 
-                this.rooms[code] = newRoom;
-            });
-        }
+          this.rooms[code] = newRoom;
+        });
+      }
     });
   }
 
