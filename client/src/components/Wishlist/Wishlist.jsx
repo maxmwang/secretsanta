@@ -76,7 +76,7 @@ class Wishlist extends Component {
   removeItemFromWishlist(itemId) {}
 
   updateWishlist() {
-    this.props.socket.emit('getWishlist', {});
+    this.props.socket.emit('getWishlist', { target: this.props.name });
 
     this.props.socket.on('wishlist', data => {
       this.setState({ items: Object.values(data.wishlist) });

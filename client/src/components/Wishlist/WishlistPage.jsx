@@ -17,11 +17,20 @@ class WishlistPage extends Component {
         <Wishlist
           socket={this.props.socket}
           personal={true}
-          name={this.props.name}
-        />
+          name={this.props.name} />
       ),
-      target1: <Wishlist personal={false} name={this.props.targetNames[0]} />,
-      target2: <Wishlist personal={false} name={this.props.targetNames[1]} />,
+      target1: (
+        <Wishlist
+          socket={this.props.socket}
+          personal={false}
+          name={this.props.targetNames[0]} />
+      ),
+      target2: (
+        <Wishlist
+          socket={this.props.socket}
+          personal={false}
+          name={this.props.targetNames[1]} />
+      ),
     };
 
     return <div>{views[this.state.view]}</div>;

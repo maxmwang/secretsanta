@@ -119,7 +119,12 @@ app.io.on('connect', function (socket) {
   });
 
   socket.on('getWishlist', data => {
-    return participant.emitWishlist();
+    const { target } = data;
+    if (name === target) {
+      participant.emitWishlist();
+    } else {
+      room.sendWishlist(participant, target);
+    }
   });
 
   socket.on('addItem', data => {
