@@ -42,7 +42,6 @@ class App extends Component {
   }
 
   exitRoom() {
-    this.socket.emit('exitRoom', {});
     this.socket.disconnect();
     this.setState({ viewState: "home", gameCode: "", name: "" });
   }

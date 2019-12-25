@@ -65,7 +65,7 @@ class Santa {
   }
 
   close(code) {
-    removePasswords(code);
+    this.removePasswords(code);
     this.roomsRef.child(code).remove();
     delete this.rooms[code];
   }

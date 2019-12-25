@@ -39,7 +39,7 @@ class Lobby extends Component {
       this.setState({ private: true });
     });
 
-    this.props.socket.on('error', data => {
+    this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     })
   }
@@ -92,7 +92,7 @@ class Lobby extends Component {
           <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
             Exit Room
           </button> :
-          <button type="button" className="btn btn-light" onClick={ () => this.props.socket("voteClose", {}) } >
+          <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
             Vote to Close Room
           </button>
         }

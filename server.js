@@ -108,7 +108,7 @@ app.io.on('connect', function (socket) {
 
   socket.on('matchRoom', data => {
     if (room.getNumParticipants() < 3) {
-      socket.emit('error', {message: 'Need at least 3 participants!'});
+      socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
       room.match();
     }
@@ -126,21 +126,17 @@ app.io.on('connect', function (socket) {
     participant.removeItem(data.id);
   })
 
-  socket.on('exitRoom', data => {
-    if (game.private) {
-      room.deactivate(name);
-    } else {
-      room.removeParticipant(name);
-    }
-  });
-
   socket.on('voteClose', data => {
-    room.voteClose(name);
+    room.voteClose(participant);
   });
 
   socket.on('disconnect', data => {
     if (room !== undefined && room.exists(name)) {
-      room.deactivate(name);
+      if (room.private) {
+        room.deactivate(name);
+      } else {
+        room.removeParticipant(name);
+      }
     }
   });
 });
