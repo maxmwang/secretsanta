@@ -9,7 +9,8 @@ class Wishlist extends Component {
     super(props);
 
     this.state = {
-      view: 'list',
+      modalOpen: false,
+      errorMsg: '',
       items: [],
       input: {
         name: '',
@@ -27,6 +28,8 @@ class Wishlist extends Component {
 
   clearInput() {
     this.setState({
+      modalOpen: false,
+      errorMsg: '',
       input: {
         name: '',
         price: '',
@@ -35,8 +38,6 @@ class Wishlist extends Component {
         notes: '',
       },
     });
-
-    this.setState({ view: 'list' });
   }
 
   modifyInput(type, value) {
@@ -46,6 +47,19 @@ class Wishlist extends Component {
   }
 
   addItemToWishlist() {
+    let missingInput;
+    if (!this.state.input.name) {
+      missingInput = 'Name';
+    } else if (!this.state.input.price) {
+      missingInput = 'Price';
+    } else if (!this.state.input.link) {
+      missingInput = 'Link';
+    }
+    if (missingInput) {
+      this.setState({ errorMsg: `${missingInput} is required.` });
+      return;
+    }
+
     const newItem = new Item(
       this.state.input.name,
       this.state.input.price,
@@ -53,10 +67,10 @@ class Wishlist extends Component {
       this.state.input.style,
       this.state.input.notes
     );
-
     this.props.socket.emit('addItem', { item: newItem });
 
     this.updateWishlist();
+    this.clearInput();
   }
 
   removeItemFromWishlist(itemId) {}
@@ -67,6 +81,76 @@ class Wishlist extends Component {
     this.props.socket.on('wishlist', data => {
       this.setState({ items: Object.values(data.wishlist) });
     });
+  }
+
+  renderModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.modalOpen}
+        close={() => this.clearInput()}
+      >
+        <div>
+          <h2>Add Item</h2>
+
+          <p>
+            <input
+              type="text"
+              placeholder="Enter the item's name"
+              value={this.state.input.name}
+              onChange={e => this.modifyInput('name', e.target.value)}
+              required
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Enter the item's price"
+              value={this.state.input.price}
+              onChange={e => this.modifyInput('price', e.target.value)}
+              required
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Enter the item's link"
+              value={this.state.input.link}
+              onChange={e => this.modifyInput('link', e.target.value)}
+              required
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Style (optional)"
+              value={this.state.input.style}
+              onChange={e => this.modifyInput('style', e.target.value)}
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Notes (optional)"
+              value={this.state.input.notes}
+              onChange={e => this.modifyInput('notes', e.target.value)}
+            />
+            <br />
+          </p>
+
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.addItemToWishlist()}
+          >
+            Add Item
+          </button>
+
+          {this.state.errorMsg && <div>{this.state.errorMsg}</div>}
+        </div>
+      </Modal>
+    );
   }
 
   render() {
@@ -106,67 +190,12 @@ class Wishlist extends Component {
         <button
           type="button"
           className="btn btn-light"
-          onClick={() => this.setState({ view: 'popup' })}
+          onClick={() => this.setState({ modalOpen: true })}
         >
           Add Item
         </button>
 
-        <Modal
-          aria-labelledby="simple-modal-title"
-          aria-describedby="simple-modal-description"
-          open={this.state.view == 'popup'}
-          close={() => this.clearInput()}
-        >
-          <div>
-            <h2 id="simple-modal-title">Add Item</h2>
-
-            <p id="simple-modal-description">
-              <input
-                type="name"
-                className="form-control"
-                placeholder="Enter the item's name"
-                value={this.state.input.name}
-                onChange={e => this.modifyInput('name', e.target.value)}
-              />
-              <input
-                type="price"
-                className="form-control"
-                placeholder="Enter the item's price"
-                value={this.state.input.price}
-                onChange={e => this.modifyInput('price', e.target.value)}
-              />
-              <input
-                type="link"
-                className="form-control"
-                placeholder="Enter the item's link"
-                value={this.state.input.link}
-                onChange={e => this.modifyInput('link', e.target.value)}
-              />
-              <input
-                type="style"
-                className="form-control"
-                placeholder="Style (optional)"
-                value={this.state.input.style}
-                onChange={e => this.modifyInput('style', e.target.value)}
-              />
-              <input
-                type="notes"
-                className="form-control"
-                placeholder="Notes (optional)"
-                value={this.state.input.notes}
-                onChange={e => this.modifyInput('notes', e.target.value)}
-              />
-            </p>
-
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={() => this.addItemToWishlist()}
-            >
-              Add Item
-            </button>
-          </div>
-        </Modal>
+        {this.renderModal()}
       </div>
     );
   }
