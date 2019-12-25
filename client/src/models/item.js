@@ -1,5 +1,6 @@
 export default class Item {
-  constructor(name, price, link, style, notes) {
+  constructor(id, name, price, link, style, notes) {
+    this.id = id;
     this.name = name;
     this.price = price;
     this.link = link;
