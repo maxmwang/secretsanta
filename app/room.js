@@ -80,8 +80,8 @@ class Room {
     this.ref.child('private').set(true);
   }
 
-  async voteClose(participant) {
-    await this.ref.child("closeVotes").once("value", s => {
+  voteClose(participant) {
+    this.ref.child("closeVotes").once("value", s => {
       let votes = s.val();
       votes = votes === null ? [] : Object.values(votes);
 
