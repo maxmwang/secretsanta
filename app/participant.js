@@ -27,6 +27,14 @@ class Participant {
     });
   }
 
+  emitWishlist() {
+    this.ref.child('wishlist').once('value', s => {
+      if (s.val() != null) {
+        this.send('wishlist', {'wishlist': s.val()});
+      }
+    });
+  }
+
   addItem(item) {
     this.ref.child('wishlist').push(item);
   }

@@ -118,6 +118,10 @@ app.io.on('connect', function (socket) {
     room.setPrivate();
   });
 
+  socket.on('getWishlist', data => {
+    return participant.emitWishlist();
+  });
+
   socket.on('addItem', data => {
     participant.addItem(data.item);
   });
