@@ -49,7 +49,7 @@ class Lobby extends Component {
       this.setState({ private: true });
     });
 
-    this.props.socket.on('error', data => {
+    this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     });
   }
@@ -102,13 +102,6 @@ class Lobby extends Component {
           <br />
 
           <br />
-          {this.state.message && (
-            <div class="alert alert-danger" role="alert">
-              {this.state.message}
-            </div>
-          )}
-
-          <br />
           {this.state.private && (
             <button
               type="button"
@@ -120,14 +113,22 @@ class Lobby extends Component {
           )}
           <br />
 
+          <br/>
+          {!this.state.private ?
+            <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
+              Exit Room
+            </button> :
+            <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
+              Vote to Close Room
+            </button>
+          }
+
           <br />
-          <button
-            type="button"
-            className="btn btn-light"
-            onClick={() => this.props.socket.emit('closeRoom', {})}
-          >
-            Close Room
-          </button>
+          {this.state.message && (
+            <div class="alert alert-danger" role="alert">
+              {this.state.message}
+            </div>
+          )}
         </div>
       ),
       wishlist: (
