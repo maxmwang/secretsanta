@@ -75,28 +75,17 @@ class Lobby extends Component {
               className="btn btn-light"
               onClick={() => this.props.socket.emit('matchRoom', {})}
             >
-              {this.state.santas.length > 0 ? 'Rematch' : 'Match'}
+              Match
             </button>
           )}
 
-          {this.state.santas.length > 0 && (
+          {this.state.private && (
             <div>
               <br />
               <h6>You are Secret Santa for:</h6>
 
               <br />
               <ParticipantList participants={this.state.santas} />
-
-              <br />
-              {!this.state.private && (
-                <button
-                  type="button"
-                  className="btn btn-light"
-                  onClick={() => this.props.socket.emit('confirmMatch', {})}
-                >
-                  Confirm
-                </button>
-              )}
             </div>
           )}
           <br />
