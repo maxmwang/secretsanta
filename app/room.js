@@ -9,17 +9,16 @@ class Room {
   constructor(code, ref, participants, onClose) {
     this.code = code;
     this.ref = ref;
-    this.participantRef = ref.child("participants");
     this.participants = participants;
     this.onClose = onClose;
     this.private = false;
-    this.ref.child('private').set(false);
   }
 
   addParticipant(name, socket) {
-    this.participants.push(new Participant(name, this.participantRef.child(name), socket));
+    const participantRef = ref.child("participants");
+    this.participants.push(new Participant(name, participantRef.child(name), socket));
     this.notifyParticipantUpdate();
-    this.participantRef.child(name).set({'name': name});
+    participantRef.child(name).set({'name': name});
   }
 
   removeParticipant(name) {
@@ -77,6 +76,25 @@ class Room {
       p.send('privated', {});
     });
     this.ref.child('private').set(true);
+  }
+
+  voteClose(participant) {
+    this.ref.child("closeVotes").once("value", s => {
+      const votes = Object.values(s.val());
+      let totalVotes = votes.length;
+      let newVote = votes.includes(participant.name);
+
+      if (newVote) {
+        this.ref.child("closeVotes").push(participant.name);
+        totalVotes += 1;
+      } else {
+        participant.send('alreadyVoted')
+      }
+
+      if (totalVotes === this.participants.length) {
+        this.close();
+      }
+    });
   }
 
   notifyParticipantUpdate() {

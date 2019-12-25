@@ -91,6 +91,9 @@ class Lobby extends Component {
         {!this.state.private ?
           <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
             Exit Room
+          </button> :
+          <button type="button" className="btn btn-light" onClick={ () => this.props.socket("voteClose", {}) } >
+            Vote to Close Room
           </button>
         }
       </div>

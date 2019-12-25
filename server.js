@@ -126,16 +126,16 @@ app.io.on('connect', function (socket) {
     participant.removeItem(data.id);
   })
 
-  socket.on('closeRoom', data => {
-    room.close();
-  });
-
   socket.on('exitRoom', data => {
     if (game.private) {
       room.deactivate(name);
     } else {
       room.removeParticipant(name);
     }
+  });
+
+  socket.on('voteClose', data => {
+    room.voteClose(name);
   });
 
   socket.on('disconnect', data => {

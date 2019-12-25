@@ -36,6 +36,7 @@ class Santa {
   createRoom() {
     const code = this.generateCode();
     var roomRef = this.roomsRef.child(code);
+    roomRef.child('private').set(false);
 
     const newRoom = new Room(code, roomRef, [], () => this.close(code));
     this.rooms[code] = newRoom;
