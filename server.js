@@ -111,11 +111,8 @@ app.io.on('connect', function (socket) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
       room.match();
+      room.setPrivate();
     }
-  });
-
-  socket.on('confirmMatch', data => {
-    room.setPrivate();
   });
 
   socket.on('getWishlist', data => {
