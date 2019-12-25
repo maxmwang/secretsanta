@@ -81,16 +81,12 @@ class Lobby extends Component {
 
           {this.state.private && (
             <div>
-              <br />
               <h6>You are Secret Santa for:</h6>
-
-              <br />
               <ParticipantList participants={this.state.santas} />
+              <br />
             </div>
           )}
-          <br />
 
-          <br />
           {this.state.private && (
             <button
               type="button"
@@ -112,7 +108,8 @@ class Lobby extends Component {
             </button>
           }
 
-          <br />
+          <br/>
+          <br/>
           {this.state.message && (
             <div class="alert alert-danger" role="alert">
               {this.state.message}
