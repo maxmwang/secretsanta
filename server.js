@@ -124,10 +124,12 @@ app.io.on('connect', function (socket) {
 
   socket.on('addItem', data => {
     participant.addItem(data.item);
+    participant.emitWishlist();
   });
 
   socket.on('removeItem', data => {
     participant.removeItem(data.id);
+    participant.emitWishlist();
   })
 
   socket.on('voteClose', data => {

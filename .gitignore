@@ -5,5 +5,4 @@ secretsanta.code-workspace
 .eslintrc.json
 .prettierrc.json
 
-Procfile
 .env

@@ -31,6 +31,8 @@ class Participant {
     this.ref.child('wishlist').once('value', s => {
       if (s.val() != null) {
         this.send('wishlist', {'wishlist': s.val()});
+      } else {
+        this.send('wishlist', {'wishlist': {}});
       }
     });
   }
