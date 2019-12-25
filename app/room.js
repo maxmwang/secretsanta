@@ -22,6 +22,11 @@ class Room {
     this.participantRef.child(name).set({'name': name});
   }
 
+  removeParticipant(name) {
+    var removedParticipant = _.remove(this.participants, p => p.name == name);
+    this.notifyPlayerUpdate();
+  }
+
   exists(name) {
     return _.filter(this.participants, p => p.name == name).length > 0;
   }
@@ -47,20 +52,7 @@ class Room {
   deactivate(name) {
     this.get(name).active = false;
     this.get(name).socket = undefined;
-    if (this.allDeactivated()) {
-      this.close();
-    } else {
-      this.notifyParticipantUpdate();
-    }
-  }
-
-  allDeactivated() {
-    for (var p of this.participants) {
-      if (p.active) {
-        return false;
-      }
-    }
-    return true;
+    this.notifyParticipantUpdate();
   }
 
   getParticipantData() {

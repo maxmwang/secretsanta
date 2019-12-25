@@ -130,6 +130,14 @@ app.io.on('connect', function (socket) {
     room.close();
   });
 
+  socket.on('exitRoom', data => {
+    if (game.private) {
+      room.deactivate(name);
+    } else {
+      room.removeParticipant(name);
+    }
+  });
+
   socket.on('disconnect', data => {
     if (room !== undefined && room.exists(name)) {
       room.deactivate(name);

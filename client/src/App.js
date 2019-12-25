@@ -41,6 +41,12 @@ class App extends Component {
     });
   }
 
+  exitRoom() {
+    this.socket.emit('exitRoom', {});
+    this.socket.disconnect();
+    this.setState({ viewState: "home", gameCode: "", name: "" });
+  }
+
   render() {
     const views = {
       home:   <Home
@@ -57,7 +63,7 @@ class App extends Component {
                 socket={this.socket}
                 roomCode={this.state.roomCode}
                 name={this.state.name}
-                exitGame={ () => this.exitGame() }/>,
+                exitRoom={ () => this.exitRoom() }/>,
       how: <HowItWorks goBack={ () => this.setState({ view: "home" }) }/>,
     }
 

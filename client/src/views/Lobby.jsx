@@ -88,9 +88,11 @@ class Lobby extends Component {
         </div>}
 
         <br/>
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit('closeRoom', {}) }>
-          Close Room
-        </button>
+        {!this.state.private ?
+          <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
+            Exit Room
+          </button>
+        }
       </div>
     );
   }
