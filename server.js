@@ -43,24 +43,9 @@ app.get('/api/checkname', (req, res) => {
   const { name } = req.query;
   if (name.length < 2 || name.length > 12) {
     res.send({ valid: false, message: 'Your name must be between 2 and 12 characters long' });
-    return;
+  } else {
+    res.send({ valid: true });
   }
-
-  const { roomCode } = req.query;
-  if (roomCode != undefined) {
-    const room = app.santa.getRoom(roomCode);
-    if (room.exists(name) && !room.isActive(name)) {
-      res.send({ valid: true });
-      return;
-    } else if (room.exists(name)) {
-      res.send({ valid: false, message: 'This name has been taken' });
-      return;
-    } else if (room.private) {
-      res.send({ valid: false, message: 'This room is private' });
-    }
-  }
-
-  res.send({ valid: true });
 });
 
 app.get('/api/checkcode', (req, res) => {
@@ -70,6 +55,33 @@ app.get('/api/checkcode', (req, res) => {
     res.send({ valid: true });
   } else {
     res.send({ valid: false, message: 'This room code is invalid' });
+  }
+});
+
+app.post('/api/attemptjoin', (req, res) => {
+  const { name, roomCode } = req.query;
+  const { password } = req.body;
+  const room = app.santa.getRoom(roomCode);
+
+  if (room.exists(name)) {
+    if (!room.isActive(name)) { // existing
+      app.santa.verifyPassword(roomCode, name, password).then(verified => {
+        if (verified) {
+          res.send({ valid: true });
+        } else {
+          res.send({ valid: false, message: 'Incorrect password' });
+        }
+      });
+    } else { // duplicate
+      res.send({ valid: false, message: 'This name has been taken' });
+    }
+  } else {
+    if (!room.private) { // new
+      res.send({ valid: true });
+      app.santa.addPassword(roomCode, name, password);
+    } else { // private
+      res.send({ valid: false, message: 'This room is private' });
+    }
   }
 });
 
@@ -113,6 +125,10 @@ app.io.on('connect', function (socket) {
   socket.on('addItem', data => {
     participant.addItem(data.item);
   });
+
+  socket.on('removeItem', data => {
+    participant.removeItem(data.id);
+  })
 
   socket.on('closeRoom', data => {
     room.close();
