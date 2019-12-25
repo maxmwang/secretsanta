@@ -24,7 +24,11 @@ class Room {
 
   removeParticipant(name) {
     var removedParticipant = _.remove(this.participants, p => p.name == name);
-    this.notifyPlayerUpdate();
+    if (this.participants.length === 0) {
+      this.close();
+    } else {
+      this.notifyPlayerUpdate();
+    }
   }
 
   exists(name) {
