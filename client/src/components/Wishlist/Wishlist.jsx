@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Modal from '@material-ui/core/Modal';
+import CloseIcon from '@material-ui/icons/Close';
 
 import Item from 'models/item';
 
@@ -23,7 +24,25 @@ class Wishlist extends Component {
   }
 
   componentDidMount() {
-    this.updateWishlist();
+    this.props.socket.emit('getWishlist', {});
+
+    this.props.socket.on('wishlist', data => {
+      let items = [];
+      const { wishlist } = data;
+
+      Object.keys(wishlist).forEach(i => {
+        items.push(new Item(
+          i,
+          wishlist[i].name,
+          wishlist[i].price,
+          wishlist[i].link,
+          wishlist[i].style,
+          wishlist[i].notes
+        ));
+      });
+
+      this.setState({ items });
+    });
   }
 
   clearInput() {
@@ -61,6 +80,7 @@ class Wishlist extends Component {
     }
 
     const newItem = new Item(
+      '',
       this.state.input.name,
       this.state.input.price,
       this.state.input.link,
@@ -69,27 +89,61 @@ class Wishlist extends Component {
     );
     this.props.socket.emit('addItem', { item: newItem });
 
-    this.updateWishlist();
     this.clearInput();
   }
 
-  removeItemFromWishlist(itemId) {}
+  removeItemFromWishlist(itemId) {
+    this.props.socket.emit('removeItem', { id: itemId });
+  }
 
-  updateWishlist() {
-    this.props.socket.emit('getWishlist', { target: this.props.name });
+  renderTable() {
+    const items = [
+      <tr>
+        <th>Name</th>
+        <th>Price</th>
+        <th>Style</th>
+        <th>Notes</th>
+        <th></th>
+      </tr>,
+    ];
 
-    this.props.socket.on('wishlist', data => {
-      this.setState({ items: Object.values(data.wishlist) });
-    });
+    if (this.state.items) {
+      for (let item of this.state.items) {
+        const styleTemp = item.style ? item.style : 'N/A';
+        const notesTemp = item.notes ? item.notes : 'N/A';
+
+        items.push(
+          <tr>
+            <td>
+              <a href={item.link}>{item.name}</a>
+            </td>
+            <td>{item.price}</td>
+            <td>{styleTemp}</td>
+            <td>{notesTemp}</td>
+            <td>
+              <CloseIcon onClick={() => this.removeItemFromWishlist(item.id)} />
+
+            </td>
+          </tr>
+        );
+      }
+      return (
+        <table style={{ width: '100%', border: '5px' }}>
+          <tbody>{items}</tbody>
+        </table>
+      );
+    }
+
+    return;
   }
 
   renderModal() {
     return (
       <Modal
-        aria-labelledby="simple-modal-title"
-        aria-describedby="simple-modal-description"
-        open={this.state.modalOpen}
-        close={() => this.clearInput()}
+      aria-labelledby="simple-modal-title"
+      aria-describedby="simple-modal-description"
+      open={this.state.modalOpen}
+      close={() => this.clearInput()}
       >
         <div>
           <h2>Add Item</h2>
@@ -154,38 +208,12 @@ class Wishlist extends Component {
   }
 
   render() {
-    const items = [
-      <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Style</th>
-        <th>Notes</th>
-      </tr>,
-    ];
-
-    this.state.items.forEach(item => {
-      const styleTemp = item.style ? item.style : 'N/A';
-      const notesTemp = item.notes ? item.notes : 'N/A';
-
-      items.push(
-        <tr>
-          <td>
-            <a href={item.link}>{item.name}</a>
-          </td>
-          <td>{item.price}</td>
-          <td>{styleTemp}</td>
-          <td>{notesTemp}</td>
-        </tr>
-      );
-    });
 
     return (
       <div>
         {this.props.name}
 
-        <table style={{ width: '100%', border: '5px' }}>
-          <tbody>{items}</tbody>
-        </table>
+        {this.renderTable()}
 
         <button
           type="button"
