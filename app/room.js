@@ -110,9 +110,8 @@ class Room {
       const targets = s.val();
       if (targets.includes(target)) {
         this.participantRef.child(target).child('wishlist').once('value', s => {
-          if (s.val() != null) {
-            participant.send('wishlist', {'wishlist': s.val()});
-          }
+          let wishlist = s.val() === null ? {} : s.val();
+          this.send('wishlist', { wishlist });
         });
       }
     });
