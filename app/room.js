@@ -105,6 +105,18 @@ class Room {
     this.participants.forEach(p => p.send('participants', this.getParticipantData()));
   }
 
+  sendWishlist(participant, target) {
+    this.participantRef.child(participant.name).child("targets").once("value", s => {
+      const targets = s.val();
+      if (targets.includes(target)) {
+        this.participantRef.child(target).child('wishlist').once('value', s => {
+          let wishlist = s.val() === null ? {} : s.val();
+          this.send('wishlist', { wishlist });
+        });
+      }
+    });
+  }
+
   close() {
     this.participants.forEach(p => p.send('close', {}));
     this.onClose();

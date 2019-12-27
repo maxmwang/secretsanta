@@ -24,7 +24,7 @@ class Wishlist extends Component {
   }
 
   componentDidMount() {
-    this.props.socket.emit('getWishlist', {});
+    this.props.socket.emit('getWishlist', { target: this.props.name });
 
     this.props.socket.on('wishlist', data => {
       let items = [];
@@ -94,7 +94,6 @@ class Wishlist extends Component {
 
   removeItemFromWishlist(itemId) {
     this.props.socket.emit('removeItem', { id: itemId });
-
   }
 
   renderTable() {
