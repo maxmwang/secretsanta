@@ -58,11 +58,6 @@ class Lobby extends Component {
     const views = {
       home: (
         <div>
-          <p>Lobby</p>
-          <RoomCode roomCode={this.props.roomCode} />
-
-          <br />
-
           <h6>Participants</h6>
           <ParticipantList
             participants={Object.values(this.state.participants)}
@@ -127,7 +122,15 @@ class Lobby extends Component {
       ),
     };
 
-    return <div>{views[this.state.view]}</div>;
+    return (
+      <div>
+          <p>Lobby</p>
+          <RoomCode roomCode={this.props.roomCode} />
+          <br />
+          
+          {views[this.state.view]}
+      </div>
+    );
   }
 }
 
