@@ -49,8 +49,7 @@ class WishlistPage extends Component {
 
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
-    let index = this.state.index + direction;
-    index = ((index % this.count) + this.count) % this.count
+    const index = (((this.state.index + direction) % this.count) + this.count) % this.count
     const currentName = index === 0 ? this.props.name : this.props.targetNames[index - 1];
     this.setState({
       index,

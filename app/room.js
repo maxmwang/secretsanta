@@ -127,7 +127,6 @@ class Room {
           .child(itemId)
           .child("marked")
           .set(participant.name);
-
       } else {
         participant.send("message", { message: "This item is already marked!" });
       }
@@ -145,7 +144,6 @@ class Room {
           .child(itemId)
           .child("marked")
           .remove();
-
       } else {
         participant.send("message", { message: "You didn't mark this item!" });
       }

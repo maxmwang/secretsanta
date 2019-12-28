@@ -66,7 +66,7 @@ class Wishlist extends Component {
       this.state.input.link,
       this.state.input.style,
       this.state.input.notes,
-      false
+      undefined
     );
     this.props.socket.emit('addItem', { item: newItem });
 
