@@ -80,7 +80,7 @@ class App extends Component {
           <hr/>
 
           <div>
-            <small>built by <a href="https://evonake.github.io">max wang</a> and <a href="http://brandon-wang.me">brandon wang</a></small>
+            <small>built by <a href="https://evonake.github.io">max wang</a> and <a href="https://brandon-wang.me">brandon wang</a></small>
           </div>
         </div>
       </div>
