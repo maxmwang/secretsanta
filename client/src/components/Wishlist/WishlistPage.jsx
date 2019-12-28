@@ -5,6 +5,7 @@ import Item from 'models/item';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import RefreshIcon from '@material-ui/icons/Refresh';
 
 class WishlistPage extends Component {
   constructor(props) {
@@ -41,6 +42,10 @@ class WishlistPage extends Component {
     });
   }
 
+  refreshWishlist() {
+    this.props.socket.emit('getWishlist', { target: this.state.currentName });
+  }
+
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
     const index = (this.state.index + direction) % this.count
@@ -55,18 +60,24 @@ class WishlistPage extends Component {
   }
 
   render() {
-
     return (
       <div>
         <div className="row">
           <div className="col-3">
-            <ChevronLeftIcon onClick={() => this.move(-1)} />
+            <ChevronLeftIcon
+              style={{cursor: 'pointer'}}
+              onClick={ () => this.move(-1) } />
           </div>
           <div className="col-6">
-            <p>{this.state.currentName}'s Wishlist</p>
+            <p>
+              {this.state.currentName}'s Wishlist
+              <RefreshIcon fontSize="small" style={{cursor: 'pointer'}} onClick={ () => this.refreshWishlist() }/>
+            </p>
           </div>
           <div className="col-3">
-            <ChevronRightIcon onClick={() => this.move(1)} />
+            <ChevronRightIcon
+              style={{cursor: 'pointer'}}
+              onClick={() => this.move(1)} />
           </div>
         </div>
         <br />

@@ -77,7 +77,10 @@ class Wishlist extends Component {
   renderItemAction(item) {
     if (this.props.personal) {
       return (
-        <CloseIcon onClick={() => this.removeItemFromWishlist(item.id)} />
+        <CloseIcon
+          style={{cursor: 'pointer'}}
+          fontSize="small"
+          onClick={() => this.removeItemFromWishlist(item.id)} />
       )
     } else {
       return null;
