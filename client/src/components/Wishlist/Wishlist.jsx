@@ -23,28 +23,6 @@ class Wishlist extends Component {
     };
   }
 
-  componentDidMount() {
-    this.props.socket.emit('getWishlist', { target: this.props.name });
-
-    this.props.socket.on('wishlist', data => {
-      let items = [];
-      const { wishlist } = data;
-
-      Object.keys(wishlist).forEach(i => {
-        items.push(new Item(
-          i,
-          wishlist[i].name,
-          wishlist[i].price,
-          wishlist[i].link,
-          wishlist[i].style,
-          wishlist[i].notes
-        ));
-      });
-
-      this.setState({ items });
-    });
-  }
-
   clearInput() {
     this.setState({
       modalOpen: false,
@@ -96,6 +74,19 @@ class Wishlist extends Component {
     this.props.socket.emit('removeItem', { id: itemId });
   }
 
+  renderItemAction(item) {
+    if (this.props.personal) {
+      return (
+        <CloseIcon
+          style={{cursor: 'pointer'}}
+          fontSize="small"
+          onClick={() => this.removeItemFromWishlist(item.id)} />
+      )
+    } else {
+      return null;
+    }
+  }
+
   renderTable() {
     const items = [
       <tr>
@@ -107,8 +98,8 @@ class Wishlist extends Component {
       </tr>,
     ];
 
-    if (this.state.items) {
-      for (let item of this.state.items) {
+    if (this.props.items) {
+      for (let item of this.props.items) {
         const styleTemp = item.style ? item.style : 'N/A';
         const notesTemp = item.notes ? item.notes : 'N/A';
 
@@ -121,8 +112,7 @@ class Wishlist extends Component {
             <td>{styleTemp}</td>
             <td>{notesTemp}</td>
             <td>
-              <CloseIcon onClick={() => this.removeItemFromWishlist(item.id)} />
-
+              {this.renderItemAction(item)}
             </td>
           </tr>
         );
@@ -133,8 +123,6 @@ class Wishlist extends Component {
         </table>
       );
     }
-
-    return;
   }
 
   renderModal() {
@@ -196,8 +184,7 @@ class Wishlist extends Component {
           <button
             type="button"
             className="btn btn-light"
-            onClick={() => this.addItemToWishlist()}
-          >
+            onClick={() => this.addItemToWishlist()}>
             Add Item
           </button>
 
@@ -211,17 +198,16 @@ class Wishlist extends Component {
 
     return (
       <div>
-        {this.props.name}
-
         {this.renderTable()}
 
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.setState({ modalOpen: true })}
-        >
-          Add Item
-        </button>
+        {this.props.personal &&
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.setState({ modalOpen: true })}>
+            Add Item
+          </button>
+        }
 
         {this.renderModal()}
       </div>

@@ -58,11 +58,6 @@ class Lobby extends Component {
     const views = {
       home: (
         <div>
-          <p>Lobby</p>
-          <RoomCode roomCode={this.props.roomCode} />
-
-          <br />
-
           <h6>Participants</h6>
           <ParticipantList
             participants={Object.values(this.state.participants)}
@@ -123,11 +118,20 @@ class Lobby extends Component {
           roomId={this.props.roomCode}
           name={this.props.name}
           targetNames={this.state.santas.map(t => t.name)}
+          returnHome={ () => this.setState({ view: 'home' })}
         />
       ),
     };
 
-    return <div>{views[this.state.view]}</div>;
+    return (
+      <div>
+          <p>Lobby</p>
+          <RoomCode roomCode={this.props.roomCode} />
+          <br />
+          
+          {views[this.state.view]}
+      </div>
+    );
   }
 }
 
