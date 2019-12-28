@@ -74,7 +74,7 @@ class Wishlist extends Component {
     this.props.socket.emit('removeItem', { id: itemId });
   }
 
-  renderItemAction() {
+  renderItemAction(item) {
     if (this.props.personal) {
       return (
         <CloseIcon onClick={() => this.removeItemFromWishlist(item.id)} />
@@ -109,7 +109,7 @@ class Wishlist extends Component {
             <td>{styleTemp}</td>
             <td>{notesTemp}</td>
             <td>
-              {this.renderItemAction()}
+              {this.renderItemAction(item)}
             </td>
           </tr>
         );

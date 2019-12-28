@@ -118,6 +118,7 @@ class Lobby extends Component {
           roomId={this.props.roomCode}
           name={this.props.name}
           targetNames={this.state.santas.map(t => t.name)}
+          returnHome={ () => this.setState({ view: 'home' })}
         />
       ),
     };

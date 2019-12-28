@@ -75,6 +75,14 @@ class WishlistPage extends Component {
           socket={this.props.socket}
           personal={this.state.index === 0}
           items={this.state.items} />
+
+        <br />
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={ () => this.props.returnHome() }>
+          Return
+        </button>
       </div>
     );
   }
