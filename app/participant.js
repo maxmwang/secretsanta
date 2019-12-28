@@ -30,6 +30,10 @@ class Participant {
   emitWishlist() {
     this.ref.child('wishlist').once('value', s => {
       let wishlist = s.val() === null ? {} : s.val();
+      Object.values(wishlist).forEach(i => {
+        delete i.marked
+      });
+
       this.send('wishlist', { wishlist });
     });
   }

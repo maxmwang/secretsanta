@@ -104,12 +104,6 @@ class Lobby extends Component {
           }
 
           <br/>
-          <br/>
-          {this.state.message && (
-            <div class="alert alert-danger" role="alert">
-              {this.state.message}
-            </div>
-          )}
         </div>
       ),
       wishlist: (
@@ -128,8 +122,15 @@ class Lobby extends Component {
           <p>Lobby</p>
           <RoomCode roomCode={this.props.roomCode} />
           <br />
-          
+
           {views[this.state.view]}
+          
+          <br/>
+          {this.state.message && (
+            <div class="alert alert-danger" role="alert">
+              {this.state.message}
+            </div>
+          )}
       </div>
     );
   }
