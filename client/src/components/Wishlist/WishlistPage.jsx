@@ -34,7 +34,8 @@ class WishlistPage extends Component {
           wishlist[i].price,
           wishlist[i].link,
           wishlist[i].style,
-          wishlist[i].notes
+          wishlist[i].notes,
+          wishlist[i].marked,
         ));
       });
 
@@ -48,7 +49,8 @@ class WishlistPage extends Component {
 
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
-    const index = (this.state.index + direction) % this.count
+    let index = this.state.index + direction;
+    index = ((index % this.count) + this.count) % this.count
     const currentName = index === 0 ? this.props.name : this.props.targetNames[index - 1];
     this.setState({
       index,
@@ -83,6 +85,7 @@ class WishlistPage extends Component {
         <br />
 
         <Wishlist
+          name={this.state.currentName}
           socket={this.props.socket}
           personal={this.state.index === 0}
           items={this.state.items} />

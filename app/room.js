@@ -117,22 +117,40 @@ class Room {
     });
   }
 
-  markItem(participantName, itemId) {
-    this.participantRef
-      .child(participantName)
-      .child("wishlist")
-      .child(itemId)
-      .child("marked")
-      .set(true);
+  markItem(participant, target, itemId) {
+    this.participantRef.child(target).child("wishlist").child(itemId).once("value", s => {
+      const item = s.val();
+      if (!item.marked) {
+        this.participantRef
+          .child(target)
+          .child("wishlist")
+          .child(itemId)
+          .child("marked")
+          .set(participant.name);
+
+      } else {
+        participant.send("message", { message: "This item is already marked!" });
+      }
+      this.sendWishlist(participant, target);
+    });
   }
 
-  unmarkItem(participantName, itemId) {
-    this.participantRef
-      .child(participantName)
-      .child("wishlist")
-      .child(itemId)
-      .child("marked")
-      .set(false);
+  unmarkItem(participant, target, itemId) {
+    this.participantRef.child(target).child("wishlist").child(itemId).once("value", s => {
+      const item = s.val();
+      if (item.marked === participant.name) {
+        this.participantRef
+          .child(target)
+          .child("wishlist")
+          .child(itemId)
+          .child("marked")
+          .remove();
+
+      } else {
+        participant.send("message", { message: "You didn't mark this item!" });
+      }
+      this.sendWishlist(participant, target);
+    })
   }
 
   close() {

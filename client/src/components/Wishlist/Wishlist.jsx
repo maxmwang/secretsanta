@@ -81,21 +81,32 @@ class Wishlist extends Component {
     if (this.props.personal) {
       return (
         <CloseIcon
-          style={{cursor: 'pointer'}}
+          style={{ cursor: 'pointer' }}
           fontSize="small"
-          onClick={() => this.removeItemFromWishlist(item.id)} />
-      )
+          onClick={() => this.removeItemFromWishlist(item.id)}
+        />
+      );
     } else {
-      return null;
+      return item.marked ? (
+        <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} />
+      ) : (
+        <CheckBoxOutlineBlankIcon onClick={() => this.markItem(item.id)} />
+      );
     }
   }
 
   markItem(id) {
-    this.props.socket.emit('markItem', { name: this.props.name, itemId: id });
+    this.props.socket.emit('markItem', {
+      target: this.props.name,
+      itemId: id,
+    });
   }
 
   unmarkItem(id) {
-    this.props.socket.emit('unmarkItem', { name: this.props.name, itemId: id });
+    this.props.socket.emit('unmarkItem', {
+      target: this.props.name,
+      itemId: id,
+    });
   }
 
   renderTable() {
@@ -122,9 +133,7 @@ class Wishlist extends Component {
             <td>{item.price}</td>
             <td>{styleTemp}</td>
             <td>{notesTemp}</td>
-            <td>
-              {this.renderItemAction(item)}
-            </td>
+            <td>{this.renderItemAction(item)}</td>
           </tr>
         );
       }
@@ -140,10 +149,10 @@ class Wishlist extends Component {
   renderModal() {
     return (
       <Modal
-      aria-labelledby="simple-modal-title"
-      aria-describedby="simple-modal-description"
-      open={this.state.modalOpen}
-      close={() => this.clearInput()}
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.modalOpen}
+        close={() => this.clearInput()}
       >
         <div>
           <h2>Add Item</h2>
@@ -196,7 +205,8 @@ class Wishlist extends Component {
           <button
             type="button"
             className="btn btn-light"
-            onClick={() => this.addItemToWishlist()}>
+            onClick={() => this.addItemToWishlist()}
+          >
             Add Item
           </button>
 
@@ -207,19 +217,19 @@ class Wishlist extends Component {
   }
 
   render() {
-
     return (
       <div>
         {this.renderTable()}
 
-        {this.props.personal &&
+        {this.props.personal && (
           <button
             type="button"
             className="btn btn-light"
-            onClick={() => this.setState({ modalOpen: true })}>
+            onClick={() => this.setState({ modalOpen: true })}
+          >
             Add Item
           </button>
-        }
+        )}
 
         {this.renderModal()}
       </div>

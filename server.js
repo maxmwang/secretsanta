@@ -132,17 +132,15 @@ app.io.on('connect', function (socket) {
   socket.on('removeItem', data => {
     participant.removeItem(data.id);
     participant.emitWishlist();
-  })
+  });
 
   socket.on('markItem', data => {
-    room.markItem(data.name, data.itemId);
-    participant.emitWishlist();
-  })
+    room.markItem(participant, data.target, data.itemId);
+  });
 
   socket.on('unmarkItem', data => {
-    room.unmarkItem(data.name, data.itemId);
-    participant.emitWishlist();
-  })
+    room.unmarkItem(participant, data.target, data.itemId);
+  });
 
   socket.on('voteClose', data => {
     room.voteClose(participant);
