@@ -134,6 +134,16 @@ app.io.on('connect', function (socket) {
     participant.emitWishlist();
   })
 
+  socket.on('markItem', data => {
+    room.markItem(data.name, data.itemId);
+    participant.emitWishlist();
+  })
+
+  socket.on('unmarkItem', data => {
+    room.unmarkItem(data.name, data.itemId);
+    participant.emitWishlist();
+  })
+
   socket.on('voteClose', data => {
     room.voteClose(participant);
   });

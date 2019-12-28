@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 
 import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
+import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
+import CheckBoxIcon from '@material-ui/icons/CheckBox';
 
 import Item from 'models/item';
 
@@ -63,7 +65,8 @@ class Wishlist extends Component {
       this.state.input.price,
       this.state.input.link,
       this.state.input.style,
-      this.state.input.notes
+      this.state.input.notes,
+      false
     );
     this.props.socket.emit('addItem', { item: newItem });
 
@@ -85,6 +88,14 @@ class Wishlist extends Component {
     } else {
       return null;
     }
+  }
+
+  markItem(id) {
+    this.props.socket.emit('markItem', { name: this.props.name, itemId: id });
+  }
+
+  unmarkItem(id) {
+    this.props.socket.emit('unmarkItem', { name: this.props.name, itemId: id });
   }
 
   renderTable() {
@@ -117,6 +128,7 @@ class Wishlist extends Component {
           </tr>
         );
       }
+
       return (
         <table style={{ width: '100%', border: '5px' }}>
           <tbody>{items}</tbody>

@@ -117,6 +117,24 @@ class Room {
     });
   }
 
+  markItem(participantName, itemId) {
+    this.participantRef
+      .child(participantName)
+      .child("wishlist")
+      .child(itemId)
+      .child("marked")
+      .set(true);
+  }
+
+  unmarkItem(participantName, itemId) {
+    this.participantRef
+      .child(participantName)
+      .child("wishlist")
+      .child(itemId)
+      .child("marked")
+      .set(false);
+  }
+
   close() {
     this.participants.forEach(p => p.send('close', {}));
     this.onClose();
