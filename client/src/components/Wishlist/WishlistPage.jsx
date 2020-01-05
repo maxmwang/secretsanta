@@ -87,9 +87,8 @@ class WishlistPage extends Component {
           self={this.props.name}
           name={this.state.currentName}
           socket={this.props.socket}
-          personal={this.state.index === 0}
-          canEdit={this.props.canEdit}
-          canMark={this.props.canMark}
+          canEdit={this.state.index === 0 && this.props.canEdit}
+          canMark={this.state.index !== 0 && this.props.canMark}
           items={this.state.items} />
 
         <br />

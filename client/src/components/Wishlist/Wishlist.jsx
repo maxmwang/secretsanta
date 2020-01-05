@@ -78,7 +78,7 @@ class Wishlist extends Component {
   }
 
   renderItemAction(item) {
-    if (this.props.personal && this.props.canEdit) {
+    if (this.props.canEdit) {
       return (
         <CloseIcon
           style={{ cursor: 'pointer' }}
@@ -86,7 +86,7 @@ class Wishlist extends Component {
           onClick={() => this.removeItemFromWishlist(item.id)}
         />
       );
-    } else if (!this.props.personal && this.props.canMark) {
+    } else if (this.props.canMark) {
       return item.marked ? (
         <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.marked === this.props.self ? 'primary' : ''} />
       ) : (
@@ -221,7 +221,7 @@ class Wishlist extends Component {
       <div>
         {this.renderTable()}
 
-        {(this.props.personal && this.props.canEdit) && (
+        {this.props.canEdit && (
           <button
             type="button"
             className="btn btn-light"
