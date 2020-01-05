@@ -45,6 +45,13 @@ class Participant {
   removeItem(id) {
     this.ref.child('wishlist').child(id).remove();
   }
+
+  editItem(item) {
+    this.ref.child('wishlist').child(item.id).child("price").set(item.price);
+    this.ref.child('wishlist').child(item.id).child("link").set(item.link);
+    this.ref.child('wishlist').child(item.id).child("style").set(item.style);
+    this.ref.child('wishlist').child(item.id).child("notes").set(item.notes);
+  }
 }
 
 module.exports = Participant;

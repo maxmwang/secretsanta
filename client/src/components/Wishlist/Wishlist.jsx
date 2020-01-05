@@ -4,6 +4,7 @@ import Modal from '@material-ui/core/Modal';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
+import EditIcon from '@material-ui/icons/Edit';
 
 import Item from 'models/item';
 
@@ -12,7 +13,8 @@ class Wishlist extends Component {
     super(props);
 
     this.state = {
-      modalOpen: false,
+      editItemId: null,
+      modalOpen: null,
       errorMsg: '',
       items: [],
       input: {
@@ -27,7 +29,8 @@ class Wishlist extends Component {
 
   clearInput() {
     this.setState({
-      modalOpen: false,
+      editItemId: null,
+      modalOpen: null,
       errorMsg: '',
       input: {
         name: '',
@@ -77,20 +80,56 @@ class Wishlist extends Component {
     this.props.socket.emit('removeItem', { id: itemId });
   }
 
+  editItem() {
+    this.props.socket.emit('editItem', { item: new Item(
+      this.state.editItemId,
+      undefined,
+      this.state.input.price,
+      this.state.input.link,
+      this.state.input.style,
+      this.state.input.notes,
+      undefined
+    )});
+
+    this.clearInput();
+  }
+
   renderItemAction(item) {
     if (this.props.personal) {
       return (
-        <CloseIcon
-          style={{ cursor: 'pointer' }}
-          fontSize="small"
-          onClick={() => this.removeItemFromWishlist(item.id)}
-        />
+        <div>
+          <td>
+            <CloseIcon
+              style={{ cursor: 'pointer' }}
+              fontSize="small"
+              onClick={() => this.removeItemFromWishlist(item.id)}
+            />
+          </td>
+          <td>
+            <EditIcon
+              onClick={() => this.setState({
+                editItemId: item.id,
+                modalOpen: 'edit',
+                input: {
+                  price: item.price,
+                  link: item.link,
+                  style: item.style,
+                  notes: item.notes,
+                }
+              })}
+            />
+          </td>
+        </div>
       );
     } else {
       return item.marked ? (
-        <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.marked === this.props.self ? 'primary' : ''} />
+        <td>
+          <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.marked === this.props.self ? 'primary' : ''} />
+        </td>
       ) : (
-        <CheckBoxOutlineBlankIcon onClick={() => this.markItem(item.id)} />
+        <td>
+          <CheckBoxOutlineBlankIcon onClick={() => this.markItem(item.id)} />
+        </td>
       );
     }
   }
@@ -133,7 +172,7 @@ class Wishlist extends Component {
             <td>{item.price}</td>
             <td>{styleTemp}</td>
             <td>{notesTemp}</td>
-            <td>{this.renderItemAction(item)}</td>
+            {this.renderItemAction(item)}
           </tr>
         );
       }
@@ -146,12 +185,12 @@ class Wishlist extends Component {
     }
   }
 
-  renderModal() {
+  renderAddModal() {
     return (
       <Modal
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
-        open={this.state.modalOpen}
+        open={this.state.modalOpen === 'add'}
         close={() => this.clearInput()}
       >
         <div>
@@ -216,6 +255,67 @@ class Wishlist extends Component {
     );
   }
 
+  renderEditModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.modalOpen === 'edit'}
+        close={() => this.clearInput()}
+      >
+        <div>
+          <h2>Edit Item</h2>
+
+          <p>
+            <input
+              type="text"
+              placeholder="Enter the item's price"
+              value={this.state.input.price}
+              onChange={e => this.modifyInput('price', e.target.value)}
+              required
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Enter the item's link"
+              value={this.state.input.link}
+              onChange={e => this.modifyInput('link', e.target.value)}
+              required
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Style (optional)"
+              value={this.state.input.style}
+              onChange={e => this.modifyInput('style', e.target.value)}
+            />
+            <br />
+
+            <input
+              type="text"
+              placeholder="Notes (optional)"
+              value={this.state.input.notes}
+              onChange={e => this.modifyInput('notes', e.target.value)}
+            />
+            <br />
+          </p>
+
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.editItem()}
+          >
+            Edit Item
+          </button>
+
+          {this.state.errorMsg && <div>{this.state.errorMsg}</div>}
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -225,13 +325,14 @@ class Wishlist extends Component {
           <button
             type="button"
             className="btn btn-light"
-            onClick={() => this.setState({ modalOpen: true })}
+            onClick={() => this.setState({ modalOpen: 'add' })}
           >
             Add Item
           </button>
         )}
 
-        {this.renderModal()}
+        {this.renderAddModal()}
+        {this.renderEditModal()}
       </div>
     );
   }

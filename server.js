@@ -133,6 +133,11 @@ app.io.on('connect', function (socket) {
     participant.emitWishlist();
   });
 
+  socket.on('editItem', data => {
+    participant.editItem(data.item);
+    participant.emitWishlist();
+  })
+
   socket.on('markItem', data => {
     room.markItem(participant, data.target, data.itemId);
   });
