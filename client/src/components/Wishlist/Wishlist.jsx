@@ -83,7 +83,7 @@ class Wishlist extends Component {
   editItem() {
     this.props.socket.emit('editItem', { item: new Item(
       this.state.editItemId,
-      undefined,
+      this.state.input.name,
       this.state.input.price,
       this.state.input.link,
       this.state.input.style,
@@ -111,6 +111,7 @@ class Wishlist extends Component {
                 editItemId: item.id,
                 modalOpen: 'edit',
                 input: {
+                  name: item.name,
                   price: item.price,
                   link: item.link,
                   style: item.style,
