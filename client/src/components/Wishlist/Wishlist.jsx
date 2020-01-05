@@ -95,7 +95,7 @@ class Wishlist extends Component {
   }
 
   renderItemAction(item) {
-    if (this.props.personal) {
+    if (this.props.canEdit) {
       return (
         <div>
           <td>
@@ -122,7 +122,7 @@ class Wishlist extends Component {
           </td>
         </div>
       );
-    } else {
+    } else if (this.props.canMark) {
       return item.marked ? (
         <td>
           <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.marked === this.props.self ? 'primary' : ''} />
@@ -322,7 +322,7 @@ class Wishlist extends Component {
       <div>
         {this.renderTable()}
 
-        {this.props.personal && (
+        {this.props.canEdit && (
           <button
             type="button"
             className="btn btn-light"

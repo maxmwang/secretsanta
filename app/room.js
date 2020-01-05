@@ -4,6 +4,7 @@ var Participant = require('./participant');
 var { match } = require('./match');
 
 const N_SANTAS = 2;
+const PHASES = ['standby', 'planning', 'shopping'];
 
 class Room {
   constructor(code, ref, participants, onClose) {
@@ -13,7 +14,7 @@ class Room {
 
     this.participants = participants;
     this.onClose = onClose;
-    this.private = false;
+    this.phase = PHASES[0];
   }
 
   addParticipant(name, socket) {
@@ -75,7 +76,7 @@ class Room {
         } else {
           this.ref.child(voteName).push(participant.name);
         }
-      } else {
+      } else if (dupVoteMessage !== undefined) {
         participant.send('message', { message: dupVoteMessage });
       }
     });
@@ -93,16 +94,19 @@ class Room {
     this.vote(participant, "matchVotes", 
       () => {
         this.match();
-        this.setPrivate();
+        this.phase = PHASES[1];
+        this.ref.child('phase').set(this.phase);
+        this.notifyPhaseChange();
       }, "You have already voted to match this room");
   }
 
-  setPrivate() {
-    this.private = true;
-    this.participants.forEach(p => {
-      p.send('privated', {});
-    });
-    this.ref.child('private').set(true);
+  voteReady(participant) {
+    this.vote(participant, "readyVotes",
+      () => {
+        this.phase = PHASES[2];
+        this.ref.child('phase').set(this.phase);
+        this.notifyPhaseChange();
+      }, undefined);
   }
 
   voteClose(participant) {
@@ -111,6 +115,10 @@ class Room {
 
   notifyParticipantUpdate() {
     this.participants.forEach(p => p.send('participants', this.getParticipantData()));
+  }
+
+  notifyPhaseChange() {
+    this.participants.forEach(p => p.send('phase', { phase: this.phase }));
   }
 
   sendWishlist(participant, target) {

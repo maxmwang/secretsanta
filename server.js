@@ -76,11 +76,11 @@ app.post('/api/attemptjoin', (req, res) => {
       res.send({ valid: false, message: 'This name has been taken' });
     }
   } else {
-    if (!room.private) { // new
+    if (room.phase === 'standby') { // new
       res.send({ valid: true });
       app.santa.addPassword(roomCode, name, password);
     } else { // private
-      res.send({ valid: false, message: 'This room is private' });
+      res.send({ valid: false, message: 'You can no longer join this room' });
     }
   }
 });
@@ -102,8 +102,8 @@ app.io.on('connect', function (socket) {
 
     participant = room.get(name);
 
-    if (room.private) { participant.send('privated', {}); }
     participant.emitTargets();
+    socket.emit('phase', { phase: room.phase });
   });
 
   socket.on('voteMatch', data => {
@@ -138,6 +138,10 @@ app.io.on('connect', function (socket) {
     participant.emitWishlist();
   });
 
+  socket.on('voteReady', data => {
+    room.voteReady(participant);
+  });
+
   socket.on('markItem', data => {
     room.markItem(participant, data.target, data.itemId);
   });
@@ -152,7 +156,7 @@ app.io.on('connect', function (socket) {
 
   socket.on('disconnect', data => {
     if (room !== undefined && room.exists(name)) {
-      if (room.private) {
+      if (room.phase !== 'standby') {
         room.deactivate(name);
       } else {
         room.removeParticipant(name);
