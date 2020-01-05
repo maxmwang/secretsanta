@@ -84,6 +84,7 @@ class WishlistPage extends Component {
         <br />
 
         <Wishlist
+          self={this.props.name}
           name={this.state.currentName}
           socket={this.props.socket}
           personal={this.state.index === 0}
