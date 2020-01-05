@@ -25,7 +25,7 @@ class Santa {
           participants.forEach(p => p.active = false);
 
           let newRoom = new Room(code, roomRef, participants, () => this.close(code));
-          newRoom.private = rooms[code].private;
+          newRoom.phase = rooms[code].phase;
 
           this.rooms[code] = newRoom;
         });
@@ -36,7 +36,7 @@ class Santa {
   createRoom() {
     const code = this.generateCode();
     var roomRef = this.roomsRef.child(code);
-    roomRef.child('private').set(false);
+    roomRef.child('phase').set('standby');
 
     const newRoom = new Room(code, roomRef, [], () => this.close(code));
     this.rooms[code] = newRoom;

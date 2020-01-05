@@ -14,6 +14,7 @@ class Lobby extends Component {
       participants: {},
       santas: [],
       message: undefined,
+      phase: 'standby',
     };
   }
 
@@ -21,6 +22,10 @@ class Lobby extends Component {
     this.props.socket.emit('join', {
       name: this.props.name,
       roomCode: this.props.roomCode,
+    });
+
+    this.props.socket.on('phase', data => {
+      this.setState({ phase: data.phase, message: undefined });
     });
 
     this.props.socket.on('participants', data => {
@@ -45,13 +50,65 @@ class Lobby extends Component {
       this.setState({ santas });
     });
 
-    this.props.socket.on('privated', data => {
-      this.setState({ private: true });
-    });
-
     this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     });
+  }
+
+  renderHomeButtons() {
+    if (this.state.phase === 'standby') {
+      return [
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={() => this.props.socket.emit('voteMatch', {})}>
+          Vote to Match Room
+        </button>,
+        <br/>,
+        <br/>,
+        <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
+          Exit Room
+        </button>
+      ]
+    } else if (this.state.phase === 'planning') {
+      return [
+        <div>
+          <h6>You are Secret Santa for:</h6>
+          <ParticipantList participants={this.state.santas} />
+          <br/>
+        </div>,
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={() => this.setState({ view: 'wishlist' })}>
+          Wishlists
+        </button>,
+        <br/>,
+        <br/>,
+        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteReady", {}) } >
+          Confirm Wishlist
+        </button>
+      ]
+    } else {
+      return [
+      <div>
+          <h6>You are Secret Santa for:</h6>
+          <ParticipantList participants={this.state.santas} />
+          <br/>
+        </div>,
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={() => this.setState({ view: 'wishlist' })}>
+          Wishlists
+        </button>,
+        <br/>,
+        <br/>,
+        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
+          Vote to Close Room
+        </button>
+      ]
+    }
   }
 
   render() {
@@ -59,48 +116,11 @@ class Lobby extends Component {
       home: (
         <div>
           <h6>Participants</h6>
-          <ParticipantList
-            participants={Object.values(this.state.participants)}
-          />
-
-          <br />
-          {!this.state.private && (
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={() => this.props.socket.emit('voteMatch', {})}>
-              Vote to Match Room
-            </button>
-          )}
-
-          {this.state.private && (
-            <div>
-              <h6>You are Secret Santa for:</h6>
-              <ParticipantList participants={this.state.santas} />
-              <br />
-            </div>
-          )}
-
-          {this.state.private && (
-            <button
-              type="button"
-              className="btn btn-light"
-              onClick={() => this.setState({ view: 'wishlist' })}
-            >
-              Wishlists
-            </button>
-          )}
-          <br />
+          <ParticipantList participants={Object.values(this.state.participants)} />
 
           <br/>
-          {!this.state.private ?
-            <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
-              Exit Room
-            </button> :
-            <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
-              Vote to Close Room
-            </button>
-          }
+
+          {this.renderHomeButtons()}
 
           <br/>
         </div>
@@ -112,6 +132,8 @@ class Lobby extends Component {
           name={this.props.name}
           targetNames={this.state.santas.map(t => t.name)}
           returnHome={ () => this.setState({ view: 'home' })}
+          canEdit={this.state.phase === 'planning'}
+          canMark={this.state.phase === 'shopping'}
         />
       ),
     };
@@ -120,7 +142,7 @@ class Lobby extends Component {
       <div>
           <p>Lobby</p>
           <RoomCode roomCode={this.props.roomCode} />
-          <br />
+          <br/>
 
           {views[this.state.view]}
           
