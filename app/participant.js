@@ -45,6 +45,10 @@ class Participant {
   removeItem(id) {
     this.ref.child('wishlist').child(id).remove();
   }
+
+  editItem(item) {
+    this.ref.child('wishlist').child(item.id).set(item);
+  }
 }
 
 module.exports = Participant;
