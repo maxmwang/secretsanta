@@ -64,6 +64,23 @@ class Room {
     return { participants: this.participants.map(p => p.json()) };
   }
 
+  vote(participant, voteName, onVoteEnd, dupVoteMessage) {
+    this.ref.child(voteName).once("value", s => {
+      let votes = s.val();
+      votes = votes === null ? [] : Object.values(votes);
+
+      if (!votes.includes(participant.name)) {
+        if (votes.length === this.participants.length - 1) {
+          onVoteEnd();
+        } else {
+          this.ref.child(voteName).push(participant.name);
+        }
+      } else {
+        participant.send('message', { message: dupVoteMessage });
+      }
+    });
+  }
+
   match() {
     const santas = match(this.participants.map(p => p.name), N_SANTAS);
     this.participants.forEach(p => {
@@ -81,24 +98,7 @@ class Room {
   }
 
   voteClose(participant) {
-    this.ref.child("closeVotes").once("value", s => {
-      let votes = s.val();
-      votes = votes === null ? [] : Object.values(votes);
-
-      let totalVotes = votes.length;
-      let newVote = !votes.includes(participant.name);
-
-      if (newVote) {
-        this.ref.child("closeVotes").push(participant.name);
-        totalVotes += 1;
-      } else {
-        participant.send('message', { message: "You have already voted" });
-      }
-
-      if (totalVotes === this.participants.length) {
-        this.close();
-      }
-    });
+    this.vote(participant, "closeVotes", () => this.close(), "You have already voted to close this room");
   }
 
   notifyParticipantUpdate() {
