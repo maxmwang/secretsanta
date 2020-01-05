@@ -106,12 +106,11 @@ app.io.on('connect', function (socket) {
     participant.emitTargets();
   });
 
-  socket.on('matchRoom', data => {
+  socket.on('voteMatch', data => {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
-      room.match();
-      room.setPrivate();
+      room.voteMatch(participant);
     }
   });
 

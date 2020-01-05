@@ -68,9 +68,8 @@ class Lobby extends Component {
             <button
               type="button"
               className="btn btn-light"
-              onClick={() => this.props.socket.emit('matchRoom', {})}
-            >
-              Match
+              onClick={() => this.props.socket.emit('voteMatch', {})}>
+              Vote to Match Room
             </button>
           )}
 

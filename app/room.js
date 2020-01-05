@@ -89,6 +89,14 @@ class Room {
     });
   }
 
+  voteMatch(participant) {
+    this.vote(participant, "matchVotes", 
+      () => {
+        this.match();
+        this.setPrivate();
+      }, "You have already voted to match this room");
+  }
+
   setPrivate() {
     this.private = true;
     this.participants.forEach(p => {
