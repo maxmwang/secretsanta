@@ -25,7 +25,7 @@ class Lobby extends Component {
     });
 
     this.props.socket.on('phase', data => {
-      this.setState({ phase: data.phase });
+      this.setState({ phase: data.phase, message: undefined });
     });
 
     this.props.socket.on('participants', data => {
@@ -132,6 +132,8 @@ class Lobby extends Component {
           name={this.props.name}
           targetNames={this.state.santas.map(t => t.name)}
           returnHome={ () => this.setState({ view: 'home' })}
+          canEdit={this.state.phase === 'planning'}
+          canMark={this.state.phase === 'shopping'}
         />
       ),
     };
