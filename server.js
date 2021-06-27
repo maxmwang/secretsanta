@@ -138,10 +138,6 @@ app.io.on('connect', function (socket) {
     participant.emitWishlist();
   });
 
-  socket.on('voteReady', data => {
-    room.voteReady(participant);
-  });
-
   socket.on('markItem', data => {
     room.markItem(participant, data.target, data.itemId);
   });

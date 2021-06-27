@@ -70,26 +70,7 @@ class Lobby extends Component {
           Exit Room
         </button>
       ]
-    } else if (this.state.phase === 'planning') {
-      return [
-        <div>
-          <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas} />
-          <br/>
-        </div>,
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.setState({ view: 'wishlist' })}>
-          Wishlists
-        </button>,
-        <br/>,
-        <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteReady", {}) } >
-          Confirm Wishlist
-        </button>
-      ]
-    } else {
+    } else if (this.state.phase === 'matched') {
       return [
       <div>
           <h6>You are Secret Santa for:</h6>
@@ -132,8 +113,8 @@ class Lobby extends Component {
           name={this.props.name}
           targetNames={this.state.santas.map(t => t.name)}
           returnHome={ () => this.setState({ view: 'home' })}
-          canEdit={this.state.phase === 'planning'}
-          canMark={this.state.phase === 'shopping'}
+          canEdit
+          canMark
         />
       ),
     };
