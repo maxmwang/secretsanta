@@ -12,12 +12,12 @@ class WishlistPage extends Component {
     super(props);
 
     this.state = {
-      index: 0,
+      index: this.props.names.indexOf(this.props.name),
       currentName: this.props.name,
       items: [],
+      target: false,
+      self: true,
     };
-
-    this.count = this.props.targetNames.length + 1;
   }
 
   componentDidMount() {
@@ -25,7 +25,7 @@ class WishlistPage extends Component {
 
     this.props.socket.on('wishlist', data => {
       let items = [];
-      const { wishlist } = data;
+      const { wishlist, target, self } = data;
 
       Object.keys(wishlist).forEach(i => {
         items.push(new Item(
@@ -39,7 +39,11 @@ class WishlistPage extends Component {
         ));
       });
 
-      this.setState({ items });
+      this.setState({
+        items,
+        target,
+        self,
+      });
     });
   }
 
@@ -49,8 +53,8 @@ class WishlistPage extends Component {
 
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
-    const index = (((this.state.index + direction) % this.count) + this.count) % this.count
-    const currentName = index === 0 ? this.props.name : this.props.targetNames[index - 1];
+    const index = ((this.state.index + direction + this.props.names.length) % this.props.names.length);
+    const currentName = this.props.names[index];
     this.setState({
       index,
       currentName,
@@ -84,11 +88,11 @@ class WishlistPage extends Component {
         <br />
 
         <Wishlist
-          self={this.props.name}
-          name={this.state.currentName}
+          name={this.props.name}
+          target={this.state.currentName}
           socket={this.props.socket}
-          canEdit={this.state.index === 0 && this.props.canEdit}
-          canMark={this.state.index !== 0 && this.props.canMark}
+          canEdit={this.state.self}
+          canMark={this.state.target}
           items={this.state.items} />
 
         <br />

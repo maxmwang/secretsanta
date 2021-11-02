@@ -116,12 +116,12 @@ class Room {
   sendWishlist(participant, target) {
     this.participantRef.child(participant.name).child("targets").once("value", s => {
       const targets = s.val();
-      if (targets.includes(target)) {
-        this.participantRef.child(target).child('wishlist').once('value', s => {
-          let wishlist = s.val() === null ? {} : s.val();
-          participant.send('wishlist', { wishlist });
-        });
-      }
+      const isTarget = targets.includes(target);
+      const isSelf = participant.name === target;
+      this.participantRef.child(target).child('wishlist').once('value', s => {
+        let wishlist = s.val() === null ? {} : s.val();
+        participant.send('wishlist', { wishlist, target: isTarget, self: isSelf });
+      });
     });
   }
 

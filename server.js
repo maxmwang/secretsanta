@@ -63,7 +63,7 @@ app.post('/api/attemptjoin', (req, res) => {
   const { password } = req.body;
   const room = app.santa.getRoom(roomCode);
 
-  if (room.exists(name)) {
+  if (room !== undefined && room.exists(name)) {
     if (!room.isActive(name)) { // existing
       app.santa.verifyPassword(roomCode, name, password).then(verified => {
         if (verified) {
@@ -116,11 +116,7 @@ app.io.on('connect', function (socket) {
 
   socket.on('getWishlist', data => {
     const { target } = data;
-    if (name === target) {
-      participant.emitWishlist();
-    } else {
-      room.sendWishlist(participant, target);
-    }
+    room.sendWishlist(participant, target);
   });
 
   socket.on('addItem', data => {

@@ -24,10 +24,12 @@ class Lobby extends Component {
       roomCode: this.props.roomCode,
     });
 
+    this.props.socket.off('phase');
     this.props.socket.on('phase', data => {
       this.setState({ phase: data.phase, message: undefined });
     });
 
+    this.props.socket.off('participants');
     this.props.socket.on('participants', data => {
       let participants = {};
       data.participants.forEach(p => {
@@ -41,6 +43,7 @@ class Lobby extends Component {
       this.setState({ participants });
     });
 
+    this.props.socket.off('santas');
     this.props.socket.on('santas', data => {
       let santas = [];
       data.santas.forEach(name => {
@@ -50,6 +53,7 @@ class Lobby extends Component {
       this.setState({ santas });
     });
 
+    this.props.socket.off('message');
     this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     });
@@ -111,10 +115,8 @@ class Lobby extends Component {
           socket={this.props.socket}
           roomId={this.props.roomCode}
           name={this.props.name}
-          targetNames={this.state.santas.map(t => t.name)}
+          names={Object.keys(this.state.participants)}
           returnHome={ () => this.setState({ view: 'home' })}
-          canEdit
-          canMark
         />
       ),
     };
