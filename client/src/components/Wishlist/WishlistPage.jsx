@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Wishlist from './Wishlist';
 import Item from 'models/item';
+import Name from 'components/Name';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -12,8 +13,7 @@ class WishlistPage extends Component {
     super(props);
 
     this.state = {
-      index: this.props.names.indexOf(this.props.name),
-      currentName: this.props.name,
+      index: this.props.participants.findIndex(p => p.name === this.props.name),
       items: [],
       target: false,
       self: true,
@@ -21,7 +21,7 @@ class WishlistPage extends Component {
   }
 
   componentDidMount() {
-    this.props.socket.emit('getWishlist', { target: this.state.currentName });
+    this.refreshWishlist();
 
     this.props.socket.on('wishlist', data => {
       let items = [];
@@ -48,20 +48,16 @@ class WishlistPage extends Component {
   }
 
   refreshWishlist() {
-    this.props.socket.emit('getWishlist', { target: this.state.currentName });
+    this.props.socket.emit('getWishlist', { target: this.props.participants[this.state.index].name });
   }
 
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
-    const index = ((this.state.index + direction + this.props.names.length) % this.props.names.length);
-    const currentName = this.props.names[index];
+    const index = ((this.state.index + direction + this.props.participants.length) % this.props.participants.length);
     this.setState({
       index,
-      currentName,
       items: [],
-    });
-
-    this.props.socket.emit('getWishlist', { target: currentName });
+    }, () => this.refreshWishlist());
   }
 
   render() {
@@ -75,7 +71,7 @@ class WishlistPage extends Component {
           </div>
           <div className="col-6">
             <p>
-              {this.state.currentName}'s Wishlist
+              Wishlist for <Name participant={this.props.participants[this.state.index]}/>
               <RefreshIcon fontSize="small" style={{cursor: 'pointer'}} onClick={ () => this.refreshWishlist() }/>
             </p>
           </div>
@@ -89,7 +85,7 @@ class WishlistPage extends Component {
 
         <Wishlist
           name={this.props.name}
-          target={this.state.currentName}
+          target={this.props.participants[this.state.index].name}
           socket={this.props.socket}
           canEdit={this.state.self}
           canMark={this.state.target}

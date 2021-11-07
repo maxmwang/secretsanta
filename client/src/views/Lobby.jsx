@@ -36,7 +36,7 @@ class Lobby extends Component {
         participants[p.name] = new Participant(
           p.name,
           p.active,
-          false,
+          this.state.santas.includes(p.name),
           p.name === this.props.name
         );
       });
@@ -45,12 +45,14 @@ class Lobby extends Component {
 
     this.props.socket.off('santas');
     this.props.socket.on('santas', data => {
-      let santas = [];
-      data.santas.forEach(name => {
-        santas.push(new Participant(name, true, true));
+      let participants = {...this.state.participants};
+      Object.keys(participants).forEach(name => {
+        participants[name].santa = data.santas.includes(name);
+      })
+      this.setState({
+        participants,
+        santas: data.santas,
       });
-
-      this.setState({ santas });
     });
 
     this.props.socket.off('message');
@@ -78,7 +80,7 @@ class Lobby extends Component {
       return [
       <div>
           <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas} />
+          <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
           <br/>
         </div>,
         <button
@@ -115,7 +117,7 @@ class Lobby extends Component {
           socket={this.props.socket}
           roomId={this.props.roomCode}
           name={this.props.name}
-          names={Object.keys(this.state.participants)}
+          participants={Object.values(this.state.participants)}
           returnHome={ () => this.setState({ view: 'home' })}
         />
       ),
