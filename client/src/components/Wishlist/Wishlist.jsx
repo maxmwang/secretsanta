@@ -172,7 +172,7 @@ class Wishlist extends Component {
         items.push(
           <tr>
             <td>
-              <a href={item.link}>{item.name}</a>
+              <a href={item.link} target="_blank">{item.name}</a>
             </td>
             <td>{item.price}</td>
             <td>{styleTemp}</td>
