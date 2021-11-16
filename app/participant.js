@@ -34,7 +34,7 @@ class Participant {
         delete i.marked
       });
 
-      this.send('wishlist', { wishlist });
+      this.send('wishlist', { wishlist, target: false, self: true });
     });
   }
 
