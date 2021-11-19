@@ -125,11 +125,11 @@ class Wishlist extends Component {
     } else {
       return item.marked ? (
         <td>
-          <CheckBoxIcon onClick={() => this.tryUnmarkItem(item.id)} color={item.marked === this.props.name ? 'primary' : ''} />
+          <CheckBoxIcon onClick={() => this.tryUnmarkItem(item.id)} color={item.marked === this.props.name ? 'secondary' : 'disabled'} />
         </td>
       ) : (
         <td>
-          <CheckBoxOutlineBlankIcon onClick={() => this.tryMarkItem(item.id)} />
+          <CheckBoxOutlineBlankIcon onClick={() => this.tryMarkItem(item.id)} color={this.props.canMark ? 'primary' : 'disabled'} />
         </td>
       );
     }
