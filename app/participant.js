@@ -47,7 +47,12 @@ class Participant {
   }
 
   editItem(item) {
-    this.ref.child('wishlist').child(item.id).set(item);
+    const itemRef = this.ref.child('wishlist').child(item.id);
+    itemRef.once('value', s => {
+      let dbItem = s.val() === null ? {} : s.val();
+      dbItem = { ...dbItem, ...item, }
+      itemRef.set(dbItem);
+    });
   }
 }
 
