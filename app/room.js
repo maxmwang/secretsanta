@@ -1,7 +1,7 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var Participant = require('./participant');
-var { match } = require('./match');
+const Participant = require('./participant');
+const { match } = require('./match');
 
 const N_SANTAS = 2;
 const STANDBY = 'standby';
@@ -120,7 +120,7 @@ class Room {
       const isSelf = participant.name === target;
       this.participantRef.child(target).child('wishlist').once('value', s => {
         let wishlist = s.val() === null ? {} : s.val();
-        participant.send('wishlist', { wishlist, target: isTarget, self: isSelf });
+        participant.sendWishlist(wishlist, isTarget, isSelf);
       });
     });
   }

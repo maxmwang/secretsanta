@@ -35,7 +35,7 @@ class WishlistPage extends Component {
           wishlist[i].link,
           wishlist[i].style,
           wishlist[i].notes,
-          wishlist[i].marked,
+          wishlist[i].mark_state,
         ));
       });
 
