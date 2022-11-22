@@ -164,11 +164,20 @@ class Wishlist extends Component {
       for (let item of this.props.items) {
         const styleTemp = item.style ? item.style : 'N/A';
         const notesTemp = item.notes ? item.notes : 'N/A';
+        let linkTemp;
+        if (item.link.startsWith('http://') || item.link.startsWith('https://')) {
+          linkTemp = item.link;
+        } else {
+          linkTemp = `//${item.link}`;
+        }
 
         items.push(
           <tr>
             <td>
-              <a href={item.link}>{item.name}</a>
+              <a href={linkTemp}
+                target="_blank"
+                rel="noopener noreferrer"
+              >{item.name}</a>
             </td>
             <td>{item.price}</td>
             <td>{styleTemp}</td>
