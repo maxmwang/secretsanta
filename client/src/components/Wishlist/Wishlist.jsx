@@ -216,7 +216,7 @@ class Wishlist extends Component {
 
             <input
               type="text"
-              placeholder="Enter the item's link"
+              placeholder="Enter the item's link (optional)"
               value={this.state.input.link}
               onChange={e => this.modifyInput('link', e.target.value)}
             />
