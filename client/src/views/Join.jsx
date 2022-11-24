@@ -45,7 +45,7 @@ class Join extends Component {
 
         <input type="name" className="form-control" placeholder="Enter room code" 
           value={this.state.roomCode} 
-          onChange={ e => this.setState({ roomCode: e.target.value }) }/>
+          onChange={ e => this.setState({ roomCode: e.target.value.toLowerCase() }) }/>
         <br/>
         <input type="name" className="form-control" placeholder="Enter your name" 
           value={this.state.name} 

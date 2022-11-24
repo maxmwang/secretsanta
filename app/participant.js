@@ -1,3 +1,5 @@
+const c = require('./const');
+
 class Participant {
   constructor(name, ref, socket) {
     this.name = name;
@@ -30,12 +32,27 @@ class Participant {
   emitWishlist() {
     this.ref.child('wishlist').once('value', s => {
       let wishlist = s.val() === null ? {} : s.val();
-      Object.values(wishlist).forEach(i => {
-        delete i.marked
-      });
-
-      this.send('wishlist', { wishlist });
+      this.sendWishlist(wishlist, false, true);
     });
+  }
+
+  sendWishlist(wishlist, target, self) {
+    Object.values(wishlist).forEach(i => {
+      if (self) {
+        i.mark_state = c.ITEM_MARK_STATE.HIDDEN;
+      } else {
+        if (i.marked === this.name) {
+          i.mark_state = c.ITEM_MARK_STATE.CAN_UNMARK;
+        } else if (i.marked) {
+          i.mark_state = c.ITEM_MARK_STATE.MARKED;
+        } else {
+          i.mark_state = c.ITEM_MARK_STATE.UNMARKED;
+        }
+      }
+      delete i.marked;
+    });
+
+    this.send('wishlist', { wishlist, target, self });  
   }
 
   addItem(item) {
@@ -47,7 +64,12 @@ class Participant {
   }
 
   editItem(item) {
-    this.ref.child('wishlist').child(item.id).set(item);
+    const itemRef = this.ref.child('wishlist').child(item.id);
+    itemRef.once('value', s => {
+      let dbItem = s.val() === null ? {} : s.val();
+      dbItem = { ...dbItem, ...item, }
+      itemRef.set(dbItem);
+    });
   }
 }
 

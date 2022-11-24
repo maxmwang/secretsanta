@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 
 import Wishlist from './Wishlist';
 import Item from 'models/item';
+import Name from 'components/Name';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -12,20 +13,19 @@ class WishlistPage extends Component {
     super(props);
 
     this.state = {
-      index: 0,
-      currentName: this.props.name,
+      index: this.props.participants.findIndex(p => p.name === this.props.name),
       items: [],
+      target: false,
+      self: true,
     };
-
-    this.count = this.props.targetNames.length + 1;
   }
 
   componentDidMount() {
-    this.props.socket.emit('getWishlist', { target: this.state.currentName });
+    this.refreshWishlist();
 
     this.props.socket.on('wishlist', data => {
       let items = [];
-      const { wishlist } = data;
+      const { wishlist, target, self } = data;
 
       Object.keys(wishlist).forEach(i => {
         items.push(new Item(
@@ -35,29 +35,29 @@ class WishlistPage extends Component {
           wishlist[i].link,
           wishlist[i].style,
           wishlist[i].notes,
-          wishlist[i].marked,
+          wishlist[i].mark_state,
         ));
       });
 
-      this.setState({ items });
+      this.setState({
+        items,
+        target,
+        self,
+      });
     });
   }
 
   refreshWishlist() {
-    this.props.socket.emit('getWishlist', { target: this.state.currentName });
+    this.props.socket.emit('getWishlist', { target: this.props.participants[this.state.index].name });
   }
 
   move(direction) {
     // if index = 0, wishlist is self, otherwise, its target
-    const index = (((this.state.index + direction) % this.count) + this.count) % this.count
-    const currentName = index === 0 ? this.props.name : this.props.targetNames[index - 1];
+    const index = ((this.state.index + direction + this.props.participants.length) % this.props.participants.length);
     this.setState({
       index,
-      currentName,
       items: [],
-    });
-
-    this.props.socket.emit('getWishlist', { target: currentName });
+    }, () => this.refreshWishlist());
   }
 
   render() {
@@ -71,7 +71,7 @@ class WishlistPage extends Component {
           </div>
           <div className="col-6">
             <p>
-              {this.state.currentName}'s Wishlist
+              Wishlist for <Name participant={this.props.participants[this.state.index]}/>
               <RefreshIcon fontSize="small" style={{cursor: 'pointer'}} onClick={ () => this.refreshWishlist() }/>
             </p>
           </div>
@@ -84,11 +84,11 @@ class WishlistPage extends Component {
         <br />
 
         <Wishlist
-          self={this.props.name}
-          name={this.state.currentName}
+          name={this.props.name}
+          target={this.props.participants[this.state.index].name}
           socket={this.props.socket}
-          canEdit={this.state.index === 0 && this.props.canEdit}
-          canMark={this.state.index !== 0 && this.props.canMark}
+          canEdit={this.state.self}
+          canMark={this.state.target}
           items={this.state.items} />
 
         <br />

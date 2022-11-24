@@ -1,10 +1,11 @@
-var _ = require('lodash');
+const _ = require('lodash');
 
-var Participant = require('./participant');
-var { match } = require('./match');
+const Participant = require('./participant');
+const { match } = require('./match');
 
 const N_SANTAS = 2;
-const PHASES = ['standby', 'planning', 'shopping'];
+const STANDBY = 'standby';
+const MATCHED = 'matched';
 
 class Room {
   constructor(code, ref, participants, onClose) {
@@ -14,7 +15,7 @@ class Room {
 
     this.participants = participants;
     this.onClose = onClose;
-    this.phase = PHASES[0];
+    this.phase = STANDBY;
   }
 
   addParticipant(name, socket) {
@@ -94,19 +95,10 @@ class Room {
     this.vote(participant, "matchVotes", 
       () => {
         this.match();
-        this.phase = PHASES[1];
+        this.phase = MATCHED;
         this.ref.child('phase').set(this.phase);
         this.notifyPhaseChange();
       }, "You have already voted to match this room");
-  }
-
-  voteReady(participant) {
-    this.vote(participant, "readyVotes",
-      () => {
-        this.phase = PHASES[2];
-        this.ref.child('phase').set(this.phase);
-        this.notifyPhaseChange();
-      }, undefined);
   }
 
   voteClose(participant) {
@@ -124,12 +116,12 @@ class Room {
   sendWishlist(participant, target) {
     this.participantRef.child(participant.name).child("targets").once("value", s => {
       const targets = s.val();
-      if (targets.includes(target)) {
-        this.participantRef.child(target).child('wishlist').once('value', s => {
-          let wishlist = s.val() === null ? {} : s.val();
-          participant.send('wishlist', { wishlist });
-        });
-      }
+      const isTarget = targets.includes(target);
+      const isSelf = participant.name === target;
+      this.participantRef.child(target).child('wishlist').once('value', s => {
+        let wishlist = s.val() === null ? {} : s.val();
+        participant.sendWishlist(wishlist, isTarget, isSelf);
+      });
     });
   }
 

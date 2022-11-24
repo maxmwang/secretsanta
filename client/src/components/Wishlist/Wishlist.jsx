@@ -122,31 +122,35 @@ class Wishlist extends Component {
           </td>
         </div>
       );
-    } else if (this.props.canMark) {
-      return item.marked ? (
+    } else {
+      return item.isMarked() ? (
         <td>
-          <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.marked === this.props.self ? 'primary' : ''} />
+          <CheckBoxIcon onClick={() => this.tryUnmarkItem(item.id)} color={item.canUnmark() ? 'secondary' : 'disabled'} />
         </td>
       ) : (
         <td>
-          <CheckBoxOutlineBlankIcon onClick={() => this.markItem(item.id)} />
+          <CheckBoxOutlineBlankIcon onClick={() => this.tryMarkItem(item.id)} color={this.props.canMark ? 'primary' : 'disabled'} />
         </td>
       );
     }
   }
 
-  markItem(id) {
-    this.props.socket.emit('markItem', {
-      target: this.props.name,
-      itemId: id,
-    });
+  tryMarkItem(id) {
+    if (this.props.canMark) {
+      this.props.socket.emit('markItem', {
+        target: this.props.target,
+        itemId: id,
+      });
+    }
   }
 
-  unmarkItem(id) {
-    this.props.socket.emit('unmarkItem', {
-      target: this.props.name,
-      itemId: id,
-    });
+  tryUnmarkItem(id) {
+    if (this.props.canMark) {
+      this.props.socket.emit('unmarkItem', {
+        target: this.props.target,
+        itemId: id,
+      });
+    }
   }
 
   renderTable() {

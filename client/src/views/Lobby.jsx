@@ -24,32 +24,38 @@ class Lobby extends Component {
       roomCode: this.props.roomCode,
     });
 
+    this.props.socket.off('phase');
     this.props.socket.on('phase', data => {
       this.setState({ phase: data.phase, message: undefined });
     });
 
+    this.props.socket.off('participants');
     this.props.socket.on('participants', data => {
       let participants = {};
       data.participants.forEach(p => {
         participants[p.name] = new Participant(
           p.name,
           p.active,
-          false,
+          this.state.santas.includes(p.name),
           p.name === this.props.name
         );
       });
       this.setState({ participants });
     });
 
+    this.props.socket.off('santas');
     this.props.socket.on('santas', data => {
-      let santas = [];
-      data.santas.forEach(name => {
-        santas.push(new Participant(name, true, true));
+      let participants = {...this.state.participants};
+      Object.keys(participants).forEach(name => {
+        participants[name].santa = data.santas.includes(name);
+      })
+      this.setState({
+        participants,
+        santas: data.santas,
       });
-
-      this.setState({ santas });
     });
 
+    this.props.socket.off('message');
     this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     });
@@ -70,30 +76,11 @@ class Lobby extends Component {
           Exit Room
         </button>
       ]
-    } else if (this.state.phase === 'planning') {
-      return [
-        <div>
-          <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas} />
-          <br/>
-        </div>,
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.setState({ view: 'wishlist' })}>
-          Wishlists
-        </button>,
-        <br/>,
-        <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteReady", {}) } >
-          Confirm Wishlist
-        </button>
-      ]
-    } else {
+    } else if (this.state.phase === 'matched') {
       return [
       <div>
           <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas} />
+          <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
           <br/>
         </div>,
         <button
@@ -130,10 +117,8 @@ class Lobby extends Component {
           socket={this.props.socket}
           roomId={this.props.roomCode}
           name={this.props.name}
-          targetNames={this.state.santas.map(t => t.name)}
+          participants={Object.values(this.state.participants)}
           returnHome={ () => this.setState({ view: 'home' })}
-          canEdit={this.state.phase === 'planning'}
-          canMark={this.state.phase === 'shopping'}
         />
       ),
     };
