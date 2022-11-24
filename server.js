@@ -9,7 +9,7 @@ var io = require('socket.io')(server);
 
 const Santa = require('./app/santa');
 
-const port = process.env.PORT || 5000;
+const port = process.env.SECRET_SANTA_PORT || process.env.PORT || 5000;
 
 var admin = require("firebase-admin");
 admin.initializeApp({
