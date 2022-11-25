@@ -48,7 +48,7 @@ class Wishlist extends Component {
     this.setState({ input: inputCopy });
   }
 
-  addItemToWishlist() {
+  verifyInput() {
     let missingInput;
     if (!this.state.input.name) {
       missingInput = 'Name';
@@ -57,6 +57,18 @@ class Wishlist extends Component {
     }
     if (missingInput) {
       this.setState({ errorMsg: `${missingInput} is required.` });
+      return false;
+    }
+
+    if (!this.state.input.link.startsWith('http') || !this.state.input.link.startsWith('https')) {
+      this.setState({ errorMsg: 'Link must start with http or https.' });
+      return false;
+    }
+    return true;
+  }
+
+  addItemToWishlist() {
+    if (!this.verifyInput()) {
       return;
     }
 
@@ -79,6 +91,10 @@ class Wishlist extends Component {
   }
 
   editItem() {
+    if (!this.verifyInput()) {
+      return;
+    }
+
     this.props.socket.emit('editItem', { item: new Item(
       this.state.editItemId,
       this.state.input.name,
@@ -277,6 +293,15 @@ class Wishlist extends Component {
           <h2>Edit Item</h2>
 
           <p>
+            <input
+              type="text"
+              placeholder="Enter the item's name"
+              value={this.state.input.name}
+              onChange={e => this.modifyInput('name', e.target.value)}
+              required
+            />
+            <br />
+
             <input
               type="text"
               placeholder="Enter the item's price"
