@@ -171,17 +171,16 @@ class Wishlist extends Component {
         let linkTemp;
         if (item.link.startsWith('http://') || item.link.startsWith('https://')) {
           linkTemp = item.link;
-        } else {
-          linkTemp = `//${item.link}`;
         }
 
         items.push(
           <tr>
             <td>
+              {linkTemp ? (
               <a href={linkTemp}
                 target="_blank"
                 rel="noopener noreferrer"
-              >{item.name}</a>
+              >{item.name}</a>) : item.name}
             </td>
             <td>{item.price}</td>
             <td>{styleTemp}</td>
