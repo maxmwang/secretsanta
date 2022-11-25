@@ -54,8 +54,6 @@ class Wishlist extends Component {
       missingInput = 'Name';
     } else if (!this.state.input.price) {
       missingInput = 'Price';
-    } else if (!this.state.input.link) {
-      missingInput = 'Link';
     }
     if (missingInput) {
       this.setState({ errorMsg: `${missingInput} is required.` });
@@ -230,10 +228,9 @@ class Wishlist extends Component {
 
             <input
               type="text"
-              placeholder="Enter the item's link"
+              placeholder="Enter the item's link (optional)"
               value={this.state.input.link}
               onChange={e => this.modifyInput('link', e.target.value)}
-              required
             />
             <br />
 
