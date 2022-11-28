@@ -1,0 +1,43 @@
+.wishlist {
+    width: 100%;
+}
+
+.wishlist-item:first-child {
+    border-top: 1px #ccc solid;
+}
+
+.wishlist-item {
+    border-bottom: 1px #ccc solid;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.wishlist-item-top {
+    display: flex;
+    justify-content: space-around;
+}
+
+.wishlist-name {
+    text-align: left;
+    width: 75%;
+}
+
+.wishlist-actions {
+    width: 25%;
+}
+
+.wishlist-price {
+    text-align: left;
+    width: 100%;
+}
+
+.wishlist-style {
+    text-align: left;
+    width: 100%;
+}
+
+.wishlist-notes {
+    text-align: left;
+    width: 100%;
+}
+

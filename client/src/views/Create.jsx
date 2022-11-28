@@ -38,20 +38,27 @@ class Create extends Component {
       <div>
         <p>Create Room</p>
 
-        <input type="name" className="form-control" placeholder="Enter your name"
-          value={this.state.name}
-          onChange={ e => this.setState({ name: e.target.value })}/>
-        <br/>
-        <input type="password" className="form-control" placeholder="Enter password"
-          value={this.state.password}
-          onChange={ e => this.setState({ password: e.target.value })}/>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            this.createGame();
+          }}
+        >
+          <input type="name" className="form-control" placeholder="Enter your name"
+            value={this.state.name}
+            onChange={ e => this.setState({ name: e.target.value })}/>
+          <br/>
+          <input type="password" className="form-control" placeholder="Enter password"
+            value={this.state.password}
+            onChange={ e => this.setState({ password: e.target.value })}/>
 
-        <br/>
+          <br/>
 
-        <div className="row d-flex justify-content-center">
-          <button type="button" className="btn btn-light" onClick={this.props.goBack}>Back</button>
-          <button type="button" className="btn btn-light" onClick={ () => this.createGame() }>Create</button>
-        </div>
+          <div className="row d-flex justify-content-center">
+            <button type="button" className="btn btn-light" onClick={this.props.goBack}>Back</button>
+            <button type="button" className="btn btn-light" type="submit">Create</button>
+          </div>
+        </form>
 
         {this.state.message && <div class="alert alert-danger" role="alert">
           {this.state.message}
