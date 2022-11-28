@@ -9,7 +9,7 @@ var io = require('socket.io')(server);
 
 const Santa = require('./app/santa');
 
-const port = process.env.PORT || 5000;
+const port = process.env.SECRET_SANTA_PORT || process.env.PORT || 5000;
 
 var admin = require("firebase-admin");
 admin.initializeApp({
@@ -160,10 +160,10 @@ app.io.on('connect', function (socket) {
 
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files
-    app.use(express.static(path.join(__dirname, 'client/build')));
+    app.use(express.static(path.join(__dirname, 'client/dist')));
     // Handle React routing, return all requests to React app
     app.get('*', function(req, res) {
-        res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+        res.sendFile(path.join(__dirname, 'client/dist', 'index.html'));
     });
 }
 

@@ -8,6 +8,8 @@ import EditIcon from '@material-ui/icons/Edit';
 
 import Item from 'models/item';
 
+import './Wishlist.css';
+
 class Wishlist extends Component {
   constructor(props) {
     super(props);
@@ -111,40 +113,36 @@ class Wishlist extends Component {
   renderItemAction(item) {
     if (this.props.canEdit) {
       return (
-        <div>
-          <td>
-            <CloseIcon
-              style={{ cursor: 'pointer' }}
-              fontSize="small"
-              onClick={() => this.removeItemFromWishlist(item.id)}
-            />
-          </td>
-          <td>
-            <EditIcon
-              onClick={() => this.setState({
-                editItemId: item.id,
-                modalOpen: 'edit',
-                input: {
-                  name: item.name,
-                  price: item.price,
-                  link: item.link,
-                  style: item.style,
-                  notes: item.notes,
-                }
-              })}
-            />
-          </td>
+        <div className="wishlist-actions">
+          <EditIcon
+            onClick={() => this.setState({
+              editItemId: item.id,
+              modalOpen: 'edit',
+              input: {
+                name: item.name,
+                price: item.price,
+                link: item.link,
+                style: item.style,
+                notes: item.notes,
+              }
+            })}
+          />
+          <CloseIcon
+            style={{ cursor: 'pointer' }}
+            fontSize="small"
+            onClick={() => this.removeItemFromWishlist(item.id)}
+          />
         </div>
       );
     } else {
       return item.isMarked() ? (
-        <td>
+        <div className="wishlist-actions">
           <CheckBoxIcon onClick={() => this.tryUnmarkItem(item.id)} color={item.canUnmark() ? 'secondary' : 'disabled'} />
-        </td>
+        </div>
       ) : (
-        <td>
+        <div className="wishlist-actions">
           <CheckBoxOutlineBlankIcon onClick={() => this.tryMarkItem(item.id)} color={this.props.canMark ? 'primary' : 'disabled'} />
-        </td>
+        </div>
       );
     }
   }
@@ -168,15 +166,7 @@ class Wishlist extends Component {
   }
 
   renderTable() {
-    const items = [
-      <tr>
-        <th>Name</th>
-        <th>Price</th>
-        <th>Style</th>
-        <th>Notes</th>
-        <th></th>
-      </tr>,
-    ];
+    const items = [];
 
     if (this.props.items) {
       for (let item of this.props.items) {
@@ -188,26 +178,28 @@ class Wishlist extends Component {
         }
 
         items.push(
-          <tr>
-            <td>
-              {linkTemp ? (
-              <a href={linkTemp}
-                target="_blank"
-                rel="noopener noreferrer"
-              >{item.name}</a>) : item.name}
-            </td>
-            <td>{item.price}</td>
-            <td>{styleTemp}</td>
-            <td>{notesTemp}</td>
-            {this.renderItemAction(item)}
-          </tr>
+          <div className="wishlist-item">
+            <div className="wishlist-item-top">
+              <div className="wishlist-name">
+                <a href={item.link} target="_blank">{item.name}</a>
+              </div>
+              {this.renderItemAction(item)}
+            </div>
+            <div className="wishlist-price">Price: {item.price}</div>
+            { item.style &&
+              <div className="wishlist-style">Style: {item.style}</div>
+            }
+            { item.notes &&
+              <div className="wishlist-notes">Notes: {item.notes}</div>
+            }
+          </div>
         );
       }
 
       return (
-        <table style={{ width: '100%', border: '5px' }}>
-          <tbody>{items}</tbody>
-        </table>
+        <div className="wishlist">
+          {items}
+        </div>
       );
     }
   }
@@ -354,6 +346,7 @@ class Wishlist extends Component {
     return (
       <div>
         {this.renderTable()}
+        <br/>
 
         {this.props.canEdit && (
           <button
