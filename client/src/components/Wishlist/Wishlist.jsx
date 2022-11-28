@@ -62,7 +62,7 @@ class Wishlist extends Component {
       return false;
     }
 
-    if (!this.state.input.link.startsWith('http') || !this.state.input.link.startsWith('https')) {
+    if (this.state.input.link && (!this.state.input.link.startsWith('http') || !this.state.input.link.startsWith('https'))) {
       this.setState({ errorMsg: 'Link must start with http or https.' });
       return false;
     }
@@ -181,7 +181,7 @@ class Wishlist extends Component {
           <div className="wishlist-item">
             <div className="wishlist-item-top">
               <div className="wishlist-name">
-                <a href={item.link} target="_blank">{item.name}</a>
+                {linkTemp ? <a href={item.link} target="_blank">{item.name}</a> : item.name}
               </div>
               {this.renderItemAction(item)}
             </div>
