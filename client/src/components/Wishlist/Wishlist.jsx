@@ -62,10 +62,13 @@ class Wishlist extends Component {
       return false;
     }
 
-    if (this.state.input.link && (!this.state.input.link.startsWith('http') || !this.state.input.link.startsWith('https'))) {
-      this.setState({ errorMsg: 'Link must start with http or https.' });
+    try {
+      new URL(this.state.input.link);
+    } catch (_) {
+      this.setState({ errorMsg: 'Invaild link.' });
       return false;
     }
+
     return true;
   }
 
