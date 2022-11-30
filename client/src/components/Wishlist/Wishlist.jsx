@@ -176,9 +176,9 @@ class Wishlist extends Component {
         const styleTemp = item.style ? item.style : 'N/A';
         const notesTemp = item.notes ? item.notes : 'N/A';
         let linkTemp;
-        if (item.link.startsWith('http://') || item.link.startsWith('https://')) {
-          linkTemp = item.link;
-        }
+        try {
+          linkTemp = new URL(item.link);
+        } catch (_) {}
 
         items.push(
           <div className="wishlist-item">
