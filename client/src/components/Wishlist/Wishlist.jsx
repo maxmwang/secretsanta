@@ -287,15 +287,6 @@ class Wishlist extends Component {
           <p>
             <input
               type="text"
-              placeholder="Enter the item's name"
-              value={this.state.input.name}
-              onChange={e => this.modifyInput('name', e.target.value)}
-              required
-            />
-            <br />
-
-            <input
-              type="text"
               placeholder="Enter the item's price"
               value={this.state.input.price}
               onChange={e => this.modifyInput('price', e.target.value)}
