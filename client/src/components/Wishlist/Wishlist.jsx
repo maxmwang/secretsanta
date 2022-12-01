@@ -200,6 +200,7 @@ class Wishlist extends Component {
           <TextField
             label="Name"
             variant="outlined"
+            size="small"
             value={this.state.input.name}
             onChange={e => this.modifyInput('name', e.target.value)}
             required
@@ -208,6 +209,7 @@ class Wishlist extends Component {
             label="Price"
             type="number"
             variant="outlined"
+            size="small"
             value={this.state.input.price}
             onChange={e => this.modifyInput('price', e.target.value)}
             required
@@ -215,18 +217,21 @@ class Wishlist extends Component {
           <TextField
             label="Link"
             variant="outlined"
+            size="small"
             value={this.state.input.link}
             onChange={e => this.modifyInput('link', e.target.value)}
           />
           <TextField
             label="Style"
             variant="outlined"
+            size="small"
             value={this.state.input.style}
             onChange={e => this.modifyInput('style', e.target.value)}
           />
           <TextField
             label="Notes"
             variant="outlined"
+            size="small"
             value={this.state.input.notes}
             onChange={e => this.modifyInput('notes', e.target.value)}
           />
@@ -258,6 +263,7 @@ class Wishlist extends Component {
             label="Price"
             type="number"
             variant="outlined"
+            size="small"
             value={this.state.input.price}
             onChange={e => this.modifyInput('price', e.target.value)}
             required
@@ -265,18 +271,21 @@ class Wishlist extends Component {
           <TextField
             label="Link"
             variant="outlined"
+            size="small"
             value={this.state.input.link}
             onChange={e => this.modifyInput('link', e.target.value)}
           />
           <TextField
             label="Style"
             variant="outlined"
+            size="small"
             value={this.state.input.style}
             onChange={e => this.modifyInput('style', e.target.value)}
           />
           <TextField
             label="Notes"
             variant="outlined"
+            size="small"
             value={this.state.input.notes}
             onChange={e => this.modifyInput('notes', e.target.value)}
           />

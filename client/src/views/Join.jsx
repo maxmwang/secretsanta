@@ -54,6 +54,7 @@ class Join extends Component {
             fullWidth
             label="Room Code"
             variant="outlined"
+            size="small"
             value={this.state.roomCode} 
             onChange={ e => this.setState({ roomCode: e.target.value.toLowerCase() }) }
           />
@@ -64,6 +65,7 @@ class Join extends Component {
             label="Name"
             type="name"
             variant="outlined"
+            size="small"
             value={this.state.name} 
             onChange={ e => this.setState({ name: e.target.value }) }
           />
@@ -74,6 +76,7 @@ class Join extends Component {
             label="Password"
             type="password"
             variant="outlined"
+            size="small"
             value={this.state.password}
             onChange={ e => this.setState({ password: e.target.value })}
           />
