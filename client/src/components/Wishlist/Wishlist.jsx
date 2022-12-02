@@ -51,17 +51,30 @@ class Wishlist extends Component {
     this.setState({ input: inputCopy });
   }
 
-  addItemToWishlist() {
+  verifyInput() {
     let missingInput;
     if (!this.state.input.name) {
       missingInput = 'Name';
     } else if (!this.state.input.price) {
       missingInput = 'Price';
-    } else if (!this.state.input.link) {
-      missingInput = 'Link';
     }
     if (missingInput) {
       this.setState({ errorMsg: `${missingInput} is required.` });
+      return false;
+    }
+
+    try {
+      new URL(this.state.input.link);
+    } catch (_) {
+      this.setState({ errorMsg: 'Invaild link.' });
+      return false;
+    }
+
+    return true;
+  }
+
+  addItemToWishlist() {
+    if (!this.verifyInput()) {
       return;
     }
 
@@ -84,6 +97,10 @@ class Wishlist extends Component {
   }
 
   editItem() {
+    if (!this.verifyInput()) {
+      return;
+    }
+
     this.props.socket.emit('editItem', { item: new Item(
       this.state.editItemId,
       this.state.input.name,
@@ -159,12 +176,16 @@ class Wishlist extends Component {
       for (let item of this.props.items) {
         const styleTemp = item.style ? item.style : 'N/A';
         const notesTemp = item.notes ? item.notes : 'N/A';
+        let linkTemp;
+        try {
+          linkTemp = new URL(item.link);
+        } catch (_) {}
 
         items.push(
           <div className="wishlist-item">
             <div className="wishlist-item-top">
               <div className="wishlist-name">
-                <a href={item.link} target="_blank">{item.name}</a>
+                {linkTemp ? <a href={item.link} target="_blank">{item.name}</a> : item.name}
               </div>
               {this.renderItemAction(item)}
             </div>
