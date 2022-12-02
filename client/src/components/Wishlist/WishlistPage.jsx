@@ -7,6 +7,7 @@ import Name from 'components/Name';
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import RefreshIcon from '@material-ui/icons/Refresh';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 class WishlistPage extends Component {
   constructor(props) {
@@ -17,6 +18,7 @@ class WishlistPage extends Component {
       items: [],
       target: false,
       self: true,
+      loading: true,
     };
   }
 
@@ -43,11 +45,15 @@ class WishlistPage extends Component {
         items,
         target,
         self,
+        loading: false,
       });
     });
   }
 
   refreshWishlist() {
+    this.setState({
+      loading: true,
+    });
     this.props.socket.emit('getWishlist', { target: this.props.participants[this.state.index].name });
   }
 
@@ -64,18 +70,18 @@ class WishlistPage extends Component {
     return (
       <div>
         <div className="row">
-          <div className="col-3">
+          <div className="col-2">
             <ChevronLeftIcon
               style={{cursor: 'pointer'}}
               onClick={ () => this.move(-1) } />
           </div>
-          <div className="col-6">
+          <div className="col-8">
             <p>
               Wishlist for <Name participant={this.props.participants[this.state.index]}/>
               <RefreshIcon fontSize="small" style={{cursor: 'pointer'}} onClick={ () => this.refreshWishlist() }/>
             </p>
           </div>
-          <div className="col-3">
+          <div className="col-2">
             <ChevronRightIcon
               style={{cursor: 'pointer'}}
               onClick={() => this.move(1)} />
@@ -83,6 +89,9 @@ class WishlistPage extends Component {
         </div>
         <br />
 
+        {this.state.loading &&
+          <CircularProgress/>
+        }
         <Wishlist
           name={this.props.name}
           target={this.props.participants[this.state.index].name}

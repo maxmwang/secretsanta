@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 
 import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
 import CloseIcon from '@material-ui/icons/Close';
 import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
@@ -188,7 +189,7 @@ class Wishlist extends Component {
               </div>
               {this.renderItemAction(item)}
             </div>
-            <div className="wishlist-price">Price: {item.price}</div>
+            <div className="wishlist-price">{item.price.startsWith('$') ? '' : '$'}{item.price}</div>
             { item.style &&
               <div className="wishlist-style">Style: {item.style}</div>
             }
@@ -213,55 +214,48 @@ class Wishlist extends Component {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         open={this.state.modalOpen === 'add'}
-        close={() => this.clearInput()}
+        onClose={() => this.clearInput()}
       >
-        <div>
-          <h2>Add Item</h2>
-
-          <p>
-            <input
-              type="text"
-              placeholder="Enter the item's name"
-              value={this.state.input.name}
-              onChange={e => this.modifyInput('name', e.target.value)}
-              required
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Enter the item's price"
-              value={this.state.input.price}
-              onChange={e => this.modifyInput('price', e.target.value)}
-              required
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Enter the item's link (optional)"
-              value={this.state.input.link}
-              onChange={e => this.modifyInput('link', e.target.value)}
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Style (optional)"
-              value={this.state.input.style}
-              onChange={e => this.modifyInput('style', e.target.value)}
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Notes (optional)"
-              value={this.state.input.notes}
-              onChange={e => this.modifyInput('notes', e.target.value)}
-            />
-            <br />
-          </p>
-
+        <div className="add-item-modal">
+          <h4 className="modal-title">Add Item</h4>
+          <TextField
+            label="Name"
+            variant="outlined"
+            size="small"
+            value={this.state.input.name}
+            onChange={e => this.modifyInput('name', e.target.value)}
+            required
+          />
+          <TextField
+            label="Price"
+            type="number"
+            variant="outlined"
+            size="small"
+            value={this.state.input.price}
+            onChange={e => this.modifyInput('price', e.target.value)}
+            required
+          />
+          <TextField
+            label="Link"
+            variant="outlined"
+            size="small"
+            value={this.state.input.link}
+            onChange={e => this.modifyInput('link', e.target.value)}
+          />
+          <TextField
+            label="Style"
+            variant="outlined"
+            size="small"
+            value={this.state.input.style}
+            onChange={e => this.modifyInput('style', e.target.value)}
+          />
+          <TextField
+            label="Notes"
+            variant="outlined"
+            size="small"
+            value={this.state.input.notes}
+            onChange={e => this.modifyInput('notes', e.target.value)}
+          />
           <button
             type="button"
             className="btn btn-light"
@@ -282,46 +276,40 @@ class Wishlist extends Component {
         aria-labelledby="simple-modal-title"
         aria-describedby="simple-modal-description"
         open={this.state.modalOpen === 'edit'}
-        close={() => this.clearInput()}
+        onClose={() => this.clearInput()}
       >
-        <div>
-          <h2>Edit Item</h2>
-
-          <p>
-            <input
-              type="text"
-              placeholder="Enter the item's price"
-              value={this.state.input.price}
-              onChange={e => this.modifyInput('price', e.target.value)}
-              required
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Enter the item's link (optional)"
-              value={this.state.input.link}
-              onChange={e => this.modifyInput('link', e.target.value)}
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Style (optional)"
-              value={this.state.input.style}
-              onChange={e => this.modifyInput('style', e.target.value)}
-            />
-            <br />
-
-            <input
-              type="text"
-              placeholder="Notes (optional)"
-              value={this.state.input.notes}
-              onChange={e => this.modifyInput('notes', e.target.value)}
-            />
-            <br />
-          </p>
-
+        <div className="edit-item-modal">
+          <h4 className="modal-title">Edit Item</h4>
+          <TextField
+            label="Price"
+            type="number"
+            variant="outlined"
+            size="small"
+            value={this.state.input.price}
+            onChange={e => this.modifyInput('price', e.target.value)}
+            required
+          />
+          <TextField
+            label="Link"
+            variant="outlined"
+            size="small"
+            value={this.state.input.link}
+            onChange={e => this.modifyInput('link', e.target.value)}
+          />
+          <TextField
+            label="Style"
+            variant="outlined"
+            size="small"
+            value={this.state.input.style}
+            onChange={e => this.modifyInput('style', e.target.value)}
+          />
+          <TextField
+            label="Notes"
+            variant="outlined"
+            size="small"
+            value={this.state.input.notes}
+            onChange={e => this.modifyInput('notes', e.target.value)}
+          />
           <button
             type="button"
             className="btn btn-light"
@@ -340,16 +328,18 @@ class Wishlist extends Component {
     return (
       <div>
         {this.renderTable()}
-        <br/>
 
         {this.props.canEdit && (
-          <button
-            type="button"
-            className="btn btn-light"
-            onClick={() => this.setState({ modalOpen: 'add' })}
-          >
-            Add Item
-          </button>
+          <>
+            <br/>
+            <button
+              type="button"
+              className="btn btn-light"
+              onClick={() => this.setState({ modalOpen: 'add' })}
+            >
+              Add Item
+            </button>
+          </>
         )}
 
         {this.renderAddModal()}

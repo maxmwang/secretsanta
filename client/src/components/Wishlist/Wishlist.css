@@ -8,8 +8,7 @@
 
 .wishlist-item {
     border-bottom: 1px #ccc solid;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    padding: 8px;
 }
 
 .wishlist-item-top {
@@ -23,12 +22,14 @@
 }
 
 .wishlist-actions {
+    text-align: right;
     width: 25%;
 }
 
 .wishlist-price {
     text-align: left;
     width: 100%;
+    font-weight: 700;
 }
 
 .wishlist-style {
@@ -39,5 +40,33 @@
 .wishlist-notes {
     text-align: left;
     width: 100%;
+    font-size: 12px;
 }
 
+.add-item-modal,
+.edit-item-modal {
+    background-color: white;
+    position: absolute;
+    width: 80%;
+    max-width: 500px;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    align-content: center;
+    box-shadow: 0 0 12px #333;
+    border-radius: 4px;
+}
+
+.add-item-modal .modal-title,
+.edit-item-modal .modal-title {
+    text-align: center;
+}
+
+.add-item-modal *,
+.edit-item-modal * {
+    margin-bottom: 4px;
+    margin-top: 4px;
+}
