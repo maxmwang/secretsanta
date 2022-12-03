@@ -15,6 +15,7 @@ class Lobby extends Component {
       santas: [],
       message: undefined,
       phase: 'standby',
+      voted: false,
     };
   }
 
@@ -61,14 +62,20 @@ class Lobby extends Component {
     });
   }
 
+  voteToMatch() {
+    this.props.socket.emit('voteMatch', {});
+    this.setState({ voted: true });
+  }
+
   renderHomeButtons() {
     if (this.state.phase === 'standby') {
       return [
         <button
           type="button"
           className="btn btn-light"
-          onClick={() => this.props.socket.emit('voteMatch', {})}>
-          Vote to Match Room
+          onClick={() => this.voteToMatch()}
+          disabled={this.state.voted}>
+          {this.state.voted ? 'Already Voted!' : 'Vote to Match Room'}
         </button>,
         <br/>,
         <br/>,
@@ -130,7 +137,7 @@ class Lobby extends Component {
           <br/>
 
           {views[this.state.view]}
-          
+
           <br/>
           {this.state.message && (
             <div class="alert alert-danger" role="alert">
