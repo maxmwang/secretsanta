@@ -79,8 +79,12 @@ class Lobby extends Component {
         </button>,
         <br/>,
         <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
-          Exit Room
+        <button
+          type="button"
+          className="btn btn-light"
+          onClick={ () => this.props.exitRoom() }
+          disabled={this.state.voted}>
+          {this.state.voted ? 'Cannot exit after voting' : 'Exit Room'}
         </button>
       ]
     } else if (this.state.phase === 'matched') {
