@@ -83,6 +83,16 @@ class Room {
     });
   }
 
+  async hasVoted(participant, voteName = "matchVotes") {
+    let voted = false;
+    await this.ref.child(voteName).once("value", s => {
+      let votes = s.val();
+      voted = votes === null ? false : Object.values(votes).includes(participant.name);
+    });
+
+    return voted;
+  }
+
   match() {
     const santas = match(this.participants.map(p => p.name), N_SANTAS);
     this.participants.forEach(p => {
@@ -92,7 +102,7 @@ class Room {
   }
 
   voteMatch(participant) {
-    this.vote(participant, "matchVotes", 
+    this.vote(participant, "matchVotes",
       () => {
         this.match();
         this.phase = MATCHED;
