@@ -58,7 +58,7 @@ class Lobby extends Component {
 
     this.props.socket.off('message');
     this.props.socket.on('message', data => {
-      this.setState({ message: data.message });
+      this.setState({ message: data.message, voted: false });
     });
   }
 
