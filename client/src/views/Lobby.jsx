@@ -69,43 +69,51 @@ class Lobby extends Component {
 
   renderHomeButtons() {
     if (this.state.phase === 'standby') {
-      return [
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.voteToMatch()}
-          disabled={this.state.voted}>
-          {this.state.voted ? 'Already Voted!' : 'Vote to Match Room'}
-        </button>,
-        <br/>,
-        <br/>,
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={ () => this.props.exitRoom() }
-          disabled={this.state.voted}>
-          {this.state.voted ? 'Cannot exit after voting' : 'Exit Room'}
-        </button>
-      ]
+      return (
+          <>
+            <button
+              type="button"
+              className="btn btn-light"
+              onClick={() => this.voteToMatch()}
+              disabled={this.state.voted}>
+              {this.state.voted ? 'Already Voted!' : 'Vote to Match Room'}
+            </button>
+            {!this.state.voted && (
+              <>
+                <br/>
+                <br/>
+                <button
+                  type="button"
+                  className="btn btn-light"
+                  onClick={ () => this.props.exitRoom() }
+                  >
+                  Exit Room
+                </button>
+              </>
+            )}
+          </>
+        );
     } else if (this.state.phase === 'matched') {
-      return [
-      <div>
-          <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+      return (
+        <>
+          <div>
+            <h6>You are Secret Santa for:</h6>
+            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+            <br/>
+          </div>
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.setState({ view: 'wishlist' })}>
+            Wishlists
+          </button>
           <br/>
-        </div>,
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.setState({ view: 'wishlist' })}>
-          Wishlists
-        </button>,
-        <br/>,
-        <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
-          Vote to Close Room
-        </button>
-      ]
+          <br/>
+          <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
+            Vote to Close Room
+          </button>
+        </>
+      );
     }
   }
 
