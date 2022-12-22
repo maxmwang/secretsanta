@@ -146,12 +146,12 @@ app.io.on('connect', function (socket) {
     room.voteClose(participant);
   });
 
-  socket.on('disconnect', data => {
+  socket.on('disconnect', async data => {
     if (room !== undefined && room.exists(name)) {
-      if (room.phase !== 'standby') {
-        room.deactivate(name);
-      } else {
+      if (!(await room.hasVoted(participant))) {
         room.removeParticipant(name);
+      } else {
+        room.deactivate(name);
       }
     }
   });
