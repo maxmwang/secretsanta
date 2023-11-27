@@ -106,6 +106,20 @@ app.io.on('connect', function (socket) {
     socket.emit('phase', { phase: room.phase });
   });
 
+  socket.on('addRestriction', data => {
+    if (room.phase === 'standby') {
+      const { target } = data;
+      room.addRestriction(participant, target);
+    }
+  });
+
+  socket.on('removeRestriction', data => {
+    if (room.phase === 'standby') {
+      const { name, target } = data;
+      room.removeRestriction(name, target);
+    }
+  });
+
   socket.on('voteMatch', data => {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
