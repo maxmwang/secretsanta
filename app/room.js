@@ -3,7 +3,6 @@ const _ = require('lodash');
 const Participant = require('./participant');
 const { match } = require('./match');
 
-const N_SANTAS = 2;
 const STANDBY = 'standby';
 const MATCHED = 'matched';
 
@@ -17,6 +16,7 @@ class Room {
     this.onClose = onClose;
     this.phase = STANDBY;
     this.restrictions = {};
+    this.n_santas = 1;
   }
 
   addParticipant(name, socket) {
@@ -73,7 +73,7 @@ class Room {
     }
     if (!this.restrictions[participant.name].includes(target)) {
       this.restrictions[participant.name].push(target);
-      this.notifyRestrictionsUpdate();
+      this.notifyOptions();
     }
   }
 
@@ -81,8 +81,13 @@ class Room {
     if (name in this.restrictions && this.restrictions[name].includes(target)) {
       const index = this.restrictions[name].indexOf(target);
       this.restrictions[name].splice(index, 1);
-      this.notifyRestrictionsUpdate();
+      this.notifyOptions();
     }
+  }
+
+  setSantas(n_santas) {
+    this.n_santas = n_santas;
+    this.notifyOptions();
   }
 
   vote(participant, voteName, onVoteEnd, dupVoteMessage) {
@@ -105,7 +110,7 @@ class Room {
   match() {
     let santas;
     try {
-      santas = match(this.participants.map(p => p.name), N_SANTAS, this.restrictions);
+      santas = match(this.participants.map(p => p.name), this.n_santas, this.restrictions);
     } catch (e) {
       this.participants.forEach(p => p.send('message', { message: e.message }));
       return false;
@@ -134,8 +139,11 @@ class Room {
     this.vote(participant, "closeVotes", () => this.close(), "You have already voted to close this room");
   }
 
-  notifyRestrictionsUpdate() {
-    this.participants.forEach(p => p.send('restrictions', { restrictions: this.restrictions }));
+  notifyOptions() {
+    this.participants.forEach(p => p.send('options', { options: {
+      restrictions: this.restrictions,
+      n_santas: this.n_santas,
+    }}));
   }
 
   notifyParticipantUpdate() {
