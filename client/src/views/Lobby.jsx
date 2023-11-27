@@ -5,7 +5,7 @@ import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 
 import WishlistPage from 'components/Wishlist/WishlistPage';
-import Restrictions from 'components/Restrictions';
+import Options from 'components/Options';
 
 class Lobby extends Component {
   constructor(props) {
@@ -15,6 +15,7 @@ class Lobby extends Component {
       participants: {},
       santas: [],
       restrictions: {},
+      n_santas: 1,
       message: undefined,
       phase: 'standby',
     };
@@ -62,10 +63,13 @@ class Lobby extends Component {
       this.setState({ message: data.message });
     });
 
-    this.props.socket.off('restrictions');
-    this.props.socket.on('restrictions', data => {
-      console.log(data)
-      this.setState({ restrictions: data.restrictions });
+    this.props.socket.off('options');
+    this.props.socket.on('options', data => {
+      let options = data.options;
+      this.setState({
+        restrictions: options.restrictions,
+        n_santas: options.n_santas,
+      });
     });
   }
 
@@ -73,9 +77,11 @@ class Lobby extends Component {
     if (this.state.phase === 'standby') {
       return (
         <>
-          <Restrictions
-            restrictions={this.state.restrictions}
+          <Options
             participants={this.state.participants}
+            nSantas={this.state.n_santas}
+            restrictions={this.state.restrictions}
+            setSantas={(n) => this.props.socket.emit("setSantas", { n_santas: n })}
             removeRestriction={(name, target) => this.props.socket.emit("removeRestriction", { name, target })}
           />
           <button

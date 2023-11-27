@@ -120,6 +120,13 @@ app.io.on('connect', function (socket) {
     }
   });
 
+  socket.on('setSantas', data => {
+    if (room.phase === 'standby') {
+      const { n_santas } = data;
+      room.setSantas(n_santas);
+    }
+  });
+
   socket.on('voteMatch', data => {
     if (room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});

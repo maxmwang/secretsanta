@@ -6,7 +6,13 @@ import {ReactComponent as Remove} from '../../svgs/remove.svg';
 
 import Name from '../Name';
 
-class Restrictions extends Component {
+const santaOptions = [
+  { value: 1, display: "1 santa"},
+  { value: 2, display: "2 santas"},
+  { value: 3, display: "3 santas"},
+];
+
+class Options extends Component {
   constructor(props) {
     super(props);
   }
@@ -14,7 +20,16 @@ class Restrictions extends Component {
   render() {
     return (
       <>
-        <h6>Restrictions</h6>
+        <h6>Room Options</h6>
+
+        <p>Number of Santas</p>
+        <select className="form-control" value={this.props.nSantas} onChange={ e => this.props.setSantas(e.target.value) }>
+          {santaOptions.map(option => (
+            <option key={option.value} value={option.value}>{option.display}</option>
+          ))}
+        </select>
+
+        <p>Restrictions</p>
         {Object.keys(this.props.restrictions).map(name => (
           <div>
             {this.props.restrictions[name].map(target => (
@@ -34,4 +49,4 @@ class Restrictions extends Component {
   }
 }
 
-export default Restrictions;
+export default Options;
