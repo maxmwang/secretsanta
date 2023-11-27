@@ -16,6 +16,7 @@ class Room {
     this.participants = participants;
     this.onClose = onClose;
     this.phase = STANDBY;
+    this.restrictions = {};
   }
 
   addParticipant(name, socket) {
@@ -66,6 +67,24 @@ class Room {
     return { participants: this.participants.map(p => p.json()) };
   }
 
+  addRestriction(participant, target) {
+    if (!(participant.name in this.restrictions)) {
+      this.restrictions[participant.name] = [];
+    }
+    if (!this.restrictions[participant.name].includes(target)) {
+      this.restrictions[participant.name].push(target);
+      this.notifyRestrictionsUpdate();
+    }
+  }
+
+  removeRestriction(name, target) {
+    if (name in this.restrictions && this.restrictions[name].includes(target)) {
+      const index = this.restrictions[name].indexOf(target);
+      this.restrictions[name].splice(index, 1);
+      this.notifyRestrictionsUpdate();
+    }
+  }
+
   vote(participant, voteName, onVoteEnd, dupVoteMessage) {
     this.ref.child(voteName).once("value", s => {
       let votes = s.val();
@@ -84,17 +103,27 @@ class Room {
   }
 
   match() {
-    const santas = match(this.participants.map(p => p.name), N_SANTAS);
+    let santas;
+    try {
+      santas = match(this.participants.map(p => p.name), N_SANTAS, this.restrictions);
+    } catch (e) {
+      this.participants.forEach(p => p.send('message', { message: e.message }));
+      return false;
+    }
+
     this.participants.forEach(p => {
       p.send('santas', {'santas': santas[p.name]});
       p.ref.child("targets").set(santas[p.name]);
     });
+    return true;
   }
 
   voteMatch(participant) {
     this.vote(participant, "matchVotes", 
       () => {
-        this.match();
+        if (!this.match()) {
+          return;
+        }
         this.phase = MATCHED;
         this.ref.child('phase').set(this.phase);
         this.notifyPhaseChange();
@@ -103,6 +132,10 @@ class Room {
 
   voteClose(participant) {
     this.vote(participant, "closeVotes", () => this.close(), "You have already voted to close this room");
+  }
+
+  notifyRestrictionsUpdate() {
+    this.participants.forEach(p => p.send('restrictions', { restrictions: this.restrictions }));
   }
 
   notifyParticipantUpdate() {
