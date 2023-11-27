@@ -5,6 +5,35 @@ function randchoice(list) {
   return list[Math.floor(Math.random() * n)];
 }
 
+function singlematch_helper(names, restrictions, curr, assigned, santas) {
+  if (assigned.length === names.length) {
+    return santas;
+  }
+
+  var available_targets = names;
+  available_targets = _.filter(available_targets, n => n != curr); // remove self
+  available_targets = _.filter(available_targets, n => !assigned.includes(n)); // remove already assigned in this iteration
+  available_targets = _.filter(available_targets, n => !restrictions[curr]?.includes(n)) // remove restrictions
+  if (available_targets.length === 0) {
+    return undefined;
+  }
+
+  var shuffled = _.shuffle(available_targets);
+  for (let target of shuffled) {
+    let next = target;
+    const visited = [...Object.keys(santas), curr];
+    if (visited.includes(target)) {
+      next = randchoice(_.filter(names, n => !visited.includes(n)));
+    }
+    const result = singlematch_helper(names, restrictions, next, [...assigned, target], {...santas, [curr]: target});
+    if (result !== undefined) {
+      return result;
+    }
+  }
+
+  return undefined;
+}
+
 /**
 names: an array of participants. e.g. ['a', 'b', 'c']
 restrictions: a map from particpant to a list of participants
@@ -14,42 +43,8 @@ return value: a map from santa to recipient
 e.g. {a: b, b: c, c: a}
 **/
 function singlematch(names, restrictions) {
-  var n = names.length;
-
-  var santas = {};
-  names.forEach(n => { santas[n] = undefined; });
-
   var curr = randchoice(names);
-  var assigned = [];
-  var visited = [];
-
-  while (visited.length < n) {
-    visited.push(curr);
-    var available_targets = names;
-    available_targets = _.filter(available_targets, n => n != curr); // remove self
-    available_targets = _.filter(available_targets, n => !assigned.includes(n)); // remove already assigned in this iteration
-    available_targets = _.filter(available_targets, n => !restrictions[curr]?.includes(n)) // remove restrictions
-    if (available_targets == 0) {
-      throw new Error(`too many restrictions placed on ${curr}`)
-    }
-
-    var target;
-    if (available_targets.length == 2) { // need to pick right one to avoid leaving odd one out
-      target = santas[available_targets[0]] == undefined ? available_targets[0] : available_targets[1];
-    } else {
-      target = randchoice(available_targets);
-    }
-    santas[curr] = target;
-    assigned.push(target);
-
-    if (visited.includes(target)) {
-      curr = randchoice(_.filter(names, n => !visited.includes(n)));
-    } else {
-      curr = target;
-    }
-  }
-
-  return santas
+  return singlematch_helper(names, restrictions, curr, [], {});
 }
 
 /**

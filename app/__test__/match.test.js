@@ -29,4 +29,15 @@ describe('match test', () => {
     expect(santas['c'].length).toEqual(1);
     expect(santas['c'][0]).toEqual('a');
   });
+
+  test('5 people, double santas, two restrictions', () => {
+    const names = ['y', 'g', 'a', 'b', 'm'];
+    const n_santas = 2;
+    const restrictions = {'y': ['g'], 'g': ['y']};
+    const santas = match(names, n_santas, restrictions);
+
+    for (let santa in santas) {
+      expect(santas[santa].length).toEqual(2);
+    }
+  });
 });

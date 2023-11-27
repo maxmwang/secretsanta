@@ -16,7 +16,7 @@ class Restrictions extends Component {
       <>
         <h6>Restrictions</h6>
         {Object.keys(this.props.restrictions).map(name => (
-          <>
+          <div>
             {this.props.restrictions[name].map(target => (
               <>
                 <Name participant={this.props.participants[name]}/>
@@ -26,7 +26,7 @@ class Restrictions extends Component {
                 <Remove style={{cursor: 'pointer'}} onClick={() => this.props.removeRestriction(name, target)}/>
               </>
             ))}
-          </>
+          </div>
         ))}
         <br />
       </>
