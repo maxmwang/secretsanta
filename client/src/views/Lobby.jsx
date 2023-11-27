@@ -5,6 +5,7 @@ import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 
 import WishlistPage from 'components/Wishlist/WishlistPage';
+import Restrictions from 'components/Restrictions';
 
 class Lobby extends Component {
   constructor(props) {
@@ -13,6 +14,7 @@ class Lobby extends Component {
       view: 'home',
       participants: {},
       santas: [],
+      restrictions: {},
       message: undefined,
       phase: 'standby',
     };
@@ -59,42 +61,56 @@ class Lobby extends Component {
     this.props.socket.on('message', data => {
       this.setState({ message: data.message });
     });
+
+    this.props.socket.off('restrictions');
+    this.props.socket.on('restrictions', data => {
+      console.log(data)
+      this.setState({ restrictions: data.restrictions });
+    });
   }
 
   renderHomeButtons() {
     if (this.state.phase === 'standby') {
-      return [
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.props.socket.emit('voteMatch', {})}>
-          Vote to Match Room
-        </button>,
-        <br/>,
-        <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
-          Exit Room
-        </button>
-      ]
-    } else if (this.state.phase === 'matched') {
-      return [
-      <div>
-          <h6>You are Secret Santa for:</h6>
-          <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+      return (
+        <>
+          <Restrictions
+            restrictions={this.state.restrictions}
+            participants={this.state.participants}
+            removeRestriction={(name, target) => this.props.socket.emit("removeRestriction", { name, target })}
+          />
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.props.socket.emit('voteMatch', {})}>
+            Vote to Match Room
+          </button>
           <br/>
-        </div>,
-        <button
-          type="button"
-          className="btn btn-light"
-          onClick={() => this.setState({ view: 'wishlist' })}>
-          Wishlists
-        </button>,
-        <br/>,
-        <br/>,
-        <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
-          Vote to Close Room
-        </button>
-      ]
+          <br/>
+          <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
+            Exit Room
+          </button>
+        </>
+      );
+    } else if (this.state.phase === 'matched') {
+      return (<>
+        <div>
+            <h6>You are Secret Santa for:</h6>
+            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+            <br/>
+          </div>
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.setState({ view: 'wishlist' })}>
+            Wishlists
+          </button>
+          <br/>
+          <br/>
+          <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
+            Vote to Close Room
+          </button>
+        </>
+      );
     }
   }
 
@@ -103,7 +119,14 @@ class Lobby extends Component {
       home: (
         <div>
           <h6>Participants</h6>
-          <ParticipantList participants={Object.values(this.state.participants)} />
+          <ParticipantList
+            participants={Object.values(this.state.participants)}
+            onClick={p => {
+              if (this.state.phase === 'standby' && !p.self) {
+                this.props.socket.emit('addRestriction', { target: p.name })
+              }
+            }}
+          />
 
           <br/>
 

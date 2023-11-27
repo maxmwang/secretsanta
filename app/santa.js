@@ -7,8 +7,8 @@ class Santa {
   constructor(db) {
     this.rooms = {};
     this.db = db;
-    this.roomsRef = db.ref("rooms");
-    this.passwordsRef = db.ref("passwords")
+    this.roomsRef = db.ref("rooms-test");
+    this.passwordsRef = db.ref("passwords-test")
 
     this.loadRooms();
   }
@@ -19,7 +19,6 @@ class Santa {
       if (rooms != undefined) {
         Object.keys(rooms).forEach(code => {
           const roomRef = this.roomsRef.child(code);
-
           const jsonParticipants = Object.keys(rooms[code]["participants"]);
           const participants = jsonParticipants.map(p => new Participant(p, roomRef.child("participants").child(p), undefined));
           participants.forEach(p => p.active = false);

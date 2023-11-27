@@ -1,6 +1,10 @@
 import React, { Component } from 'react';
 
 class Name extends Component {
+  constructor(props) {
+    super(props);
+  }
+
   getBadgeClass() {
     if (!this.props.participant.active) {
       return "badge-light";
@@ -10,19 +14,26 @@ class Name extends Component {
   }
 
   getStyle() {
+    const style = {};
     if (this.props.participant.santa) {
-      return { boxShadow: "0px 0px 4px 2px red" };
+      style['boxShadow'] = "0px 0px 4px 2px red";
     } else if (this.props.participant.self) {
-      return { boxShadow: "0px 0px 4px 2px green" };
+      style['boxShadow'] = "0px 0px 4px 2px green";
     }
-    return {};
+
+    if (this.props.onClick !== undefined) {
+      style['cursor'] = 'pointer';
+    }
+    return style;
   }
 
   render() {
     return (
       <div
         className={`badge m-2 ${this.getBadgeClass()}`}
-        style={this.getStyle()}>
+        style={this.getStyle()}
+        onClick={() => this.props.onClick?.(this.props.participant)}
+      >
         { this.props.participant.name }
       </div>
     );
