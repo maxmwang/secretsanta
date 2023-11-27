@@ -7,8 +7,8 @@ class Santa {
   constructor(db) {
     this.rooms = {};
     this.db = db;
-    this.roomsRef = db.ref("rooms-test");
-    this.passwordsRef = db.ref("passwords-test")
+    this.roomsRef = db.ref("rooms");
+    this.passwordsRef = db.ref("passwords")
 
     this.loadRooms();
   }
