@@ -16,8 +16,9 @@ class Lobby extends Component {
       santas: [],
       restrictions: {},
       n_santas: 1,
-      message: undefined,
       phase: 'standby',
+      error: undefined,
+      success: undefined,
     };
   }
 
@@ -29,7 +30,7 @@ class Lobby extends Component {
 
     this.props.socket.off('phase');
     this.props.socket.on('phase', data => {
-      this.setState({ phase: data.phase, message: undefined });
+      this.setState({ phase: data.phase, error: undefined });
     });
 
     this.props.socket.off('participants');
@@ -60,7 +61,7 @@ class Lobby extends Component {
 
     this.props.socket.off('message');
     this.props.socket.on('message', data => {
-      this.setState({ message: data.message });
+      this.setState({ error: data.message });
     });
 
     this.props.socket.off('options');
@@ -155,15 +156,23 @@ class Lobby extends Component {
     return (
       <div>
           <p>Lobby</p>
-          <RoomCode roomCode={this.props.roomCode} />
+          <RoomCode
+            roomCode={this.props.roomCode}
+            copySuccess={() => this.setState({ success: 'Link successfully copied' })}
+          />
           <br/>
 
           {views[this.state.view]}
           
           <br/>
-          {this.state.message && (
+          {this.state.error && (
             <div class="alert alert-danger" role="alert">
-              {this.state.message}
+              {this.state.error}
+            </div>
+          )}
+          {this.state.success && (
+            <div class="alert alert-success" role="alert">
+              {this.state.success}
             </div>
           )}
       </div>

@@ -5,9 +5,21 @@ const style = {
 }
 
 class Code extends Component {
+  copyLink() {
+    const el = document.createElement('textarea');
+    el.value = window.location.href;
+    document.body.appendChild(el);
+    el.select();
+    document.execCommand('copy');
+    document.body.removeChild(el);
+    this.props.copySuccess();
+  };
+
   render() {
     return (
-      <p>Room code: <span className="badge badge-secondary badge-light" style={style}>{this.props.roomCode}</span></p>
+      <p style={{ "cursor": "pointer" }}>Room code:
+        <span onClick={() => this.copyLink()} className="badge badge-secondary badge-light" style={style}>{this.props.roomCode}</span>
+      </p>
     );
   }
 }

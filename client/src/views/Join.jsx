@@ -7,7 +7,7 @@ class Join extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      roomCode: '',
+      roomCode: props.urlCode || '',
       name: '',
       password: '',
       message: undefined,
