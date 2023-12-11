@@ -1,12 +1,12 @@
 const ITEM_MARK_STATE = {
-  HIDDEN: 0,
-  UNMARKED: 1,
-  MARKED: 2,
-  CAN_UNMARK: 3,
+  HIDDEN: 0, // you should not be able to see if items on your list ar emarked
+  UNMARKED: 1, // item is unmarked on someone else's list
+  MARKED: 2, // item is marked on someone else's list by someone else
+  CAN_UNMARK: 3, // item is marked on someone else's list by you
 }
 
 export default class Item {
-  constructor(id, name, price, link, style, notes, mark_state) {
+  constructor(id, name, price, link, style, notes, mark_state, preview_src) {
     this.id = id;
     this.name = name;
     this.price = price;
@@ -14,6 +14,7 @@ export default class Item {
     this.style = style;
     this.notes = notes;
     this.mark_state = mark_state;
+    this.preview_src = preview_src;
   }
 
   markIsHidden() {

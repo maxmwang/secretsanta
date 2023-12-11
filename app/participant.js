@@ -1,4 +1,5 @@
 const c = require('./const');
+const { linkPreview } = require('./link_preview');
 
 class Participant {
   constructor(name, ref, socket) {
@@ -56,6 +57,9 @@ class Participant {
   }
 
   addItem(item) {
+    if (item.link !== undefined && item.link !== '') {
+      item.preview_src = linkPreview(item);
+    }
     this.ref.child('wishlist').push(item);
   }
 
