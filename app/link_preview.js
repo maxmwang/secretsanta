@@ -13,7 +13,11 @@ async function linkPreview(url) {
 
 function httpget(url) {
   const promise = new Promise((resolve, reject) => {
-    https.get(url, (res) => {
+    https.get(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/115.0.0.0 Safari/537.36',
+      }
+    }, (res) => {
       let data = '';
       res.setEncoding('utf8');
 
@@ -25,7 +29,7 @@ function httpget(url) {
           reject(data);
         }
       })
-    }).on('error', resolve(''));
+    }).on('error', () => resolve(''));
   });
   return promise;
 }
