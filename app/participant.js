@@ -58,7 +58,10 @@ class Participant {
 
   async addItem(item) {
     if (item.link !== undefined && item.link !== '') {
-      item.preview_src = await linkPreview(item.link);
+      const previewLink = await linkPreview(item.link);
+      if (previewLink !== undefined) {
+        item.preview_src = previewLink;
+      }
     }
     this.ref.child('wishlist').push(item);
   }
