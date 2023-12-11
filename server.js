@@ -140,8 +140,8 @@ app.io.on('connect', function (socket) {
     room.sendWishlist(participant, target);
   });
 
-  socket.on('addItem', data => {
-    participant.addItem(data.item);
+  socket.on('addItem', async data => {
+    await participant.addItem(data.item);
     participant.emitWishlist();
   });
 
