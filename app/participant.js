@@ -1,5 +1,5 @@
-const linkPreviewGenerator = require("link-preview-generator");
 const c = require('./const');
+const linkPreviewGenerator = require("./link_preview");
 
 class Participant {
   constructor(name, ref, socket) {
