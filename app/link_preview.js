@@ -1,7 +1,7 @@
 const https = require('https');
 const { parse } = require('node-html-parser');
 
-export async function linkPreview(url) {
+async function linkPreview(url) {
   let html = await httpget(url);
   const root = parse(html);
   const ogImage = getOgImage(root);
@@ -33,4 +33,8 @@ function getOgImage(root) {
     return undefined;
   }
   return ogImage.getAttribute('content');
+}
+
+module.exports = {
+  linkPreview: linkPreview,
 }
