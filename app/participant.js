@@ -1,5 +1,5 @@
-const linkPreviewGenerator = require("link-preview-generator");
 const c = require('./const');
+const { linkPreview } = require("./link_preview");
 
 class Participant {
   constructor(name, ref, socket) {
@@ -58,10 +58,7 @@ class Participant {
 
   async addItem(item) {
     if (item.link !== undefined && item.link !== '') {
-      const previewData = await linkPreviewGenerator(
-        "https://www.youtube.com/watch?v=8mqqY2Ji7_g"
-      );
-      item.preview_src = previewData['img'];
+      item.preview_src = await linkPreview(item.link);
     }
     this.ref.child('wishlist').push(item);
   }
