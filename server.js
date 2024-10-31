@@ -177,6 +177,7 @@ app.io.on('connect', function (socket) {
     const other = otherRoom.get(otherParticipant);
     other.withWishlist(async wishlist => {
       for (let item of Object.values(wishlist)) {
+        delete item.marked;
         await participant.addItem(item);
       }
       participant.emitWishlist();
