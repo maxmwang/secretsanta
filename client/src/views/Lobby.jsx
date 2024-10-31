@@ -111,11 +111,6 @@ class Lobby extends Component {
             onClick={() => this.setState({ view: 'wishlist' })}>
             Wishlists
           </button>
-          <br/>
-          <br/>
-          <button type="button" className="btn btn-light" onClick={ () => this.props.socket.emit("voteClose", {}) } >
-            Vote to Close Room
-          </button>
         </>
       );
     }

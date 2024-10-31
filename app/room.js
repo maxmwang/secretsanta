@@ -135,10 +135,6 @@ class Room {
       }, "You have already voted to match this room");
   }
 
-  voteClose(participant) {
-    this.vote(participant, "closeVotes", () => this.close(), "You have already voted to close this room");
-  }
-
   notifyOptions() {
     this.participants.forEach(p => p.send('options', { options: {
       restrictions: this.restrictions,
