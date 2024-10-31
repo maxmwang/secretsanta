@@ -140,8 +140,8 @@ app.io.on('connect', function (socket) {
     room.sendWishlist(participant, target);
   });
 
-  socket.on('addItem', async data => {
-    await participant.addItem(data.item);
+  socket.on('addItem', data => {
+    participant.addItem(data.item);
     participant.emitWishlist();
   });
 
@@ -155,16 +155,40 @@ app.io.on('connect', function (socket) {
     participant.emitWishlist();
   });
 
+  socket.on('importItem', data => {
+    const { roomCode, participant: otherParticipant } = data;
+    if (roomCode === undefined) {
+      socket.emit('message', {message: 'Missing room code'});
+      return
+    }
+    const otherRoom = app.santa.getRoom(roomCode);
+    if (otherRoom === undefined) {
+      socket.emit('message', {message: 'This room code does not exist'});
+      return;
+    }
+    if (otherRoom.code === room.code) {
+      socket.emit('message', {message: 'Other room cannot be the same as current room'});
+      return;
+    }
+    if (otherParticipant === undefined) {
+      socket.emit('importParticipants', {participants: otherRoom.participants.map(p => p.name)});
+      return;
+    }
+    const other = otherRoom.get(otherParticipant);
+    other.withWishlist(async wishlist => {
+      for (let item of Object.values(wishlist)) {
+        await participant.addItem(item);
+      }
+      participant.emitWishlist();
+    });
+  });
+
   socket.on('markItem', data => {
     room.markItem(participant, data.target, data.itemId);
   });
 
   socket.on('unmarkItem', data => {
     room.unmarkItem(participant, data.target, data.itemId);
-  });
-
-  socket.on('voteClose', data => {
-    room.voteClose(participant);
   });
 
   socket.on('disconnect', data => {

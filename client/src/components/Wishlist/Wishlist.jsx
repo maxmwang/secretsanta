@@ -8,6 +8,8 @@ import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import EditIcon from '@material-ui/icons/Edit';
 
 import Item from 'models/item';
+import ParticipantList from 'components/ParticipantList';
+import Participant from 'models/participant';
 
 import './Wishlist.css';
 
@@ -27,7 +29,24 @@ class Wishlist extends Component {
         style: '',
         notes: '',
       },
+      importData: {
+        otherRoomId: '',
+        otherParticipant: '',
+        importedParticipants: null,
+      },
     };
+  }
+
+  componentDidMount() {
+    this.props.socket.on('importParticipants', data => {
+      this.setState((prevState, props) => ({
+        importData: {
+          ...this.state.importData,
+          importedParticipants: data.participants.map(name => new Participant(name, true, false, false)),
+        },
+      }))
+
+    });
   }
 
   clearInput() {
@@ -41,6 +60,11 @@ class Wishlist extends Component {
         link: '',
         style: '',
         notes: '',
+      },
+      importData: {
+        otherRoomId: '',
+        otherParticipant: '',
+        importedParticipants: null,
       },
     });
   }
@@ -60,13 +84,6 @@ class Wishlist extends Component {
     }
     if (missingInput) {
       this.setState({ errorMsg: `${missingInput} is required.` });
-      return false;
-    }
-
-    try {
-      new URL(this.state.input.link);
-    } catch (_) {
-      this.setState({ errorMsg: 'Invaild link.' });
       return false;
     }
 
@@ -213,7 +230,7 @@ class Wishlist extends Component {
         open={this.state.modalOpen === 'add'}
         onClose={() => this.clearInput()}
       >
-        <div className="add-item-modal">
+        <div className="wishlist-modal">
           <h4 className="modal-title">Add Item</h4>
           <TextField
             label="Name"
@@ -275,7 +292,7 @@ class Wishlist extends Component {
         open={this.state.modalOpen === 'edit'}
         onClose={() => this.clearInput()}
       >
-        <div className="edit-item-modal">
+        <div className="wishlist-modal">
           <h4 className="modal-title">Edit Item</h4>
           <TextField
             label="Price"
@@ -321,6 +338,57 @@ class Wishlist extends Component {
     );
   }
 
+  renderImportModal() {
+    console.log('renderImportModal', this.state.importData)
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.modalOpen === 'import'}
+        onClose={() => this.clearInput()}
+      >
+        <div className="wishlist-modal">
+          <h4 className="modal-title">Import wishlist</h4>
+
+          {this.state.importData.importedParticipants == null &&
+            <>
+              <TextField
+                label="Other Room ID"
+                variant="outlined"
+                size="small"
+                value={this.state.importData.otherRoomId}
+                onChange={e => this.setState({ importData: {...this.state.importData, otherRoomId: e.target.value} })}
+                required
+              />
+              <button
+                type="button"
+                className="btn btn-light"
+                onClick={() => this.props.socket.emit('importItem', { roomCode: this.state.importData.otherRoomId })}
+              >
+                Import
+              </button>
+            </>
+          }
+          {this.state.importData.importedParticipants != null &&
+            <>
+              <p>Importing from <span className="badge badge-secondary badge-light">{this.state.importData.otherRoomId}</span></p>
+              <p>Select participant to import wishlist from</p>
+              <ParticipantList
+                participants={this.state.importData.importedParticipants}
+                onClick={p => {
+                  this.props.socket.emit('importItem', { roomCode: this.state.importData.otherRoomId, participant: p.name });
+                  this.clearInput();
+                }}
+              />
+            </>
+          }
+
+          {this.state.errorMsg && <div>{this.state.errorMsg}</div>}
+        </div>
+      </Modal>
+    );
+  }
+
   render() {
     return (
       <div>
@@ -336,11 +404,22 @@ class Wishlist extends Component {
             >
               Add Item
             </button>
+
+            <br/>
+            <br/>
+            <button
+              type="button"
+              className="btn btn-light"
+              onClick={() => this.setState({ modalOpen: 'import' })}
+            >
+              Import previous wishlist
+            </button>
           </>
         )}
 
         {this.renderAddModal()}
         {this.renderEditModal()}
+        {this.renderImportModal()}
       </div>
     );
   }

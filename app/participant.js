@@ -30,6 +30,13 @@ class Participant {
     });
   }
 
+  withWishlist(fn) {
+    this.ref.child('wishlist').once('value', s => {
+      let wishlist = s.val() === null ? {} : s.val();
+      fn(wishlist);
+    });
+  }
+
   emitWishlist() {
     this.ref.child('wishlist').once('value', s => {
       let wishlist = s.val() === null ? {} : s.val();
@@ -57,12 +64,12 @@ class Participant {
   }
 
   async addItem(item) {
-    if (item.link !== undefined && item.link !== '') {
-      const previewLink = await linkPreview(item.link);
-      if (previewLink !== undefined) {
-        item.preview_src = previewLink;
-      }
-    }
+    // if (item.link !== undefined && item.link !== '') {
+    //   const previewLink = await linkPreview(item.link);
+    //   if (previewLink !== undefined) {
+    //     item.preview_src = previewLink;
+    //   }
+    // }
     this.ref.child('wishlist').push(item);
   }
 
