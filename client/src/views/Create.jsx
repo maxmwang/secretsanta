@@ -14,7 +14,8 @@ class Create extends Component {
   }
 
   async createGame() {
-    checkName(this.state.name).then(res => {
+    const cleanedName = this.state.name.toLowerCase().replaceAll(' ', '');
+    checkName(cleanedName).then(res => {
       if (!res.valid) {
         this.setState({ message: res.message });
         return;
@@ -22,13 +23,13 @@ class Create extends Component {
 
       createRoom().then(res => {
         const { roomCode } = res;
-        attemptJoin(roomCode, this.state.name, this.state.password).then(res => {
+        attemptJoin(roomCode, cleanedName, this.state.password).then(res => {
           if (!res.valid) {
             this.setState({ message: res.message });
             return;
           }
 
-          this.props.create(roomCode, this.state.name);
+          this.props.create(roomCode, cleanedName);
         });
       });
     });

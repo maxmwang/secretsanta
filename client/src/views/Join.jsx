@@ -21,19 +21,20 @@ class Join extends Component {
         return;
       }
 
-      checkName(this.state.name).then(res => {
+      const cleanedName = this.state.name.toLowerCase().replaceAll(' ', '');
+      checkName(cleanedName).then(res => {
         if (!res.valid) {
           this.setState({ message: res.message });
           return;
         }
 
-        attemptJoin(this.state.roomCode, this.state.name, this.state.password).then(res => {
+        attemptJoin(this.state.roomCode, cleanedName, this.state.password).then(res => {
           if (!res.valid) {
             this.setState({ message: res.message });
             return;
           }
 
-          this.props.join(this.state.roomCode, this.state.name);
+          this.props.join(this.state.roomCode, cleanedName);
         });
       });
     });
