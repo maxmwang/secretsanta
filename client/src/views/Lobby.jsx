@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
 
+import Modal from '@material-ui/core/Modal';
+import TextField from '@material-ui/core/TextField';
+
 import RoomCode from 'components/RoomCode';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
@@ -19,6 +22,10 @@ class Lobby extends Component {
       phase: 'standby',
       error: undefined,
       success: undefined,
+      changePassword: {
+        open: false,
+        newPassword: '',
+      },
     };
   }
 
@@ -99,8 +106,9 @@ class Lobby extends Component {
         </>
       );
     } else if (this.state.phase === 'matched') {
-      return (<>
-        <div>
+      return (
+        <>
+          <div>
             <h6>You are Secret Santa for:</h6>
             <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
             <br/>
@@ -111,9 +119,55 @@ class Lobby extends Component {
             onClick={() => this.setState({ view: 'wishlist' })}>
             Wishlists
           </button>
+          <br/>
+          <br/>
+          <button
+            type="button"
+            className="btn btn-light"
+            onClick={() => this.setState({ changePassword: { open: true } })}>
+            Change Password
+          </button>
         </>
       );
     }
+  }
+
+  renderChangePasswordModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.changePassword.open}
+        onClose={() => this.setState({
+          changePassword: {
+            open: false,
+            value: '',
+          },
+        })}
+      >
+        <form
+          className="wishlist-modal"
+          onSubmit={e => {
+            e.preventDefault();
+            this.props.socket.emit("changePassword", { newPassword: this.state.changePassword.value });
+            this.setState({ changePassword: { open: false }});
+          }}
+        >
+          <h4 className="modal-title">Change Password</h4>
+          <TextField
+            label="New Password"
+            variant="outlined"
+            size="small"
+            value={this.state.changePassword.value}
+            onChange={e => this.setState({ changePassword: { open: true, value: e.target.value }})}
+            required
+          />
+          <button type="submit" className="btn btn-light">
+            Submit
+          </button>
+        </form>
+      </Modal>
+    );
   }
 
   render() {
@@ -150,26 +204,28 @@ class Lobby extends Component {
 
     return (
       <div>
-          <p>Lobby</p>
-          <RoomCode
-            roomCode={this.props.roomCode}
-            copySuccess={() => this.setState({ success: 'Link successfully copied' })}
-          />
-          <br/>
+        <p>Lobby</p>
+        <RoomCode
+          roomCode={this.props.roomCode}
+          copySuccess={() => this.setState({ success: 'Link successfully copied' })}
+        />
+        <br/>
 
-          {views[this.state.view]}
-          
-          <br/>
-          {this.state.error && (
-            <div class="alert alert-danger" role="alert">
-              {this.state.error}
-            </div>
-          )}
-          {this.state.success && (
-            <div class="alert alert-success" role="alert">
-              {this.state.success}
-            </div>
-          )}
+        {views[this.state.view]}
+
+        <br/>
+        {this.state.error && (
+          <div class="alert alert-danger" role="alert">
+            {this.state.error}
+          </div>
+        )}
+        {this.state.success && (
+          <div class="alert alert-success" role="alert">
+            {this.state.success}
+          </div>
+        )}
+
+        {this.renderChangePasswordModal()}
       </div>
     );
   }

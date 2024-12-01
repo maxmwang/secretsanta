@@ -339,7 +339,6 @@ class Wishlist extends Component {
   }
 
   renderImportModal() {
-    console.log('renderImportModal', this.state.importData)
     return (
       <Modal
         aria-labelledby="simple-modal-title"
