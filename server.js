@@ -78,7 +78,7 @@ app.post('/api/attemptjoin', (req, res) => {
   } else {
     if (room.phase === 'standby') { // new
       res.send({ valid: true });
-      app.santa.addPassword(roomCode, name, password);
+      app.santa.setPassword(roomCode, name, password);
     } else { // private
       res.send({ valid: false, message: 'You can no longer join this room' });
     }
@@ -104,6 +104,11 @@ app.io.on('connect', function (socket) {
 
     participant.emitTargets();
     socket.emit('phase', { phase: room.phase });
+  });
+
+  socket.on('changePassword', data => {
+    const { newPassword } = data;
+    app.santa.setPassword(room.code, participant.name, newPassword);
   });
 
   socket.on('addRestriction', data => {

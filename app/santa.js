@@ -46,7 +46,7 @@ class Santa {
     return this.rooms[code];
   }
 
-  addPassword(roomCode, name, password) {
+  setPassword(roomCode, name, password) {
     const hash = sha256(password);
     this.passwordsRef.child(roomCode).child(name).set(hash);
   }
