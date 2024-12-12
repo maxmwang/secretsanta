@@ -7,11 +7,21 @@ import { BigButton } from 'components/Button';
 class Join extends Component {
   constructor(props) {
     super(props);
+    const { roomCode, name } = JSON.parse(localStorage.getItem("prev_room") || '{}');
+    const preferredCode = props.urlCode || roomCode || '';
+    // dont use saved name if the urlCode is not the same as saved code
+    const preferredName = preferredCode === roomCode ? name : '';
+
     this.state = {
-      roomCode: props.urlCode || '',
-      name: '',
+      roomCode: preferredCode,
+      name: preferredName || '',
       password: '',
       message: undefined,
+      rejoin: {
+        active: false,
+        roomCode,
+        name,
+      }
     };
   }
 
@@ -19,6 +29,7 @@ class Join extends Component {
     checkCode(this.state.roomCode).then(res => {
       if (!res.valid) {
         this.setState({ message: res.message });
+        localStorage.setItem('prev_room', JSON.stringify('{}'));
         return;
       }
 
@@ -56,16 +67,16 @@ class Join extends Component {
         >
           <TextField
             fullWidth
+            className="mb-4"
             label="Room Code"
             variant="outlined"
             size="small"
             value={this.state.roomCode} 
             onChange={ e => this.setState({ roomCode: e.target.value.toLowerCase() }) }
           />
-          <br/>
-          <br/>
           <TextField
             fullWidth
+            className="mb-4"
             label="Name"
             type="name"
             variant="outlined"
@@ -73,10 +84,9 @@ class Join extends Component {
             value={this.state.name} 
             onChange={ e => this.setState({ name: e.target.value }) }
           />
-          <br/>
-          <br/>
           <TextField
             fullWidth
+            className="mb-4"
             label="Password"
             type="password"
             variant="outlined"
@@ -84,8 +94,6 @@ class Join extends Component {
             value={this.state.password}
             onChange={ e => this.setState({ password: e.target.value })}
           />
-          <br/>
-          <br/>
 
           <div className="row d-flex justify-content-center">
             <BigButton type="button" className="btn btn-light" onClick={this.props.goBack}>Back</BigButton>

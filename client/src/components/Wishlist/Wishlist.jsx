@@ -200,7 +200,7 @@ class Wishlist extends Component {
           <div className="wishlist-item">
             <div className="wishlist-item-top">
               <div className="wishlist-name">
-                {linkTemp ? <a href={item.link} target="_blank">{item.name}</a> : item.name}
+                {linkTemp ? <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a> : item.name}
               </div>
               {this.renderItemAction(item)}
             </div>
