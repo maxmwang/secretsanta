@@ -10,6 +10,7 @@ import EditIcon from '@material-ui/icons/Edit';
 import Item from 'models/item';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
+import { BigButton } from 'components/Button';
 
 import './Wishlist.css';
 
@@ -270,13 +271,13 @@ class Wishlist extends Component {
             value={this.state.input.notes}
             onChange={e => this.modifyInput('notes', e.target.value)}
           />
-          <button
+          <BigButton
             type="button"
             className="btn btn-light"
             onClick={() => this.addItemToWishlist()}
           >
             Add Item
-          </button>
+          </BigButton>
 
           {this.state.errorMsg && <div>{this.state.errorMsg}</div>}
         </div>
@@ -324,13 +325,13 @@ class Wishlist extends Component {
             value={this.state.input.notes}
             onChange={e => this.modifyInput('notes', e.target.value)}
           />
-          <button
+          <BigButton
             type="button"
             className="btn btn-light"
             onClick={() => this.editItem()}
           >
             Edit Item
-          </button>
+          </BigButton>
 
           {this.state.errorMsg && <div>{this.state.errorMsg}</div>}
         </div>
@@ -359,13 +360,13 @@ class Wishlist extends Component {
                 onChange={e => this.setState({ importData: {...this.state.importData, otherRoomId: e.target.value} })}
                 required
               />
-              <button
+              <BigButton
                 type="button"
                 className="btn btn-light"
                 onClick={() => this.props.socket.emit('importItem', { roomCode: this.state.importData.otherRoomId })}
               >
                 Import
-              </button>
+              </BigButton>
             </>
           }
           {this.state.importData.importedParticipants != null &&
@@ -396,23 +397,23 @@ class Wishlist extends Component {
         {this.props.canEdit && (
           <>
             <br/>
-            <button
+            <BigButton
               type="button"
               className="btn btn-light"
               onClick={() => this.setState({ modalOpen: 'add' })}
             >
               Add Item
-            </button>
+            </BigButton>
 
             <br/>
             <br/>
-            <button
+            <BigButton
               type="button"
               className="btn btn-light"
               onClick={() => this.setState({ modalOpen: 'import' })}
             >
               Import previous wishlist
-            </button>
+            </BigButton>
           </>
         )}
 

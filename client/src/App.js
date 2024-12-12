@@ -82,19 +82,26 @@ function App() {
 
   return (
     <div className="App d-flex justify-content-center">
-      <div className="container" style={{ maxWidth: "500px" }}>
+      <div className="container">
         <div>
-          <h3>Secret Santa</h3>
+          <h1 className="text-3xl md:text-5xl font-semibold text-blue-400 inline-block mb-4">
+            Secret Santa
+          </h1>
         </div>
-
-        <hr/>
 
         {views[view]}
 
-        <hr/>
-
         <div>
-          <small>built by <a href="https://evonake.github.io">max wang</a> and <a href="https://brandon-wang.me">brandon wang</a></small>
+          <p className="text-xs font-semibold tracking-tighter text-blue-400 inline-block mt-4">
+            built by{' '}
+            <a className="hover:no-underline hover:text-blue-400 border-b-2 transition ease-in-out duration-300 hover:border-blue-400 border-transparent " target="_blank" rel="noopener noreferrer" href="https://evonake.github.io" tabIndex="-1">
+              max wang
+            </a>
+            {' '}and{' '}
+            <a className="hover:no-underline hover:text-blue-400 border-b-2 transition ease-in-out duration-300 hover:border-blue-400 border-transparent " target="_blank" rel="noopener noreferrer" href="https://brandon-wang.com" tabIndex="-1">
+              brandon wang
+            </a>
+          </p>
         </div>
       </div>
     </div>
