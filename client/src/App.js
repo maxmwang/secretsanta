@@ -52,6 +52,7 @@ function App() {
     setName(name);
     setView("lobby");
     history.push(`/${roomCode}`);
+    localStorage.setItem('prev_room', JSON.stringify({ roomCode, name }));
   }
 
   const exitRoom = () => {
