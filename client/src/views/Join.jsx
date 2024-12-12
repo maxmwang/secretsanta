@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 
 import { checkCode, checkName, attemptJoin } from 'api/api';
+import { BigButton } from 'components/Button';
 
 class Join extends Component {
   constructor(props) {
@@ -43,7 +44,9 @@ class Join extends Component {
   render() {
     return (
       <div>
-        <h5>Join Room</h5>
+        <h1 className="text-lg md:text-2xl font-semibold text-blue-400 inline-block mb-2">
+          Join Room
+        </h1>
 
         <form
           onSubmit={(e) => {
@@ -85,8 +88,8 @@ class Join extends Component {
           <br/>
 
           <div className="row d-flex justify-content-center">
-            <button type="button" className="btn btn-light" onClick={this.props.goBack}>Back</button>
-            <button type="submit" className="btn btn-light">Join</button>
+            <BigButton type="button" className="btn btn-light" onClick={this.props.goBack}>Back</BigButton>
+            <BigButton type="submit" className="btn btn-light">Join</BigButton>
           </div>
         </form>
 

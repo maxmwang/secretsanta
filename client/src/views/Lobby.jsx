@@ -9,6 +9,7 @@ import Participant from 'models/participant';
 
 import WishlistPage from 'components/Wishlist/WishlistPage';
 import Options from 'components/Options';
+import { BigButton } from 'components/Button';
 
 class Lobby extends Component {
   constructor(props) {
@@ -92,17 +93,17 @@ class Lobby extends Component {
             setSantas={(n) => this.props.socket.emit("setSantas", { n_santas: n })}
             removeRestriction={(name, target) => this.props.socket.emit("removeRestriction", { name, target })}
           />
-          <button
+          <BigButton
             type="button"
             className="btn btn-light"
             onClick={() => this.props.socket.emit('voteMatch', {})}>
             Vote to Match Room
-          </button>
+          </BigButton>
           <br/>
           <br/>
-          <button type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
+          <BigButton type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
             Exit Room
-          </button>
+          </BigButton>
         </>
       );
     } else if (this.state.phase === 'matched') {
@@ -113,20 +114,20 @@ class Lobby extends Component {
             <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
             <br/>
           </div>
-          <button
+          <BigButton
             type="button"
             className="btn btn-light"
             onClick={() => this.setState({ view: 'wishlist' })}>
             Wishlists
-          </button>
+          </BigButton>
           <br/>
           <br/>
-          <button
+          <BigButton
             type="button"
             className="btn btn-light"
             onClick={() => this.setState({ changePassword: { open: true } })}>
             Change Password
-          </button>
+          </BigButton>
         </>
       );
     }
@@ -162,9 +163,9 @@ class Lobby extends Component {
             onChange={e => this.setState({ changePassword: { open: true, value: e.target.value }})}
             required
           />
-          <button type="submit" className="btn btn-light">
+          <BigButton type="submit" className="btn btn-light">
             Submit
-          </button>
+          </BigButton>
         </form>
       </Modal>
     );

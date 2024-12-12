@@ -3,6 +3,7 @@ import React, { Component } from 'react';
 import Wishlist from './Wishlist';
 import Item from 'models/item';
 import Name from 'components/Name';
+import { BigButton } from 'components/Button';
 
 import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
@@ -102,12 +103,12 @@ class WishlistPage extends Component {
           items={this.state.items} />
 
         <br />
-        <button
+        <BigButton
           type="button"
           className="btn btn-light"
           onClick={ () => this.props.returnHome() }>
           Return
-        </button>
+        </BigButton>
       </div>
     );
   }

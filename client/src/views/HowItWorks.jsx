@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 
+import { BigButton } from 'components/Button';
+
 class HowItWorks extends Component {
   render() {
     return (
@@ -24,7 +26,7 @@ class HowItWorks extends Component {
           <p>The algorithm starts by choosing a random node. From there, it creates an edge from that node to another random node. Then, it uses the new node to repeat the process. After each assignment, the assigned node is marked as visited, and cannot be assigned again. </p>
         </div>
 
-        <button type="button" className="btn btn-light" onClick={this.props.goBack}>Back</button>
+        <BigButton type="button" className="btn btn-light" onClick={this.props.goBack}>Back</BigButton>
       </div>
     );
   }
