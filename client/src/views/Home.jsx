@@ -5,14 +5,28 @@ import { BigButton } from 'components/Button';
 class Home extends Component {
   render() {
     return (
-      <div>
-        <div className="row d-flex justify-content-center">
-          <BigButton className="btn btn-light" onClick={this.props.joinRoom}>Join Room</BigButton>
-          <BigButton className="btn btn-light" onClick={this.props.createRoom}>Create Room</BigButton>
+      <div className="mt-24 md:mt-36">
+        <div className="m-4">
+          <BigButton className="btn btn-light mx-2" onClick={this.props.joinRoom}>Join Room</BigButton>
         </div>
-        <br/>
-        <div>
+        <div className="m-4">
+          <BigButton className="btn btn-light mx-2" onClick={this.props.createRoom}>Create Room</BigButton>
+        </div>
+        <div className="m-4">
           <BigButton className="btn btn-light" onClick={this.props.viewHow}>How It Works</BigButton>
+        </div>
+
+        <div className>
+          <p className="text-xs font-semibold tracking-tighter text-blue-400 inline-block mt-4">
+            built by{' '}
+            <a className="hover:no-underline hover:text-blue-400 border-b-2 transition ease-in-out duration-300 hover:border-blue-400 border-transparent " target="_blank" rel="noopener noreferrer" href="https://evonake.github.io" tabIndex="-1">
+              max wang
+            </a>
+            {' '}and{' '}
+            <a className="hover:no-underline hover:text-blue-400 border-b-2 transition ease-in-out duration-300 hover:border-blue-400 border-transparent " target="_blank" rel="noopener noreferrer" href="https://brandon-wang.com" tabIndex="-1">
+              brandon wang
+            </a>
+          </p>
         </div>
       </div>
     );

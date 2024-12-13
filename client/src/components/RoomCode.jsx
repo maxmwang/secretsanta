@@ -17,8 +17,8 @@ class Code extends Component {
 
   render() {
     return (
-      <p style={{ "cursor": "pointer" }}>Room code:
-        <span onClick={() => this.copyLink()} className="badge badge-secondary badge-light" style={style}>{this.props.roomCode}</span>
+      <p className="text-lg font-semibold text-blue-400">Room code:
+        <span onClick={() => this.copyLink()} className="badge badge-secondary badge-light m-2 cursor-pointer" style={style}>{this.props.roomCode}</span>
       </p>
     );
   }

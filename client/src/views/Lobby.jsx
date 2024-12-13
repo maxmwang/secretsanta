@@ -95,11 +95,10 @@ class Lobby extends Component {
           />
           <BigButton
             type="button"
-            className="btn btn-light"
+            className="btn btn-light mb-4"
             onClick={() => this.props.socket.emit('voteMatch', {})}>
             Vote to Match Room
           </BigButton>
-          <br/>
           <br/>
           <BigButton type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
             Exit Room
@@ -109,18 +108,18 @@ class Lobby extends Component {
     } else if (this.state.phase === 'matched') {
       return (
         <>
-          <div>
-            <h6>You are Secret Santa for:</h6>
+          <div className="mb-4">
+            <p className="text-lg font-semibold text-blue-400">
+              You are Secret Santa for:
+            </p>
             <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
-            <br/>
           </div>
           <BigButton
             type="button"
-            className="btn btn-light"
+            className="btn btn-light mb-4"
             onClick={() => this.setState({ view: 'wishlist' })}>
             Wishlists
           </BigButton>
-          <br/>
           <br/>
           <BigButton
             type="button"
@@ -175,7 +174,9 @@ class Lobby extends Component {
     const views = {
       home: (
         <div>
-          <h6>Participants</h6>
+          <h1 className="text-lg md:text-2xl font-semibold text-blue-400 inline-block mb-2">
+            Participants
+          </h1>
           <ParticipantList
             participants={Object.values(this.state.participants)}
             onClick={p => {
@@ -205,7 +206,6 @@ class Lobby extends Component {
 
     return (
       <div>
-        <p>Lobby</p>
         <RoomCode
           roomCode={this.props.roomCode}
           copySuccess={() => this.setState({ success: 'Link successfully copied' })}

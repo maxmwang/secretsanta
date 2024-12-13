@@ -20,16 +20,22 @@ class Options extends Component {
   render() {
     return (
       <>
-        <h6>Room Options</h6>
+        <p className="text-lg font-semibold text-blue-400">
+          Room Options
+        </p>
 
-        <p>Number of Santas</p>
+        <p className="text-md font-semibold text-blue-400">
+          Number of Santas
+        </p>
         <select className="form-control" value={this.props.nSantas} onChange={ e => this.props.setSantas(e.target.value) }>
           {santaOptions.map(option => (
             <option key={option.value} value={option.value}>{option.display}</option>
           ))}
         </select>
 
-        <p>Restrictions</p>
+        <p className="text-md font-semibold text-blue-400">
+          Restrictions
+        </p>
         {Object.keys(this.props.restrictions).map(name => (
           <div>
             {this.props.restrictions[name].map(target => (

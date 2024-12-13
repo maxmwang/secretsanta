@@ -9,7 +9,7 @@ class Name extends Component {
     if (!this.props.participant.active) {
       return "badge-light";
     } else {
-      return "badge-dark";
+      return "bg-blue-500 text-white";
     }
   }
 
