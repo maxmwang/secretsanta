@@ -37,3 +37,9 @@ export function SmallButton({ children, className, disabled, type, onClick }) {
     </small>
   );
 }
+
+export function TextButton({ children, className, onClick }) {
+  return (
+    <p className={cx(className, "cursor-pointer text-blue-400 border-b-2 hover:border-blue-400 border-transparent inline-block")} onClick={onClick}>{children}</p>
+  );
+}

@@ -9,7 +9,7 @@ import Participant from 'models/participant';
 
 import WishlistPage from 'components/Wishlist/WishlistPage';
 import Options from 'components/Options';
-import { BigButton } from 'components/Button';
+import { BigButton, TextButton } from 'components/Button';
 
 class Lobby extends Component {
   constructor(props) {
@@ -121,12 +121,10 @@ class Lobby extends Component {
             Wishlists
           </BigButton>
           <br/>
-          <BigButton
-            type="button"
-            className="btn btn-light"
+          <TextButton
             onClick={() => this.setState({ changePassword: { open: true } })}>
             Change Password
-          </BigButton>
+          </TextButton>
         </>
       );
     }
