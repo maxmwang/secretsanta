@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import { BigButton } from 'components/Button';
+import { BigButton, TextButton } from 'components/Button';
 
 class Home extends Component {
   render() {
@@ -12,11 +12,11 @@ class Home extends Component {
         <div className="m-4">
           <BigButton className="btn btn-light mx-2" onClick={this.props.createRoom}>Create Room</BigButton>
         </div>
-        <div className="m-4">
-          <BigButton className="btn btn-light" onClick={this.props.viewHow}>How It Works</BigButton>
+        <div className="mt-16 mb-2">
+          <TextButton onClick={this.props.viewHow}>How It Works</TextButton>
         </div>
 
-        <div className>
+        <div>
           <p className="text-xs font-semibold tracking-tighter text-blue-400 inline-block mt-4">
             built by{' '}
             <a className="hover:no-underline hover:text-blue-400 border-b-2 transition ease-in-out duration-300 hover:border-blue-400 border-transparent " target="_blank" rel="noopener noreferrer" href="https://evonake.github.io" tabIndex="-1">

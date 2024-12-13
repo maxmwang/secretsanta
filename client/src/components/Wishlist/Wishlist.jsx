@@ -2,16 +2,13 @@ import React, { Component } from 'react';
 
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
-import CloseIcon from '@material-ui/icons/Close';
-import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
-import CheckBoxIcon from '@material-ui/icons/CheckBox';
-import EditIcon from '@material-ui/icons/Edit';
 
 import Item from 'models/item';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 import { BigButton } from 'components/Button';
 
+import WishlistItem from './Item';
 import './Wishlist.css';
 
 class Wishlist extends Component {
@@ -133,43 +130,6 @@ class Wishlist extends Component {
     this.clearInput();
   }
 
-  renderItemAction(item) {
-    if (this.props.canEdit) {
-      return (
-        <div className="wishlist-actions">
-          <EditIcon
-            onClick={() => this.setState({
-              editItemId: item.id,
-              modalOpen: 'edit',
-              input: {
-                name: item.name,
-                price: item.price,
-                link: item.link,
-                style: item.style,
-                notes: item.notes,
-              }
-            })}
-          />
-          <CloseIcon
-            style={{ cursor: 'pointer' }}
-            fontSize="small"
-            onClick={() => this.removeItemFromWishlist(item.id)}
-          />
-        </div>
-      );
-    } else {
-      return item.isMarked() ? (
-        <div className="wishlist-actions">
-          <CheckBoxIcon onClick={() => this.unmarkItem(item.id)} color={item.canUnmark() ? 'secondary' : 'disabled'} />
-        </div>
-      ) : (
-        <div className="wishlist-actions">
-          <CheckBoxOutlineBlankIcon onClick={() => this.markItem(item.id)} color='primary' />
-        </div>
-      );
-    }
-  }
-
   markItem(id) {
     this.props.socket.emit('markItem', {
       target: this.props.target,
@@ -185,37 +145,39 @@ class Wishlist extends Component {
   }
 
   renderTable() {
-    const items = [];
-
     if (this.props.items) {
-      for (let item of this.props.items) {
-        let link;
-        try {
-          link = new URL(item.link);
-        } catch (_) {}
-
-        items.push(
-          <div className="wishlist-item">
-            <div className="wishlist-item-top">
-              <div className="wishlist-name">
-                {link ? <a href={item.link} className="text-blue-400 border-b border-blue-400 hover:no-underline" target="_blank" rel="noopener noreferrer">{item.name}</a> : item.name}
-              </div>
-              {this.renderItemAction(item)}
-            </div>
-            <div className="wishlist-price">{item.price.startsWith('$') ? '' : '$'}{item.price}</div>
-            { item.style &&
-              <div className="wishlist-style">Style: {item.style}</div>
-            }
-            { item.notes &&
-              <div className="wishlist-notes">Notes: {item.notes}</div>
-            }
-          </div>
-        );
-      }
-
       return (
-        <div className="wishlist">
-          {items}
+        <div className="wishlist grid grid-cols-2 md:grid-cols-4 gap-4">
+          {this.props.items.map(item => (
+            <WishlistItem
+              item={item}
+              canEdit={this.props.canEdit}
+              onEdit={() => this.setState({
+                editItemId: item.id,
+                modalOpen: 'edit',
+                input: {
+                  name: item.name,
+                  price: item.price,
+                  link: item.link,
+                  style: item.style,
+                  notes: item.notes,
+                }
+              })}
+              onDelete={() => this.removeItemFromWishlist(item.id)}
+              onUnmark={() => this.unmarkItem(item.id)}
+              onMark={() => this.markItem(item.id)}
+            />
+          ))}
+          {this.props.canEdit &&
+            <div
+              className="wishlist-item-placeholder border-blue-400"
+              onClick={() => this.setState({ modalOpen: 'add' })}
+            >
+              <p className="text-blue-400 font-semibold">
+                + Add Item
+              </p>
+            </div>
+          }
         </div>
       );
     }
@@ -393,22 +355,13 @@ class Wishlist extends Component {
         {this.renderTable()}
 
         {this.props.canEdit && (
-          <div className="row d-flex justify-content-center mt-4">
-            <BigButton
-              type="button"
-              className="btn btn-light mx-2"
-              onClick={() => this.setState({ modalOpen: 'import' })}
-            >
-              Import
-            </BigButton>
-            <BigButton
-              type="button"
-              className="btn btn-light mx-2"
-              onClick={() => this.setState({ modalOpen: 'add' })}
-            >
-              Add Item
-            </BigButton>
-          </div>
+          <BigButton
+            type="button"
+            className="btn btn-light mt-4 mx-2"
+            onClick={() => this.setState({ modalOpen: 'import' })}
+          >
+            Import
+          </BigButton>
         )}
 
         {this.renderAddModal()}

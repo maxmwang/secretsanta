@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 
-import {ReactComponent as ArrowRight} from '../../svgs/arrowRight.svg';
-import {ReactComponent as X} from '../../svgs/x.svg';
-import {ReactComponent as Remove} from '../../svgs/remove.svg';
+import ArrowForward from '@material-ui/icons/ArrowForward';
+import X from '@material-ui/icons/Close';
+import Remove from '@material-ui/icons/DeleteOutlined';
 
 import Name from '../Name';
 
@@ -37,15 +37,15 @@ class Options extends Component {
           Restrictions
         </p>
         {Object.keys(this.props.restrictions).map(name => (
-          <div>
+          <div className="d-flex flex-col items-center">
             {this.props.restrictions[name].map(target => (
-              <>
+              <div className="d-flex items-center">
                 <Name participant={this.props.participants[name]}/>
-                <ArrowRight/>
+                <ArrowForward/>
                 <X/>
                 <Name participant={this.props.participants[target]}/>
                 <Remove style={{cursor: 'pointer'}} onClick={() => this.props.removeRestriction(name, target)}/>
-              </>
+              </div>
             ))}
           </div>
         ))}
