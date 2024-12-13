@@ -38,7 +38,7 @@ class Create extends Component {
 
   render() {
     return (
-      <div>
+      <div className="mt-24 md:mt-36">
         <h1 className="text-lg md:text-2xl font-semibold text-blue-400 inline-block mb-2">
           Create Room
         </h1>
@@ -73,8 +73,8 @@ class Create extends Component {
           <br/>
 
           <div className="row d-flex justify-content-center">
-            <BigButton type="button" className="btn btn-light" onClick={this.props.goBack}>Back</BigButton>
-            <BigButton type="submit" className="btn btn-light">Create</BigButton>
+            <BigButton type="button" className="btn btn-light mx-2" onClick={this.props.goBack}>Back</BigButton>
+            <BigButton type="submit" className="btn btn-light mx-2">Create</BigButton>
           </div>
         </form>
 

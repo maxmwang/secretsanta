@@ -71,6 +71,9 @@ class WishlistPage extends Component {
   render() {
     return (
       <div>
+        <h1 className="text-lg md:text-2xl font-semibold text-blue-400 inline-block mb-2">
+          Wishlists
+        </h1>
         <div className="row">
           <div className="col-2">
             <ChevronLeftIcon
@@ -79,7 +82,7 @@ class WishlistPage extends Component {
           </div>
           <div className="col-8">
             <p>
-              Wishlist for <Name participant={this.props.participants[this.state.index]}/>
+              <Name participant={this.props.participants[this.state.index]}/>
               <RefreshIcon fontSize="small" style={{cursor: 'pointer'}} onClick={ () => this.refreshWishlist() }/>
             </p>
           </div>

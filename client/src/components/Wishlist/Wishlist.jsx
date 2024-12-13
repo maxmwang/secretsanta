@@ -189,18 +189,16 @@ class Wishlist extends Component {
 
     if (this.props.items) {
       for (let item of this.props.items) {
-        const styleTemp = item.style ? item.style : 'N/A';
-        const notesTemp = item.notes ? item.notes : 'N/A';
-        let linkTemp;
+        let link;
         try {
-          linkTemp = new URL(item.link);
+          link = new URL(item.link);
         } catch (_) {}
 
         items.push(
           <div className="wishlist-item">
             <div className="wishlist-item-top">
               <div className="wishlist-name">
-                {linkTemp ? <a href={item.link} target="_blank" rel="noopener noreferrer">{item.name}</a> : item.name}
+                {link ? <a href={item.link} className="text-blue-400 border-b border-blue-400 hover:no-underline" target="_blank" rel="noopener noreferrer">{item.name}</a> : item.name}
               </div>
               {this.renderItemAction(item)}
             </div>
@@ -395,26 +393,22 @@ class Wishlist extends Component {
         {this.renderTable()}
 
         {this.props.canEdit && (
-          <>
-            <br/>
+          <div className="row d-flex justify-content-center mt-4">
             <BigButton
               type="button"
-              className="btn btn-light"
+              className="btn btn-light mx-2"
+              onClick={() => this.setState({ modalOpen: 'import' })}
+            >
+              Import
+            </BigButton>
+            <BigButton
+              type="button"
+              className="btn btn-light mx-2"
               onClick={() => this.setState({ modalOpen: 'add' })}
             >
               Add Item
             </BigButton>
-
-            <br/>
-            <br/>
-            <BigButton
-              type="button"
-              className="btn btn-light"
-              onClick={() => this.setState({ modalOpen: 'import' })}
-            >
-              Import previous wishlist
-            </BigButton>
-          </>
+          </div>
         )}
 
         {this.renderAddModal()}
