@@ -5,6 +5,7 @@ const { match } = require('./match');
 
 const STANDBY = 'standby';
 const MATCHED = 'matched';
+const REVEALED = 'revealed';
 
 class Room {
   constructor(code, ref, participants, onClose) {
@@ -98,6 +99,7 @@ class Room {
       if (!votes.includes(participant.name)) {
         if (votes.length === this.participants.length - 1) {
           onVoteEnd();
+          this.ref.child(voteName).remove();
         } else {
           this.ref.child(voteName).push(participant.name);
         }
@@ -135,6 +137,15 @@ class Room {
       }, "You have already voted to match this room");
   }
 
+  voteReveal(participant) {
+    this.vote(participant, "revealVotes",
+      () => {
+        this.phase = REVEALED;
+        this.ref.child('phase').set(this.phase);
+        this.notifyPhaseChange();
+      }, "You have already voted to reveal this room");
+  }
+
   notifyOptions() {
     this.participants.forEach(p => p.send('options', { options: {
       restrictions: this.restrictions,
@@ -151,14 +162,10 @@ class Room {
   }
 
   sendWishlist(participant, target) {
-    this.participantRef.child(participant.name).child("targets").once("value", s => {
-      const targets = s.val();
-      const isTarget = targets.includes(target);
-      const isSelf = participant.name === target;
-      this.participantRef.child(target).child('wishlist').once('value', s => {
-        let wishlist = s.val() === null ? {} : s.val();
-        participant.sendWishlist(wishlist, isTarget, isSelf);
-      });
+    const isSelf = participant.name === target;
+    this.participantRef.child(target).child('wishlist').once('value', s => {
+      let wishlist = s.val() === null ? {} : s.val();
+      participant.sendWishlist(wishlist, isSelf, this.phase === REVEALED);
     });
   }
 

@@ -82,7 +82,7 @@ class Lobby extends Component {
     });
   }
 
-  renderHomeButtons() {
+  renderHomeContent() {
     if (this.state.phase === 'standby') {
       return (
         <>
@@ -105,26 +105,57 @@ class Lobby extends Component {
           </BigButton>
         </>
       );
-    } else if (this.state.phase === 'matched') {
+    }
+
+    const participantList = <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />;
+    const wishlistButton = (
+      <BigButton
+        type="button"
+        className="btn btn-light mb-4"
+        onClick={() => this.setState({ view: 'wishlist' })}>
+        Wishlists
+      </BigButton>
+    );
+    const changePasswordButton = (
+      <TextButton
+        onClick={() => this.setState({ changePassword: { open: true } })}>
+        Change Password
+      </TextButton>
+    );
+
+    if (this.state.phase === 'matched') {
       return (
         <>
           <div className="mb-4">
             <p className="text-lg font-semibold text-blue-400">
               You are Secret Santa for:
             </p>
-            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+            {participantList}
           </div>
+          {wishlistButton}
+          <br/>
           <BigButton
             type="button"
             className="btn btn-light mb-4"
-            onClick={() => this.setState({ view: 'wishlist' })}>
-            Wishlists
+            onClick={() => this.props.socket.emit('voteReveal', {})}>
+            Vote to Reveal Room
           </BigButton>
           <br/>
-          <TextButton
-            onClick={() => this.setState({ changePassword: { open: true } })}>
-            Change Password
-          </TextButton>
+          {changePasswordButton}
+        </>
+      );
+    } else if (this.state.phase === 'revealed') {
+      return (
+        <>
+          <div className="mb-4">
+            <p className="text-lg font-semibold text-blue-400">
+              You were Secret Santa for:
+            </p>
+            {participantList}
+          </div>
+          {wishlistButton}
+          <br/>
+          {changePasswordButton}
         </>
       );
     }
@@ -186,7 +217,7 @@ class Lobby extends Component {
 
           <br/>
 
-          {this.renderHomeButtons()}
+          {this.renderHomeContent()}
 
           <br/>
         </div>

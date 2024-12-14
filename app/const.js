@@ -4,5 +4,6 @@ module.exports = {
     UNMARKED: 1,
     MARKED: 2,
     CAN_UNMARK: 3,
+    REVEALED: 4,
   },
 };
