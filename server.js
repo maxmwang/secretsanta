@@ -91,19 +91,28 @@ app.io.on('connect', function (socket) {
   var participant;
 
   socket.on('join', data => {
-    name = data.name;
-    room = app.santa.getRoom(data.roomCode);
-
-    if (room.exists(name)) {
-      room.activate(name, socket);
-    } else {
-      room.addParticipant(name, socket);
+    if (data.password === undefined) {
+      socket.disconnect();
     }
+    app.santa.verifyPassword(data.roomCode, data.name, data.password).then(verified => {
+      if (verified) {
+        name = data.name;
+        password = data.password;
+        room = app.santa.getRoom(data.roomCode);
+        if (room.exists(name)) {
+          room.activate(name, socket);
+        } else {
+          room.addParticipant(name, socket);
+        }
 
-    participant = room.get(name);
+        participant = room.get(name);
 
-    participant.emitTargets();
-    socket.emit('phase', { phase: room.phase });
+        participant.emitTargets();
+        socket.emit('phase', { phase: room.phase });
+      } else {
+        socket.disconnect();
+      }
+    });
   });
 
   socket.on('changePassword', data => {
@@ -213,7 +222,6 @@ app.io.on('connect', function (socket) {
     }
   });
 });
-
 
 if (process.env.NODE_ENV === 'production') {
     // Serve any static files

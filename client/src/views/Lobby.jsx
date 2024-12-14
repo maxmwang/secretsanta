@@ -20,7 +20,7 @@ class Lobby extends Component {
       santas: [],
       restrictions: {},
       n_santas: 1,
-      phase: 'standby',
+      phase: '',
       error: undefined,
       success: undefined,
       changePassword: {
@@ -34,6 +34,7 @@ class Lobby extends Component {
     this.props.socket.emit('join', {
       name: this.props.name,
       roomCode: this.props.roomCode,
+      password: this.props.password,
     });
 
     this.props.socket.off('phase');
@@ -83,6 +84,9 @@ class Lobby extends Component {
   }
 
   renderHomeContent() {
+    if (this.state.phase === '') {
+      return <></>;
+    }
     if (this.state.phase === 'standby') {
       return (
         <>

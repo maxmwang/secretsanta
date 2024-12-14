@@ -30,6 +30,7 @@ class Create extends Component {
             return;
           }
 
+          this.props.setPassword(this.state.password);
           this.props.create(roomCode, cleanedName);
         });
       });

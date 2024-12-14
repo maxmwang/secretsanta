@@ -46,6 +46,7 @@ class Join extends Component {
             return;
           }
 
+          this.props.setPassword(this.state.password);
           this.props.join(this.state.roomCode, cleanedName);
         });
       });
