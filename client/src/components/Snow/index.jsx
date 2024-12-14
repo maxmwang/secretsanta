@@ -39,18 +39,18 @@ class Snowflake extends Component {
 class Snow extends Component {
   render() {
     return (
-      <div className="main select-none">
+      <div className="main-snow select-none">
         <div className="initial-snow">
-          {Array.from(Array(20)).map(_ => (
+          {Array.from(Array(8)).map(_ => (
             <Snowflake layer={0}/>
           ))}
-          {Array.from(Array(20)).map(_ => (
+          {Array.from(Array(12)).map(_ => (
             <Snowflake layer={1}/>
           ))}
-          {Array.from(Array(15)).map(_ => (
+          {Array.from(Array(10)).map(_ => (
             <Snowflake layer={2}/>
           ))}
-          {Array.from(Array(12)).map(_ => (
+          {Array.from(Array(5)).map(_ => (
             <Snowflake layer={3}/>
           ))}
         </div>
