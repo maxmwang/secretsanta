@@ -44,9 +44,11 @@ class Participant {
     });
   }
 
-  sendWishlist(wishlist, target, self) {
+  sendWishlist(wishlist, self, reveal) {
     Object.values(wishlist).forEach(i => {
-      if (self) {
+      if (reveal) {
+        i.mark_state = c.ITEM_MARK_STATE.REVEALED
+      } else if (self) {
         i.mark_state = c.ITEM_MARK_STATE.HIDDEN;
       } else {
         if (i.marked === this.name) {
@@ -57,10 +59,12 @@ class Participant {
           i.mark_state = c.ITEM_MARK_STATE.UNMARKED;
         }
       }
-      delete i.marked;
+      if (!reveal) {
+        delete i.marked;
+      }
     });
 
-    this.send('wishlist', { wishlist, target, self });  
+    this.send('wishlist', { wishlist });
   }
 
   async addItem(item) {

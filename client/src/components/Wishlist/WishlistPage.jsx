@@ -17,7 +17,6 @@ class WishlistPage extends Component {
     this.state = {
       index: this.props.participants.findIndex(p => p.name === this.props.name),
       items: [],
-      target: false,
       self: true,
       loading: true,
     };
@@ -28,7 +27,7 @@ class WishlistPage extends Component {
 
     this.props.socket.on('wishlist', data => {
       let items = [];
-      const { wishlist, target, self } = data;
+      const { wishlist } = data;
 
       Object.keys(wishlist).forEach(i => {
         items.push(new Item(
@@ -39,14 +38,13 @@ class WishlistPage extends Component {
           wishlist[i].style,
           wishlist[i].notes,
           wishlist[i].mark_state,
+          wishlist[i].marked,
           wishlist[i].preview_src,
         ));
       });
 
       this.setState({
         items,
-        target,
-        self,
         loading: false,
       });
     });
@@ -55,6 +53,7 @@ class WishlistPage extends Component {
   refreshWishlist() {
     this.setState({
       loading: true,
+      self: this.props.participants[this.state.index].name === this.props.name,
     });
     this.props.socket.emit('getWishlist', { target: this.props.participants[this.state.index].name });
   }
@@ -102,8 +101,8 @@ class WishlistPage extends Component {
           target={this.props.participants[this.state.index].name}
           socket={this.props.socket}
           canEdit={this.state.self}
-          canMark={this.state.target}
-          items={this.state.items} />
+          items={this.state.items}
+        />
 
         <br />
         <BigButton

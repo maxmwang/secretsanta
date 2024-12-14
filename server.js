@@ -62,8 +62,6 @@ app.post('/api/attemptjoin', (req, res) => {
   const { name, roomCode } = req.query;
   const { password } = req.body;
   const room = app.santa.getRoom(roomCode);
-  res.send({ valid: true });
-  return;
 
   if (room !== undefined && room.exists(name)) {
     if (!room.isActive(name)) { // existing
@@ -135,7 +133,7 @@ app.io.on('connect', function (socket) {
   });
 
   socket.on('voteMatch', data => {
-    if (room.getNumParticipants() < 3) {
+    if (room.phase !== STANDBY || room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
     } else {
       room.voteMatch(participant);
@@ -197,6 +195,12 @@ app.io.on('connect', function (socket) {
 
   socket.on('unmarkItem', data => {
     room.unmarkItem(participant, data.target, data.itemId);
+  });
+
+  socket.on('voteReveal', data => {
+    if (room.phase === REVEALED) {
+      room.voteReveal(participant);
+    }
   });
 
   socket.on('disconnect', data => {

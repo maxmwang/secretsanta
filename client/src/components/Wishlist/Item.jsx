@@ -37,7 +37,18 @@ class Item extends Component {
   }
 
   renderItemActions() {
-    if (this.props.canEdit) {
+    if (this.props.item.isRevealed()) {
+      return this.props.item.marked_by !== undefined ? (
+        <div style={{ color: "#f50057" }} className="font-semibold italic d-flex flex-row justify-content-end align-content-center">
+          {this.props.item.marked_by}
+          <CheckBoxIcon className="ml-1" color={'secondary'} />
+        </div>
+      ) : (
+        <div className="text-right">
+          <CheckBoxOutlineBlankIcon color='disabled' />
+        </div>
+      );
+    } else if (this.props.canEdit) {
       return (
         <div className="wishlist-actions">
           <EditIcon
