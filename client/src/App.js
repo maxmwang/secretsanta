@@ -18,6 +18,7 @@ function App() {
   const [view, setView] = useState("home");
   const [roomCode, setRoomCode] = useState("");
   const [name, setName] = useState("");
+  const [password, setPassword] = useState("");
   const [socket, setSocket] = useState(undefined);
   const [urlCode, setURLCode] = useState(undefined);
 
@@ -69,15 +70,18 @@ function App() {
               viewHow={ () => setView("how") }/>,
     create: <Create
               goBack={ () => goHome() }
-              create={ (roomCode, name) => setRoom(roomCode, name) }/>,
+              create={ (roomCode, name) => setRoom(roomCode, name) }
+              setPassword={setPassword}/>,
     join:   <Join
               urlCode={urlCode}
               goBack={ () => goHome() }
-              join={ (roomCode, name) => setRoom(roomCode, name) }/>,
+              join={ (roomCode, name) => setRoom(roomCode, name) }
+              setPassword={setPassword}/>,
     lobby:  <Lobby
               socket={socket}
               roomCode={roomCode}
               name={name}
+              password={password}
               exitRoom={ () => exitRoom() }/>,
     how: <HowItWorks goBack={ () => goHome() }/>,
   }
