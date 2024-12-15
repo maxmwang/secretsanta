@@ -28,8 +28,19 @@ app.io = io;
 app.santa = new Santa(db);
 
 app.post('/api/create', (req, res) => {
-  const room = app.santa.createRoom();
+  let { roomCode } = req.query;
+  if (roomCode !== '') {
+    const err = app.santa.validateUserProvidedCode(roomCode);
+    if (err !== undefined) {
+      res.send({ valid: false, message: err });
+      return;
+    }
+  } else {
+    roomCode = app.santa.generateCode();
+  }
+  const room = app.santa.createRoom(roomCode);
   res.send({
+    valid: true,
     roomCode: `${room.code}`
   });
 });
