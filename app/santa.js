@@ -20,7 +20,7 @@ class Santa {
         Object.keys(rooms).forEach(code => {
           const roomRef = this.roomsRef.child(code);
           const jsonParticipants = Object.keys(rooms[code]["participants"]);
-          const participants = jsonParticipants.map(p => new Participant(p, roomRef.child("participants").child(p), undefined));
+          const participants = jsonParticipants.map(p => new Participant(p, roomRef.child("participants").child(p), undefined, rooms[code].admin === p));
           participants.forEach(p => p.active = false);
 
           let newRoom = new Room(code, roomRef, participants, () => this.close(code));
