@@ -21,9 +21,13 @@ class Room {
   }
 
   addParticipant(name, socket) {
-    this.participants.push(new Participant(name, this.participantRef.child(name), socket));
+    const isAdmin = this.participants.length === 0;
+    this.participants.push(new Participant(name, this.participantRef.child(name), socket, isAdmin));
     this.notifyParticipantUpdate();
-    this.participantRef.child(name).set({'name': name});
+    this.participantRef.child(name).set({ name });
+    if (isAdmin) {
+      this.ref.child('phase').set(this.phase);
+    }
   }
 
   removeParticipant(name) {
@@ -91,24 +95,6 @@ class Room {
     this.notifyOptions();
   }
 
-  vote(participant, voteName, onVoteEnd, dupVoteMessage) {
-    this.ref.child(voteName).once("value", s => {
-      let votes = s.val();
-      votes = votes === null ? [] : Object.values(votes);
-
-      if (!votes.includes(participant.name)) {
-        if (votes.length === this.participants.length - 1) {
-          onVoteEnd();
-          this.ref.child(voteName).remove();
-        } else {
-          this.ref.child(voteName).push(participant.name);
-        }
-      } else if (dupVoteMessage !== undefined) {
-        participant.send('message', { message: dupVoteMessage });
-      }
-    });
-  }
-
   match() {
     let santas;
     try {
@@ -125,25 +111,33 @@ class Room {
     return true;
   }
 
-  voteMatch(participant) {
-    this.vote(participant, "matchVotes", 
-      () => {
-        if (!this.match()) {
-          return;
-        }
-        this.phase = MATCHED;
-        this.ref.child('phase').set(this.phase);
-        this.notifyPhaseChange();
-      }, "You have already voted to match this room");
+  adminMatch(participant) {
+    if (!participant.isAdmin) {
+      return;
+    }
+    if (this.phase !== STANDBY || this.getNumParticipants() < 3) {
+      participant.send('message', { message: 'Need at least 3 participants!' });
+      return
+    }
+    if (!this.match()) {
+      return;
+    }
+    this.phase = MATCHED;
+    this.ref.child('phase').set(this.phase);
+    this.notifyPhaseChange();
   }
 
-  voteReveal(participant) {
-    this.vote(participant, "revealVotes",
-      () => {
-        this.phase = REVEALED;
-        this.ref.child('phase').set(this.phase);
-        this.notifyPhaseChange();
-      }, "You have already voted to reveal this room");
+  adminReveal(participant) {
+    if (!participant.isAdmin) {
+      return;
+    }
+    if (room.phase === REVEALED) {
+      participant.send('message', { message: 'Room has not been matched yet!' });
+      return
+    }
+    this.phase = REVEALED;
+    this.ref.child('phase').set(this.phase);
+    this.notifyPhaseChange();
   }
 
   notifyOptions() {

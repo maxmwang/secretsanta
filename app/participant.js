@@ -2,17 +2,19 @@ const c = require('./const');
 const { linkPreview } = require("./link_preview");
 
 class Participant {
-  constructor(name, ref, socket) {
+  constructor(name, ref, socket, isAdmin) {
     this.name = name;
     this.ref = ref;
     this.socket = socket;
     this.active = true;
+    this.isAdmin = isAdmin;
   }
 
   json() {
     return {
       name: this.name,
       active: this.active,
+      isAdmin: this.isAdmin,
     };
   }
 

@@ -17,6 +17,7 @@ class Lobby extends Component {
     this.state = {
       view: 'home',
       participants: {},
+      isAdmin: false,
       santas: [],
       restrictions: {},
       n_santas: 1,
@@ -50,8 +51,12 @@ class Lobby extends Component {
           p.name,
           p.active,
           this.state.santas.includes(p.name),
-          p.name === this.props.name
+          p.name === this.props.name,
+          p.isAdmin,
         );
+        if (p.name === this.props.name) {
+          this.setState({ isAdmin: p.isAdmin });
+        }
       });
       this.setState({ participants });
     });
@@ -97,12 +102,14 @@ class Lobby extends Component {
             setSantas={(n) => this.props.socket.emit("setSantas", { n_santas: n })}
             removeRestriction={(name, target) => this.props.socket.emit("removeRestriction", { name, target })}
           />
-          <BigButton
-            type="button"
-            className="btn btn-light mb-4"
-            onClick={() => this.props.socket.emit('voteMatch', {})}>
-            Vote to Match Room
-          </BigButton>
+          {this.state.isAdmin &&
+            <BigButton
+              type="button"
+              className="btn btn-light mb-4"
+              onClick={() => this.props.socket.emit('adminMatch', {})}>
+              Match Room
+            </BigButton>
+          }
           <br/>
           <BigButton type="button" className="btn btn-light" onClick={ () => this.props.exitRoom() }>
             Exit Room
@@ -138,12 +145,14 @@ class Lobby extends Component {
           </div>
           {wishlistButton}
           <br/>
-          <BigButton
-            type="button"
-            className="btn btn-light mb-4"
-            onClick={() => this.props.socket.emit('voteReveal', {})}>
-            Vote to Reveal Room
-          </BigButton>
+          {this.state.isAdmin &&
+            <BigButton
+              type="button"
+              className="btn btn-light mb-4"
+              onClick={() => this.props.socket.emit('adminReveal', {})}>
+              Vote to Reveal Room
+            </BigButton>
+          }
           <br/>
           {changePasswordButton}
         </>

@@ -141,6 +141,10 @@ app.io.on('connect', function (socket) {
     }
   });
 
+  socket.on('adminMatch', data => {
+    room.adminMatch(participant);
+  });
+
   socket.on('voteMatch', data => {
     if (room.phase !== STANDBY || room.getNumParticipants() < 3) {
       socket.emit('message', {message: 'Need at least 3 participants!'});
@@ -204,6 +208,10 @@ app.io.on('connect', function (socket) {
 
   socket.on('unmarkItem', data => {
     room.unmarkItem(participant, data.target, data.itemId);
+  });
+
+  socket.on('adminReveal', data => {
+    room.adminReveal(participant);
   });
 
   socket.on('voteReveal', data => {
