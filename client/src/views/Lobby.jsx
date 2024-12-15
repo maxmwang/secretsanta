@@ -33,7 +33,6 @@ class Lobby extends Component {
   }
 
   componentDidMount() {
-    console.log('mounted')
     this.props.socket.emit('join', {
       name: this.props.name,
       roomCode: this.props.roomCode,
