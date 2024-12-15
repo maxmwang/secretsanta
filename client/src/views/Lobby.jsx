@@ -11,17 +11,6 @@ import WishlistPage from 'components/Wishlist/WishlistPage';
 import Options from 'components/Options';
 import { BigButton, SmallButton, TextButton } from 'components/Button';
 
-const isAroundChristmas = () => {
-  const today = new Date();
-  if (today.getMonth() + 1 !== 12) {
-    return false;
-  }
-  if (20 <= today.getDate() && today.getDate() <= 31) {
-    return true;
-  }
-  return false;
-}
-
 class Lobby extends Component {
   constructor(props) {
     super(props);
@@ -39,10 +28,12 @@ class Lobby extends Component {
         open: false,
         newPassword: '',
       },
+      revealConfirmOpen: false,
     };
   }
 
   componentDidMount() {
+    console.log('mounted')
     this.props.socket.emit('join', {
       name: this.props.name,
       roomCode: this.props.roomCode,
@@ -184,22 +175,15 @@ class Lobby extends Component {
         </div>
       );
     } else if (this.state.phase === 'matched') {
-      if (isAroundChristmas()) {
-        return (
-          <div>
-            <SmallButton
-              important
-              type="button"
-              className="btn btn-light mb-4"
-              onClick={() => this.props.socket.emit('adminReveal', {})}>
-              Reveal Santas
-            </SmallButton>
-          </div>
-        );
-      }
       return (
-        <div className="mb-4 text-blue-400">
-          <p>Santas can be revealed between 12/20 - 12/31</p>
+        <div>
+          <SmallButton
+            important
+            type="button"
+            className="btn btn-light mb-4"
+            onClick={() => this.setState({ revealConfirmOpen: true })}>
+            Reveal Santas
+          </SmallButton>
         </div>
       );
     }
@@ -238,6 +222,36 @@ class Lobby extends Component {
           <BigButton type="submit" className="btn btn-light">
             Submit
           </BigButton>
+        </form>
+      </Modal>
+    );
+  }
+
+  renderRevealConfirmModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.revealConfirmOpen}
+        onClose={() => this.setState({ revealConfirmOpen: false })}
+      >
+        <form
+          className="wishlist-modal"
+          onSubmit={e => {
+            e.preventDefault();
+            this.props.socket.emit('adminReveal', {});
+            this.setState({ revealConfirmOpen: false });
+          }}
+        >
+          <h4 className="modal-title">Are you sure you want to reveal Santas?</h4>
+          <div className="grid grid-cols-2 gap-8">
+            <BigButton important onClick={() => this.setState({ revealConfirmOpen: false })} className="btn btn-light">
+              Cancel
+            </BigButton>
+            <BigButton important type="submit" className="btn btn-light">
+              Yes
+            </BigButton>
+          </div>
         </form>
       </Modal>
     );
@@ -301,6 +315,7 @@ class Lobby extends Component {
         )}
 
         {this.renderChangePasswordModal()}
+        {this.renderRevealConfirmModal()}
       </div>
     );
   }
