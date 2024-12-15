@@ -145,14 +145,6 @@ app.io.on('connect', function (socket) {
     room.adminMatch(participant);
   });
 
-  socket.on('voteMatch', data => {
-    if (room.phase !== STANDBY || room.getNumParticipants() < 3) {
-      socket.emit('message', {message: 'Need at least 3 participants!'});
-    } else {
-      room.voteMatch(participant);
-    }
-  });
-
   socket.on('getWishlist', data => {
     const { target } = data;
     room.sendWishlist(participant, target);
@@ -212,12 +204,6 @@ app.io.on('connect', function (socket) {
 
   socket.on('adminReveal', data => {
     room.adminReveal(participant);
-  });
-
-  socket.on('voteReveal', data => {
-    if (room.phase === REVEALED) {
-      room.voteReveal(participant);
-    }
   });
 
   socket.on('disconnect', data => {
