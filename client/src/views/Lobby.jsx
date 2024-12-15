@@ -28,6 +28,7 @@ class Lobby extends Component {
         open: false,
         newPassword: '',
       },
+      revealConfirmOpen: false,
     };
   }
 
@@ -164,6 +165,7 @@ class Lobby extends Component {
       return (
         <div>
           <SmallButton
+            important
             type="button"
             className="btn btn-light mb-4"
             onClick={() => this.props.socket.emit('adminMatch', {})}>
@@ -175,9 +177,10 @@ class Lobby extends Component {
       return (
         <div>
           <SmallButton
+            important
             type="button"
             className="btn btn-light mb-4"
-            onClick={() => this.props.socket.emit('adminReveal', {})}>
+            onClick={() => this.setState({ revealConfirmOpen: true })}>
             Reveal Santas
           </SmallButton>
         </div>
@@ -218,6 +221,36 @@ class Lobby extends Component {
           <BigButton type="submit" className="btn btn-light">
             Submit
           </BigButton>
+        </form>
+      </Modal>
+    );
+  }
+
+  renderRevealConfirmModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.revealConfirmOpen}
+        onClose={() => this.setState({ revealConfirmOpen: false })}
+      >
+        <form
+          className="wishlist-modal"
+          onSubmit={e => {
+            e.preventDefault();
+            this.props.socket.emit('adminReveal', {});
+            this.setState({ revealConfirmOpen: false });
+          }}
+        >
+          <h4 className="modal-title">Are you sure you want to reveal Santas?</h4>
+          <div className="grid grid-cols-2 gap-8">
+            <BigButton important onClick={() => this.setState({ revealConfirmOpen: false })} className="btn btn-light">
+              Cancel
+            </BigButton>
+            <BigButton important type="submit" className="btn btn-light">
+              Yes
+            </BigButton>
+          </div>
         </form>
       </Modal>
     );
@@ -281,6 +314,7 @@ class Lobby extends Component {
         )}
 
         {this.renderChangePasswordModal()}
+        {this.renderRevealConfirmModal()}
       </div>
     );
   }

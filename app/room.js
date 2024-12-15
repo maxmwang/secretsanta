@@ -131,7 +131,7 @@ class Room {
     if (!participant.isAdmin) {
       return;
     }
-    if (room.phase !== MATCHED) {
+    if (this.phase !== MATCHED) {
       participant.send('message', { message: 'Room has not been matched yet!' });
       return
     }
