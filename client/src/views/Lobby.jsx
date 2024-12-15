@@ -11,6 +11,17 @@ import WishlistPage from 'components/Wishlist/WishlistPage';
 import Options from 'components/Options';
 import { BigButton, SmallButton, TextButton } from 'components/Button';
 
+const isAroundChristmas = () => {
+  const today = new Date();
+  if (today.getMonth() + 1 !== 12) {
+    return false;
+  }
+  if (20 <= today.getDate() && today.getDate() <= 31) {
+    return true;
+  }
+  return false;
+}
+
 class Lobby extends Component {
   constructor(props) {
     super(props);
@@ -164,6 +175,7 @@ class Lobby extends Component {
       return (
         <div>
           <SmallButton
+            important
             type="button"
             className="btn btn-light mb-4"
             onClick={() => this.props.socket.emit('adminMatch', {})}>
@@ -172,14 +184,22 @@ class Lobby extends Component {
         </div>
       );
     } else if (this.state.phase === 'matched') {
+      if (isAroundChristmas()) {
+        return (
+          <div>
+            <SmallButton
+              important
+              type="button"
+              className="btn btn-light mb-4"
+              onClick={() => this.props.socket.emit('adminReveal', {})}>
+              Reveal Santas
+            </SmallButton>
+          </div>
+        );
+      }
       return (
-        <div>
-          <SmallButton
-            type="button"
-            className="btn btn-light mb-4"
-            onClick={() => this.props.socket.emit('adminReveal', {})}>
-            Reveal Santas
-          </SmallButton>
+        <div className="mb-4 text-blue-400">
+          <p>Santas can be revealed between 12/20 - 12/31</p>
         </div>
       );
     }
