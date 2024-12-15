@@ -26,7 +26,7 @@ class Room {
     this.notifyParticipantUpdate();
     this.participantRef.child(name).set({ name });
     if (isAdmin) {
-      this.ref.child('phase').set(this.phase);
+      this.ref.child('admin').set(name);
     }
   }
 
