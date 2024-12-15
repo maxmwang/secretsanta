@@ -8,6 +8,7 @@ class Create extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      code: '',
       name: '',
       password: '',
       message: undefined,
@@ -22,7 +23,12 @@ class Create extends Component {
         return;
       }
 
-      createRoom().then(res => {
+      createRoom(this.state.code).then(res => {
+        if (!res.valid) {
+          this.setState({ message: res.message });
+          return;
+        }
+
         const { roomCode } = res;
         attemptJoin(roomCode, cleanedName, this.state.password).then(res => {
           if (!res.valid) {
@@ -52,11 +58,22 @@ class Create extends Component {
         >
           <TextField
             fullWidth
+            label="Room Code"
+            type="name"
+            variant="outlined"
+            size="small"
+            value={this.state.code}
+            onChange={ e => this.setState({ code: e.target.value }) }
+          />
+          <br/>
+          <br/>
+          <TextField
+            fullWidth
             label="Name"
             type="name"
             variant="outlined"
             size="small"
-            value={this.state.name} 
+            value={this.state.name}
             onChange={ e => this.setState({ name: e.target.value }) }
           />
           <br/>

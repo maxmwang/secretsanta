@@ -32,13 +32,25 @@ class Santa {
     });
   }
 
-  createRoom() {
-    const code = this.generateCode();
-    var roomRef = this.roomsRef.child(code);
+  validateUserProvidedCode(code) {
+    if (code in this.rooms) {
+      return 'Room code is taken';
+    }
+    if (code.length < 4) {
+      return 'Room code must be at least 4 characters';
+    }
+    if (!/^[a-zA-Z0-9]+$/.test(code)) {
+      return 'Room code can only contain letters and numbers';
+    }
+    return undefined;
+  }
+
+  createRoom(roomCode) {
+    var roomRef = this.roomsRef.child(roomCode);
     roomRef.child('phase').set('standby');
 
-    const newRoom = new Room(code, roomRef, [], () => this.close(code));
-    this.rooms[code] = newRoom;
+    const newRoom = new Room(roomCode, roomRef, [], () => this.close(roomCode));
+    this.rooms[roomCode] = newRoom;
     return newRoom;
   }
 
@@ -76,7 +88,7 @@ class Santa {
       for (var i = 0; i < length; i++) {
         code += String.fromCharCode(97 + Math.random() * 26);
       }
-    } while (this.rooms[code]);
+    } while (!this.codeIsAvailable(code));
     return code;
   }
 }

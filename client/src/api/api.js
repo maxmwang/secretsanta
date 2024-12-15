@@ -1,5 +1,5 @@
-export async function createRoom(options) {
-  return callApi('api/create', {
+export async function createRoom(roomCode, options) {
+  return callApi(`api/create?roomCode=${roomCode}`, {
     method: "POST",
     headers: {
       'Content-Type': 'application/json',
