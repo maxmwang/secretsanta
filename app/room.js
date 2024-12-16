@@ -197,6 +197,14 @@ class Room {
     })
   }
 
+  sendReconnectData(participant) {
+    participant.emitTargets();
+    participant.send('phase', { phase: this.phase });
+    if (this.phase === REVEALED) {
+      this.withRevealedSantas(data => participant.send('revealedSantas', { santas: data }));
+    }
+  }
+
   close() {
     this.participants.forEach(p => p.send('close', {}));
     this.onClose();
