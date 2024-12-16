@@ -39,13 +39,6 @@ class Participant {
     });
   }
 
-  emitWishlist(reveal) {
-    this.ref.child('wishlist').once('value', s => {
-      let wishlist = s.val() === null ? {} : s.val();
-      this.sendWishlist(wishlist, true, reveal);
-    });
-  }
-
   sendWishlist(wishlist, self, reveal) {
     Object.values(wishlist).forEach(i => {
       if (reveal) {

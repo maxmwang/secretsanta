@@ -118,8 +118,7 @@ app.io.on('connect', function (socket) {
 
         participant = room.get(name);
 
-        participant.emitTargets();
-        socket.emit('phase', { phase: room.phase });
+        room.sendReconnectData(participant);
       } else {
         socket.disconnect();
       }
@@ -166,7 +165,7 @@ app.io.on('connect', function (socket) {
       return;
     }
     participant.addItem(data.item);
-    participant.emitWishlist(false);
+    room.sendWishlist(participant, participant.name);
   });
 
   socket.on('removeItem', data => {
@@ -174,7 +173,7 @@ app.io.on('connect', function (socket) {
       return;
     }
     participant.removeItem(data.id);
-    participant.emitWishlist(false);
+    room.sendWishlist(participant, participant.name);
   });
 
   socket.on('editItem', data => {
@@ -182,7 +181,7 @@ app.io.on('connect', function (socket) {
       return;
     }
     participant.editItem(data.item);
-    participant.emitWishlist(false);
+    room.sendWishlist(participant, participant.name);
   });
 
   socket.on('importItem', data => {
@@ -213,7 +212,7 @@ app.io.on('connect', function (socket) {
         delete item.marked;
         await participant.addItem(item);
       }
-      participant.emitWishlist(false);
+      room.sendWishlist(participant, participant.name);
     });
   });
 
