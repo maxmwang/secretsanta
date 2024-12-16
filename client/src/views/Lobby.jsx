@@ -18,7 +18,7 @@ class Lobby extends Component {
       view: 'home',
       participants: {},
       isAdmin: false,
-      santas: [],
+      santas: [], // these are the people the participant is santa for
       restrictions: {},
       n_santas: 1,
       phase: '',
@@ -29,6 +29,7 @@ class Lobby extends Component {
         newPassword: '',
       },
       revealConfirmOpen: false,
+      revealedSantas: {},
     };
   }
 
@@ -87,6 +88,14 @@ class Lobby extends Component {
         n_santas: options.n_santas,
       });
     });
+
+    this.props.socket.off('revealedSantas');
+    this.props.socket.on('revealedSantas', data => {
+      let revealedSantas = data.santas;
+      this.setState({
+        revealedSantas,
+      });
+    });
   }
 
   renderHomeContent() {
@@ -110,7 +119,6 @@ class Lobby extends Component {
       );
     }
 
-    const participantList = <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />;
     const wishlistButton = (
       <BigButton
         type="button"
@@ -133,7 +141,7 @@ class Lobby extends Component {
             <p className="text-lg font-semibold text-blue-400">
               You are Secret Santa for:
             </p>
-            {participantList}
+            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
           </div>
           {wishlistButton}
           <br/>
@@ -144,10 +152,14 @@ class Lobby extends Component {
       return (
         <>
           <div className="mb-4">
-            <p className="text-lg font-semibold text-blue-400">
-              You were Secret Santa for:
-            </p>
-            {participantList}
+            {Object.keys(this.state.revealedSantas).map(santa => (
+              <>
+                <p className="text-lg font-semibold text-blue-400">
+                  {santa} was Secret Santa for:
+                  <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
+                </p>
+              </>
+            ))}
           </div>
           {wishlistButton}
           <br/>

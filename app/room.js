@@ -138,6 +138,24 @@ class Room {
     this.phase = REVEALED;
     this.ref.child('phase').set(this.phase);
     this.notifyPhaseChange();
+    this.notifyRevealedSantas();
+  }
+
+  withRevealedSantas(fn) {
+    this.participantRef.once('value', s => {
+      let santaMap = {};
+      const participants = s.val();
+      for (let p of Object.keys(participants)) {
+        santaMap[p] = participants[p]['targets'];
+      }
+      fn(santaMap);
+    });
+  }
+
+  notifyRevealedSantas() {
+    this.withRevealedSantas(s => {
+      this.participants.forEach(p => p.send('revealedSantas', { santas: s }));
+    });
   }
 
   notifyOptions() {
