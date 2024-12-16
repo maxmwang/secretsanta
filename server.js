@@ -162,21 +162,33 @@ app.io.on('connect', function (socket) {
   });
 
   socket.on('addItem', data => {
+    if (room.phase !== 'matched') {
+      return;
+    }
     participant.addItem(data.item);
-    participant.emitWishlist();
+    participant.emitWishlist(false);
   });
 
   socket.on('removeItem', data => {
+    if (room.phase !== 'matched') {
+      return;
+    }
     participant.removeItem(data.id);
-    participant.emitWishlist();
+    participant.emitWishlist(false);
   });
 
   socket.on('editItem', data => {
+    if (room.phase !== 'matched') {
+      return;
+    }
     participant.editItem(data.item);
-    participant.emitWishlist();
+    participant.emitWishlist(false);
   });
 
   socket.on('importItem', data => {
+    if (room.phase !== 'matched') {
+      return;
+    }
     const { roomCode, participant: otherParticipant } = data;
     if (roomCode === undefined) {
       socket.emit('message', {message: 'Missing room code'});
@@ -201,7 +213,7 @@ app.io.on('connect', function (socket) {
         delete item.marked;
         await participant.addItem(item);
       }
-      participant.emitWishlist();
+      participant.emitWishlist(false);
     });
   });
 

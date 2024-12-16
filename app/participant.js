@@ -39,10 +39,10 @@ class Participant {
     });
   }
 
-  emitWishlist() {
+  emitWishlist(reveal) {
     this.ref.child('wishlist').once('value', s => {
       let wishlist = s.val() === null ? {} : s.val();
-      this.sendWishlist(wishlist, false, true);
+      this.sendWishlist(wishlist, true, reveal);
     });
   }
 

@@ -284,6 +284,7 @@ class Lobby extends Component {
           socket={this.props.socket}
           roomId={this.props.roomCode}
           name={this.props.name}
+          revealed={this.state.phase === 'revealed'}
           participants={Object.values(this.state.participants)}
           returnHome={ () => this.setState({ view: 'home' })}
         />

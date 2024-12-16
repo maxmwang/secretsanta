@@ -100,7 +100,7 @@ class WishlistPage extends Component {
           name={this.props.name}
           target={this.props.participants[this.state.index].name}
           socket={this.props.socket}
-          canEdit={this.state.self}
+          canEdit={this.state.self && !this.props.revealed}
           items={this.state.items}
         />
 
