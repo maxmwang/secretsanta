@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 
+import ArrowForward from '@material-ui/icons/ArrowForward';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 
@@ -151,14 +152,13 @@ class Lobby extends Component {
     } else if (this.state.phase === 'revealed') {
       return (
         <>
-          <div className="mb-4">
+          <div className="mb-4 w-3/12 m-auto">
             {Object.keys(this.state.revealedSantas).map(santa => (
-              <>
-                <p className="text-lg font-semibold text-blue-400">
-                  {santa} was Secret Santa for:
-                  <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
-                </p>
-              </>
+              <div className="grid grid-cols-3">
+                <ParticipantList participants={[this.state.participants[santa]]} />
+                <div><ArrowForward/></div>
+                <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
+              </div>
             ))}
           </div>
           {wishlistButton}
