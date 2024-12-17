@@ -152,9 +152,9 @@ class Lobby extends Component {
     } else if (this.state.phase === 'revealed') {
       return (
         <>
-          <div className="mb-4 w-3/12 m-auto">
+          <div className="mb-4 m-auto">
             {Object.keys(this.state.revealedSantas).map(santa => (
-              <div className="grid grid-cols-3">
+              <div className="d-flex justify-content-center">
                 <ParticipantList participants={[this.state.participants[santa]]} />
                 <div><ArrowForward/></div>
                 <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
