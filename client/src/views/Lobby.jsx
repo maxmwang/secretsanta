@@ -120,6 +120,27 @@ class Lobby extends Component {
       );
     }
 
+    const assignmentInfo = (
+      <div className="mb-4">
+        <p className="text-lg font-semibold text-blue-400">
+          You are Secret Santa for:
+        </p>
+        <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+      </div>
+    );
+
+    const revealedInfo = (
+      <div className="mb-4 m-auto">
+        {Object.keys(this.state.revealedSantas).map(santa => (
+          <div className="d-flex justify-content-center">
+            <ParticipantList participants={[this.state.participants[santa]]} />
+            <div><ArrowForward/></div>
+            <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
+          </div>
+        ))}
+      </div>
+    );
+
     const wishlistButton = (
       <BigButton
         type="button"
@@ -138,12 +159,7 @@ class Lobby extends Component {
     if (this.state.phase === 'matched') {
       return (
         <>
-          <div className="mb-4">
-            <p className="text-lg font-semibold text-blue-400">
-              You are Secret Santa for:
-            </p>
-            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
-          </div>
+          {assignmentInfo}
           {wishlistButton}
           <br/>
           {changePasswordButton}
@@ -152,15 +168,8 @@ class Lobby extends Component {
     } else if (this.state.phase === 'revealed') {
       return (
         <>
-          <div className="mb-4 m-auto">
-            {Object.keys(this.state.revealedSantas).map(santa => (
-              <div className="d-flex justify-content-center">
-                <ParticipantList participants={[this.state.participants[santa]]} />
-                <div><ArrowForward/></div>
-                <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
-              </div>
-            ))}
-          </div>
+          {revealedInfo}
+          <br/>
           {wishlistButton}
           <br/>
           {changePasswordButton}
@@ -296,7 +305,7 @@ class Lobby extends Component {
           socket={this.props.socket}
           roomId={this.props.roomCode}
           name={this.props.name}
-          revealed={this.state.phase === 'revealed'}
+          canEdit={this.state.phase === 'matched'}
           participants={Object.values(this.state.participants)}
           returnHome={ () => this.setState({ view: 'home' })}
         />

@@ -8,7 +8,8 @@ import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
 import { BigButton } from 'components/Button';
 
-import WishlistItem from './Item';
+import WishlistItem from 'components/Item';
+import PlaceholderItem from 'components/Item/Placeholder';
 import './Wishlist.css';
 
 class Wishlist extends Component {
@@ -169,14 +170,7 @@ class Wishlist extends Component {
             />
           ))}
           {this.props.canEdit &&
-            <div
-              className="wishlist-item-placeholder border-blue-400"
-              onClick={() => this.setState({ modalOpen: 'add' })}
-            >
-              <p className="text-blue-400 font-semibold">
-                + Add Item
-              </p>
-            </div>
+            <PlaceholderItem onClick={() => this.setState({ modalOpen: 'add' })}/>
           }
         </div>
       );

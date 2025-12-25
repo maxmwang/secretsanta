@@ -25,6 +25,7 @@ class WishlistPage extends Component {
   componentDidMount() {
     this.refreshWishlist();
 
+    this.props.socket.off('wishlist');
     this.props.socket.on('wishlist', data => {
       let items = [];
       const { wishlist } = data;
@@ -100,7 +101,7 @@ class WishlistPage extends Component {
           name={this.props.name}
           target={this.props.participants[this.state.index].name}
           socket={this.props.socket}
-          canEdit={this.state.self && !this.props.revealed}
+          canEdit={this.state.self && this.props.canEdit}
           items={this.state.items}
         />
 
