@@ -5,7 +5,7 @@ import CheckBoxOutlineBlankIcon from '@material-ui/icons/CheckBoxOutlineBlank';
 import CheckBoxIcon from '@material-ui/icons/CheckBox';
 import EditIcon from '@material-ui/icons/Edit';
 
-import './Wishlist.css';
+import './index.css';
 
 class Item extends Component {
   constructor() {
