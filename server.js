@@ -224,18 +224,6 @@ app.io.on('connect', function (socket) {
     room.unmarkItem(participant, data.target, data.itemId);
   });
 
-  socket.on('adminEnableGuessing', data => {
-    room.adminEnableGuessing(participant);
-  });
-
-  socket.on('makeGuess', data => {
-    const { guess } = data;
-    if (guess === name) {
-      return;
-    }
-    room.makeGuess(participant, guess);
-  });
-
   socket.on('adminReveal', data => {
     room.adminReveal(participant);
   });

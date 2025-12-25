@@ -5,7 +5,6 @@ const { match } = require('./match');
 
 const STANDBY = 'standby';
 const MATCHED = 'matched';
-const GUESSING = 'guessing';
 const REVEALED = 'revealed';
 
 class Room {
@@ -129,33 +128,11 @@ class Room {
     this.notifyPhaseChange();
   }
 
-  adminEnableGuessing(participant) {
-    if (!participant.isAdmin) {
-      return;
-    }
-    if (this.phase !== MATCHED) {
-      participant.send('message', { message: 'Room has not been matched yet!' });
-      return
-    }
-    this.phase = GUESSING;
-    this.ref.child('phase').set(this.phase);
-    this.notifyPhaseChange();
-  }
-
-  makeGuess(participant, guess) {
-    this.ref.child('n_santas').once('value', n_santas => {
-      this.withRevealedSantas(s => {
-        participant.addGuess(s, guess, n_santas.val());
-        participant.sendGuesses();
-      });
-    });
-  }
-
   adminReveal(participant) {
     if (!participant.isAdmin) {
       return;
     }
-    if (this.phase !== MATCHED && this.phase !== GUESSING) {
+    if (this.phase !== MATCHED) {
       participant.send('message', { message: 'Room has not been matched yet!' });
       return
     }
@@ -242,11 +219,7 @@ class Room {
   sendReconnectData(participant) {
     participant.emitTargets();
     participant.send('phase', { phase: this.phase });
-    if (this.phase === GUESSING) {
-      participant.sendGuesses();
-    }
     if (this.phase === REVEALED) {
-      participant.sendGuesses();
       this.withRevealedSantas(data => participant.send('revealedSantas', { santas: data }));
     }
   }
