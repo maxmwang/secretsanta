@@ -4,6 +4,7 @@ import ArrowForward from '@material-ui/icons/ArrowForward';
 import Modal from '@material-ui/core/Modal';
 import TextField from '@material-ui/core/TextField';
 
+import GuessHistory from 'components/GuessHistory';
 import RoomCode from 'components/RoomCode';
 import ParticipantList from 'components/ParticipantList';
 import Participant from 'models/participant';
@@ -30,6 +31,7 @@ class Lobby extends Component {
         newPassword: '',
       },
       revealConfirmOpen: false,
+      guesses: {},
       revealedSantas: {},
     };
   }
@@ -90,6 +92,14 @@ class Lobby extends Component {
       });
     });
 
+    this.props.socket.off('guesses');
+    this.props.socket.on('guesses', data => {
+      let guesses = data.guesses;
+      this.setState({
+        guesses,
+      });
+    });
+
     this.props.socket.off('revealedSantas');
     this.props.socket.on('revealedSantas', data => {
       let revealedSantas = data.santas;
@@ -120,6 +130,36 @@ class Lobby extends Component {
       );
     }
 
+    const assignmentInfo = (
+      <div className="mb-4">
+        <p className="text-lg font-semibold text-blue-400">
+          You are Secret Santa for:
+        </p>
+        <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
+      </div>
+    );
+
+    const guessInfo = (
+      <div className="mb-4">
+        <GuessHistory
+          participants={this.state.participants}
+          guesses={this.state.guesses}
+        />
+      </div>
+    );
+
+    const revealedInfo = (
+      <div className="mb-4 m-auto">
+        {Object.keys(this.state.revealedSantas).map(santa => (
+          <div className="d-flex justify-content-center">
+            <ParticipantList participants={[this.state.participants[santa]]} />
+            <div><ArrowForward/></div>
+            <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
+          </div>
+        ))}
+      </div>
+    );
+
     const wishlistButton = (
       <BigButton
         type="button"
@@ -138,12 +178,17 @@ class Lobby extends Component {
     if (this.state.phase === 'matched') {
       return (
         <>
-          <div className="mb-4">
-            <p className="text-lg font-semibold text-blue-400">
-              You are Secret Santa for:
-            </p>
-            <ParticipantList participants={this.state.santas.map(s => this.state.participants[s])} />
-          </div>
+          {assignmentInfo}
+          {wishlistButton}
+          <br/>
+          {changePasswordButton}
+        </>
+      );
+    } else if (this.state.phase === 'guessing') {
+      return (
+        <>
+          {assignmentInfo}
+          {guessInfo}
           {wishlistButton}
           <br/>
           {changePasswordButton}
@@ -152,15 +197,9 @@ class Lobby extends Component {
     } else if (this.state.phase === 'revealed') {
       return (
         <>
-          <div className="mb-4 m-auto">
-            {Object.keys(this.state.revealedSantas).map(santa => (
-              <div className="d-flex justify-content-center">
-                <ParticipantList participants={[this.state.participants[santa]]} />
-                <div><ArrowForward/></div>
-                <ParticipantList participants={this.state.revealedSantas[santa].map(name => this.state.participants[name])} />
-              </div>
-            ))}
-          </div>
+          {revealedInfo}
+          <br/>
+          {guessInfo}
           {wishlistButton}
           <br/>
           {changePasswordButton}
@@ -173,31 +212,49 @@ class Lobby extends Component {
     if (!this.state.isAdmin) {
       return <></>;
     }
+    let buttons = [];
+
     if (this.state.phase === 'standby') {
-      return (
-        <div>
-          <SmallButton
-            important
-            type="button"
-            className="btn btn-light mb-4"
-            onClick={() => this.props.socket.emit('adminMatch', {})}>
-            Match Santas
-          </SmallButton>
-        </div>
-      );
-    } else if (this.state.phase === 'matched') {
-      return (
-        <div>
-          <SmallButton
-            important
-            type="button"
-            className="btn btn-light mb-4"
-            onClick={() => this.setState({ revealConfirmOpen: true })}>
-            Reveal Santas
-          </SmallButton>
-        </div>
+      buttons.push(
+        <SmallButton
+          important
+          type="button"
+          className="btn btn-light mb-4"
+          onClick={() => this.props.socket.emit('adminMatch', {})}>
+          Match Santas
+        </SmallButton>
       );
     }
+
+    if (this.state.phase === 'matched' || this.state.phase === 'guessing') {
+      buttons.push(
+        <SmallButton
+          important
+          type="button"
+          className="btn btn-light mb-4"
+          onClick={() => this.setState({ revealConfirmOpen: true })}>
+          Reveal Santas
+        </SmallButton>
+      );
+    }
+
+    if (this.state.phase === 'matched') {
+      buttons.push(
+        <SmallButton
+          important
+          type="button"
+          className="btn btn-light mb-4"
+          onClick={() => this.setState({ guessingConfirmOpen: true })}>
+          Enable Guessing
+        </SmallButton>
+      );
+    }
+
+    return (
+      <div>
+        {buttons}
+      </div>
+    );
   }
 
   renderChangePasswordModal() {
@@ -214,7 +271,7 @@ class Lobby extends Component {
         })}
       >
         <form
-          className="wishlist-modal"
+          className="app-modal"
           onSubmit={e => {
             e.preventDefault();
             this.props.socket.emit("changePassword", { newPassword: this.state.changePassword.value });
@@ -238,6 +295,36 @@ class Lobby extends Component {
     );
   }
 
+  renderGuessingConfirmModal() {
+    return (
+      <Modal
+        aria-labelledby="simple-modal-title"
+        aria-describedby="simple-modal-description"
+        open={this.state.guessingConfirmOpen}
+        onClose={() => this.setState({ guessingConfirmOpen: false })}
+      >
+        <form
+          className="app-modal"
+          onSubmit={e => {
+            e.preventDefault();
+            this.props.socket.emit('adminEnableGuessing', {});
+            this.setState({ guessingConfirmOpen: false });
+          }}
+        >
+          <h4 className="modal-title">Are you sure you want to enable guessing?</h4>
+          <div className="grid grid-cols-2 gap-8">
+            <BigButton important onClick={() => this.setState({ guessingConfirmOpen: false })} className="btn btn-light">
+              Cancel
+            </BigButton>
+            <BigButton important type="submit" className="btn btn-light">
+              Yes
+            </BigButton>
+          </div>
+        </form>
+      </Modal>
+    );
+  }
+
   renderRevealConfirmModal() {
     return (
       <Modal
@@ -247,7 +334,7 @@ class Lobby extends Component {
         onClose={() => this.setState({ revealConfirmOpen: false })}
       >
         <form
-          className="wishlist-modal"
+          className="app-modal"
           onSubmit={e => {
             e.preventDefault();
             this.props.socket.emit('adminReveal', {});
@@ -280,6 +367,8 @@ class Lobby extends Component {
             onClick={p => {
               if (this.state.phase === 'standby' && !p.self) {
                 this.props.socket.emit('addRestriction', { target: p.name })
+              } else if (this.state.phase === 'guessing') {
+                this.props.socket.emit('makeGuess', { guess: p.name });
               }
             }}
           />
@@ -327,6 +416,7 @@ class Lobby extends Component {
         )}
 
         {this.renderChangePasswordModal()}
+        {this.renderGuessingConfirmModal()}
         {this.renderRevealConfirmModal()}
       </div>
     );

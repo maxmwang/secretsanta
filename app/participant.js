@@ -84,6 +84,30 @@ class Participant {
       itemRef.set(dbItem);
     });
   }
+
+  addGuess(revealedSantas, guessName, maxGuesses) {
+    this.ref.child('guesses').once('value', s => {
+      let guesses = s.val() === null ? {} : s.val();
+
+      if (Object.keys(guesses).length == maxGuesses) {
+        this.send('message', { message: 'You have reached the maximum number of guesses' })
+        return;
+      }
+
+      const isCorrect = revealedSantas[guessName].includes(this.name);
+      guesses[guessName] = isCorrect;
+      this.ref.child('guesses').set(guesses);
+
+      this.send('guesses', { guesses });
+    });
+  }
+
+  sendGuesses() {
+    this.ref.child('guesses').once('value', s => {
+      const guesses = s.val() === null ? {} : s.val();
+      this.send('guesses', { guesses });
+    });
+  }
 }
 
 module.exports = Participant;
