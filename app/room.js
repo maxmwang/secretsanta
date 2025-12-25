@@ -93,7 +93,6 @@ class Room {
 
   setSantas(n_santas) {
     this.n_santas = n_santas;
-    this.ref.child('n_santas').set(n_santas);
     this.notifyOptions();
   }
 
@@ -110,6 +109,7 @@ class Room {
       p.send('santas', {'santas': santas[p.name]});
       p.ref.child("targets").set(santas[p.name]);
     });
+    this.ref.child('n_santas').set(this.n_santas);
     return true;
   }
 
