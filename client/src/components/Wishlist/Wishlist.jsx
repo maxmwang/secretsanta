@@ -191,7 +191,7 @@ class Wishlist extends Component {
         open={this.state.modalOpen === 'add'}
         onClose={() => this.clearInput()}
       >
-        <div className="wishlist-modal">
+        <div className="app-modal">
           <h4 className="modal-title">Add Item</h4>
           <TextField
             label="Name"
@@ -253,7 +253,7 @@ class Wishlist extends Component {
         open={this.state.modalOpen === 'edit'}
         onClose={() => this.clearInput()}
       >
-        <div className="wishlist-modal">
+        <div className="app-modal">
           <h4 className="modal-title">Edit Item</h4>
           <TextField
             label="Price"
@@ -307,7 +307,7 @@ class Wishlist extends Component {
         open={this.state.modalOpen === 'import'}
         onClose={() => this.clearInput()}
       >
-        <div className="wishlist-modal">
+        <div className="app-modal">
           <h4 className="modal-title">Import wishlist</h4>
 
           {this.state.importData.importedParticipants == null &&
