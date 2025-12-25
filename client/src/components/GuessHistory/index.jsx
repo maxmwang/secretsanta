@@ -20,7 +20,7 @@ class GuessHistory extends Component {
         </p>
 
         {Object.keys(this.props.guesses).length === 0 &&
-          <p className="text-med font-italic text-blue-400">
+          <p className="text-sm font-italic text-gray-400">
             Make your first guess by clicking on a name above
           </p>
         }
