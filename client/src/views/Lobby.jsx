@@ -223,7 +223,7 @@ class Lobby extends Component {
         })}
       >
         <form
-          className="wishlist-modal"
+          className="app-modal"
           onSubmit={e => {
             e.preventDefault();
             this.props.socket.emit("changePassword", { newPassword: this.state.changePassword.value });
@@ -256,7 +256,7 @@ class Lobby extends Component {
         onClose={() => this.setState({ revealConfirmOpen: false })}
       >
         <form
-          className="wishlist-modal"
+          className="app-modal"
           onSubmit={e => {
             e.preventDefault();
             this.props.socket.emit('adminReveal', {});
