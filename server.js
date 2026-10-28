@@ -13,9 +13,11 @@ const Santa = require('./app/santa');
 
 const port = process.env.SECRET_SANTA_PORT || process.env.PORT || 5000;
 
-var admin = require("firebase-admin");
-admin.initializeApp({
-  credential: admin.credential.cert({
+const { initializeApp, cert } = require("firebase-admin/app");
+const { getDatabase } = require("firebase-admin/database");
+
+const firebaseApp = initializeApp({
+  credential: cert({
     project_id: process.env.PROJECT_ID,
     private_key_id: process.env.PRIVATE_KEY_ID,
     private_key: process.env.PRIVATE_KEY.replace(/\\n/g, '\n'),
@@ -23,7 +25,7 @@ admin.initializeApp({
   }),
   databaseURL: "https://secretsanta-ea79a.firebaseio.com"
 });
-var db = admin.database();
+var db = getDatabase(firebaseApp);
 
 app.use(bodyParser.json());
 app.io = io;
