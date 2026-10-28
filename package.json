@@ -2,9 +2,9 @@
   "name": "secretsanta",
   "version": "1.0.0",
   "scripts": {
-    "client": "cd client && yarn start",
+    "client": "cd client && npm start",
     "server": "nodemon server.js",
-    "dev": "concurrently --kill-others-on-fail \"yarn server\" \"yarn client\"",
+    "dev": "concurrently --kill-others-on-fail \"npm run server\" \"npm run client\"",
     "test": "jest",
     "start": "node server.js"
   },
@@ -20,5 +20,8 @@
   },
   "devDependencies": {
     "concurrently": "^4.0.1"
+  },
+  "engines": {
+    "node": ">=22"
   }
 }
